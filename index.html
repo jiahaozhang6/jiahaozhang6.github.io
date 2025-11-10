@@ -67,47 +67,42 @@
 
 <table style="width:100%; border:0px; border-spacing:0px 10px; border-collapse:separate; margin-right:auto; margin-left:auto;">
 <tbody>   
-  <tr onmouseout="nexf_stop()" onmouseover="nexf_start()">
+    <tr onmouseout="mksnet_stop()" onmouseover="mksnet_start()">
       <td style="padding:16px;width:20%;vertical-align:middle">
         <div class="one">
-          <div class="two" id="nexf_image" style="opacity: 0;">
-					  <img src="images/nexf_after.jpg" width="100%">
-					</div>
-          <img src="images/nexf_before.jpg" width="100%">
+          <div class="two" id="mksnet_image" style="opacity: 0;">
+            
+          </div>
+          
         </div>
         <script type="text/javascript">
-          function nexf_start() {
-            document.getElementById('nexf_image').style.opacity = "1";
+          function mksnet_start() {
+            document.getElementById('mksnet_image').style.opacity = "1";
           }
 
-          function nexf_stop() {
-            document.getElementById('nexf_image').style.opacity = "0";
+          function mksnet_stop() {
+            document.getElementById('mksnet_image').style.opacity = "0";
           }
-          nexf_stop()
+          mksnet_stop()
         </script>
       </td>
       <td style="padding:8px;width:80%;vertical-align:middle">
-        <a href="https://m-niemeyer.github.io/nexf/">
-          <span class="papertitle">NExF: Learning Neural Exposure Fields for View Synthesis</span>
+        <a href="https://doi.org/10.1007/978-981-96-2061-6_29">
+          <span class="papertitle">MKSNet: Advanced Small Object Detection in Remote Sensing Imagery with Multi-Kernel and Dual Attention Mechanisms</span>
         </a>
         <br>
-        <a href="https://m-niemeyer.github.io/">Michael Niemeyer</a>,
-        <a href="https://campar.in.tum.de/Main/FabianManhardt">Fabian Manhardt</a>,
-        <a href="http://www.lix.polytechnique.fr/Labo/Marie-Julie.RAKOTOSAONA/">Marie-Julie Rakotosaona</a>,
-        <a href="https://moechsle.github.io">Michael Oechsle</a>,
-        <a href="https://ait.ethz.ch/people/ctsalico">Christina Tsalicoglou</a>,
-        <a href="https://scholar.google.com/citations?user=ml3laqEAAAAJ&amp;hl=ja">Keisuke Tateno</a>,
-        <strong>Jonathan T. Barron</strong>,
-        <a href="https://federicotombari.github.io/">Federico Tombari</a>
+        <a href="https://orcid.org/0009-0009-0847-5805">Jiahao Zhang</a>,
+        <a href="#">Xiao Zhao</a>,
+        <a href="https://orcid.org/0000-0002-0083-3016">Guangyu Gao</a>
         <br>
-        <em>NeurIPS</em>, 2025
+        <em>MultiMedia Modeling (MMM)</em>, 2025
         <br>
-        <a href="https://m-niemeyer.github.io/nexf/">project page</a>
+        <a href="https://doi.org/10.1007/978-981-96-2061-6_29">paper</a>
         /
-        <a href="https://arxiv.org/abs/2510.08279">arXiv</a>
+        <a href="#">arXiv</a>
         <p></p>
         <p>
-		Learning a neural field that optimizes exposure for each 3D point enables high-quality 3D-consistent view synthesis despite extreme exposure variation during capture.
+          MKSNet introduces a novel Multi-Kernel Selection mechanism and dual attention modules to address small object detection challenges in remote sensing imagery, achieving state-of-the-art performance on DOTA-v1.0 and HRSC2016 benchmarks.
         </p>
       </td>
     </tr>
