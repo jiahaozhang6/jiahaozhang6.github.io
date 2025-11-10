@@ -11,6 +11,14 @@
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
     
   </head>
+  <!-- 局部样式：控制 WeChat 悬停显示小图（也可移动到 stylesheet.css） -->
+  <style>
+    .wechat-container { position: relative; display: inline-block; }
+    .wechat-popup { display: none; position: absolute; top: 110%; left: 50%; transform: translateX(-50%); padding: 6px; background: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); z-index: 200; }
+    .wechat-popup img { width: 110px; height: auto; display: block; }
+    .wechat-container:hover .wechat-popup { display: block; }
+    .wechat-link { text-decoration: none; color: inherit; cursor: default; }
+  </style>
 
   <body>
     <table style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
@@ -31,7 +39,14 @@
                   <a href="mailto:quinn_zhang@buaa.com">Email</a> &nbsp;/&nbsp;
                   <a href="zhihu.com/people/mei-you-dao-bu-liao-de-ming-tian-9">Zhihu</a> &nbsp;/&nbsp;
                   <a href="https://scholar.google.com/citations?user=-yfIyeAAAAAJ&hl=zh-CN">Scholar</a> &nbsp;/&nbsp;
-                  <a href="#"><img src="images/wechat.jpg" alt="WeChat QR code"> <p>Wechat</p></a> &nbsp;/&nbsp;
+                  <!-- WeChat：默认隐藏二维码，鼠标悬停显示小图 -->
+                  <span class="wechat-container">
+                    <a class="wechat-link" href="#">Wechat</a>
+                    <span class="wechat-popup" aria-hidden="true">
+                      <img src="images/wechat.jpg" alt="WeChat QR code">
+                    </span>
+                  </span>
+                  &nbsp;/&nbsp;
                   <a href="https://github.com/jiahaozhang6/">Github</a>
                 </p>
               </td>
