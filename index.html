@@ -63,54 +63,57 @@
             </tr>
           </tbody></table>
 
-<table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-      <h2 style="padding:16px;width:100%;vertical-align:middle">Publications</h2> 
-<tr onmouseout="nexf_stop()" onmouseover="nexf_start()">
-      <td style="padding:16px;width:20%;vertical-align:middle">
+<!-- 将标题移到表格外部，这是更标准的做法 -->
+<h2 style="padding: 16px; width: 100%; vertical-align: middle">Publications</h2>
+
+<table style="width:100%; border:0px; border-spacing:0px 10px; border-collapse:separate; margin-right:auto; margin-left:auto;">
+  <tbody>
+    <tr onmouseout="nexf_stop()" onmouseover="nexf_start()">
+      <td style="padding:16px; width:20%; vertical-align:middle">
         <div class="one">
-          <div class="two" id='nexf_image'>
-					  <img src='images/nexf_after.jpg' width=100%>
-					</div>
-          <img src='images/nexf_before.jpg' width=100%>
+          <!-- 使用内联CSS实现初始隐藏，不依赖JS -->
+          <div class="two" id='nexf_image' style="opacity: 0;">
+            
+          </div>
+          
         </div>
         <script type="text/javascript">
           function nexf_start() {
             document.getElementById('nexf_image').style.opacity = "1";
           }
-
           function nexf_stop() {
             document.getElementById('nexf_image').style.opacity = "0";
           }
-          nexf_stop()
+          // 不再需要在这里调用 nexf_stop() 了
         </script>
       </td>
-      <td style="padding:8px;width:80%;vertical-align:middle">
-        <a href="https://m-niemeyer.github.io/nexf/">
+      <td style="padding:8px; width:80%; vertical-align:middle">
+        <a href="Doc3nexf/">
           <span class="papertitle">NExF: Learning Neural Exposure Fields for View Synthesis</span>
         </a>
         <br>
-        <a href="https://m-niemeyer.github.io/">Michael Niemeyer</a>,
-        <a href="https://campar.in.tum.de/Main/FabianManhardt">Fabian Manhardt</a>,
-        <a href="http://www.lix.polytechnique.fr/Labo/Marie-Julie.RAKOTOSAONA/">Marie-Julie Rakotosaona</a>,
+        <a href="Doc3">Michael Niemeyer</a>,
+        <a href="Doc7">Fabian Manhardt</a>,
+        <a href="Doc4">Marie-Julie Rakotosaona</a>,
         <a href="https://moechsle.github.io">Michael Oechsle</a>,
-        <a href="https://ait.ethz.ch/people/ctsalico">Christina Tsalicoglou</a>,
+        <a href="Doc5">Christina Tsalicoglou</a>,
         <a href="https://scholar.google.com/citations?user=ml3laqEAAAAJ&hl=ja">Keisuke Tateno</a>,
         <strong>Jonathan T. Barron</strong>,
-        <a href="https://federicotombari.github.io/">Federico Tombari</a>
+        <a href="Doc1">Federico Tombari</a>
         <br>
         <em>NeurIPS</em>, 2025
         <br>
-        <a href="https://m-niemeyer.github.io/nexf/">project page</a>
+        <a href="Doc3nexf/">project page</a>
         /
-        <a href="https://arxiv.org/abs/2510.08279">arXiv</a>
-        <p></p>
+        <a href="Doc2">arXiv</a>
+        <!-- 移除了多余的空 <p> 标签 -->
         <p>
-		Learning a neural field that optimizes exposure for each 3D point enables high-quality 3D-consistent view synthesis despite extreme exposure variation during capture.
+          Learning a neural field that optimizes exposure for each 3D point enables high-quality 3D-consistent view synthesis despite extreme exposure variation during capture.
         </p>
       </td>
     </tr>
-
-          </tbody></table>
+  </tbody>
+</table>
 
           
 					<table style="width:100%; margin:0 auto; border:0; border-spacing:0; padding:16px;"><tbody>
@@ -127,7 +130,7 @@
     <tr>
         <td align="center" style="padding:16px;width:20%;vertical-align:middle">
             <div>
-                <h4 style="margin:0;font-size:10pt;">Doctoral Period</h4>
+                <h4 style="margin:0;font-size:12pt;">Doctoral Period</h4>
             </div>
         </td>
         <td style="padding:8px;width:80%;vertical-align:center">
@@ -139,7 +142,7 @@
     <tr>
         <td align="center" style="padding:16px;width:20%;vertical-align:middle">
             <div>
-                <h4 style="margin:0;font-size:10pt;">Master's Period</h4>
+                <h4 style="margin:0;font-size:12pt;">Master's Period</h4>
             </div>
         </td>
         <td style="padding:8px;width:80%;vertical-align:center">
@@ -159,7 +162,7 @@
     <tr>
         <td align="center" style="padding:16px;width:20%;vertical-align:middle">
             <div>
-                <h4 style="margin:0;font-size:10pt;">Bachelor's Period</h4>
+                <h4 style="margin:0;font-size:12pt;">Bachelor's Period</h4>
             </div>
         </td>
         <td style="padding:8px;width:80%;vertical-align:center">
