@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <html lang="en">
+  <!-- Head: document metadata, title, meta tags, favicon and global stylesheet links -->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
@@ -11,29 +12,40 @@
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
     
   </head>
-  <!-- 局部样式：控制 WeChat 悬停显示小图（也可移动到 stylesheet.css） -->
+  <!-- Developer notes: Major sections in this file (top to bottom):
+    - Profile / Contact
+    - Research
+    - Personal Interests
+    - Publications (project/paper entries are each a <tr> block)
+    - Patents (ordered list)
+    - Honors & Awards (grouped by degree/period)
+    - Visitor map and footer
+    To add a new publication, copy an existing <tr> inside the Publications table and update image/links/text.
+    Prefer editing content only (text/links). For style changes, update `stylesheet.css` or the inline <style> at the top.
+  -->
+  <!-- Inline styles: small page-specific CSS (WeChat popup, patents list). Move to stylesheet.css if you prefer central styles. -->
   <style>
     .wechat-container { position: relative; display: inline-block; }
     .wechat-popup { display: none; position: absolute; top: 110%; left: 50%; transform: translateX(-50%); padding: 6px; background: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); z-index: 200; }
     .wechat-popup img { width: 180px; height: auto; display: block; }
     .wechat-container:hover .wechat-popup { display: block; }
-  /* 让 Wechat 文本颜色和普通链接的浅蓝色一致，悬停时也变为链接的 hover 色（橙色） */
-  .wechat-link { text-decoration: none; color: #1772d0; cursor: pointer; }
-  .wechat-link:hover { color: #f09228; }
-  /* 专利列表样式：数字置于外侧、显著、与站点链接色一致 */
-  ol.patents-list { list-style-position: outside; padding-left: 36px; margin: 0 0 16px 0; }
-  ol.patents-list li { margin: 10px 0; }
-  ol.patents-list li p { margin: 0; }
-  /* 给数字（marker）加粗并使用站点浅蓝色，以增强可见性（现代浏览器支持） */
-  ol.patents-list li::marker { font-weight: 700; color: #1772d0; }
+    .wechat-link { text-decoration: none; color: #1772d0; cursor: pointer; }
+    .wechat-link:hover { color: #f09228; }
+    ol.patents-list { list-style-position: outside; padding-left: 36px; margin: 0 0 16px 0; }
+    ol.patents-list li { margin: 10px 0; }
+    ol.patents-list li p { margin: 0; }
+    ol.patents-list li::marker { font-weight: 700; color: inherit; }
+    ol.patents-list li { color: #000; }
   </style>
 
   <body>
+    <!-- Main container: centers page content and sets a max width for readable line lengths -->
     <table style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
       <tr style="padding:0px">
         <td style="padding:0px">
           <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
             <tr style="padding:0px">
+              <!-- Profile / Contact: name, short bio, contact links (email, WeChat, Github, etc.) -->
               <td style="padding:2.5%;width:63%;vertical-align:middle">
                 <p class="name" style="text-align: center;">
                   Jiahao Zhang （张家豪）
@@ -47,7 +59,6 @@
                   <a href="mailto:quinn_zhang@buaa.com" target="_blank">Email</a> &nbsp;/&nbsp;
                   <a href="https://www.zhihu.com/people/mei-you-dao-bu-liao-de-ming-tian-9" target="_blank">Zhihu</a> &nbsp;/&nbsp;
                   <a href="https://scholar.google.com/citations?user=-yfIyeAAAAAJ&hl=zh-CN" target="_blank">Scholar</a> &nbsp;/&nbsp;
-                  <!-- WeChat：默认隐藏二维码，鼠标悬停显示小图 -->
                   <span class="wechat-container">
                     <a class="wechat-link" href="#">Wechat</a>
                     <span class="wechat-popup" aria-hidden="true">
@@ -66,6 +77,7 @@
           <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
               <tr>
               <td style="padding:16px;width:100%;vertical-align:middle">
+                <!-- Research: brief summary of research interests and keywords -->
                 <h2>Research</h2>
                 <p>
                     3D Vision, Panoramic Generation, Generative AI ...
@@ -77,6 +89,7 @@
           <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
               <tr>
               <td style="padding:16px;width:100%;vertical-align:middle">
+                <!-- Personal Interests: non-academic activities and hobbies -->
                 <h2>Personal Interests</h2>
                 <p>
                     Outside of academic research, I am a passionate long-distance runner. 
@@ -86,6 +99,7 @@
             </tr>
           </tbody></table>
 
+<!-- Publications: list of published papers and project pages (each entry includes title, authors, venue, and links) -->
 <h2 style="padding: 16px; width: 100%; vertical-align: middle">Publications</h2>
 
 <table style="width:100%; border:0px; border-spacing:0px 10px; border-collapse:separate; margin-right:auto; margin-left:auto;">
@@ -137,11 +151,10 @@
 -->
 <h2 style="padding: 16px; width: 100%; vertical-align: middle">Patents</h2>
 
-<!-- 专利部分：使用有序列表（数字编号）显示每条专利 -->
 <section style="padding:0 16px 16px 16px;">
   <ol class="patents-list">
     <li>
-      <p>Gao, G., Zhang, J., Zhao, X., &amp; Zhang, S. (2025). 一种基于多尺度Census变换的图像脉冲编码方法 [A Image Pulse Coding Method Based on Multi-scale Census Transform] (中国专利 No. CN120088344A). 中国国家知识产权局.</p>
+      <p>Gao G, Zhang J, Zhao X, Zhang S. 一种基于多尺度Census变换的图像脉冲编码方法 [P]. CN 120088344 A. 2025. China National Intellectual Property Administration.</p>
     </li>
   </ol>
 </section>
@@ -153,6 +166,7 @@
 <tbody>
   <tr>
     <td>
+      <!-- Honors & Awards: academic prizes, scholarships, recognitions (chronological or grouped by degree) -->
       <h2>Honors & Awards</h2>
     </td>
   </tr>
@@ -237,7 +251,8 @@
               <td style="padding:0px">
                 <br>
                 <p style="text-align:center;font-size:small;">
-                  Design and source code from <a style="font-size:small;" href="https://jonbarron.info" target="_blank">Jon Barron'swebsite</a>
+                  Design and source code from <a style="font-size:small;" href="https://jonbarron.info" target="_blank">Jon Barron's website</a>
+                </p>
               </td>
             </tr>
           </tbody></table>
