@@ -45,7 +45,12 @@
         <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=Z2nHOhbXqcwWDWOcsFYCjU-1zcLfuJJC1pGVK-hXIY8"></script>
       </div></td></tr>
       <!-- footer / attribution -->
-      <tr><td colspan="2"><div class="center small">Design and source code from <a class="small" href="https://jonbarron.info" target="_blank">Jon Barron's website</a></div></td></tr>
+      <tr><td colspan="2">
+        <div class="center small">
+          <div>Last updated: <span id="last-updated"></span></div><br>
+          <div style="font-size: 12px;">Design and source code from <a style="font-size: 12px;" href="https://jonbarron.info" target="_blank">Jon Barron's website</a></div>
+        </div>
+      </td></tr>
     </tbody></table>
 
     <script>
@@ -75,6 +80,18 @@
       var includes = document.querySelectorAll('[data-include]');
       var promises = Array.from(includes).map(loadInclude);
       Promise.all(promises).catch(function(e){ console.error('Include load failed', e); });
+      
+      // Display last updated time
+      var lastUpdatedElement = document.getElementById('last-updated');
+      if (lastUpdatedElement) {
+        var lastModified = new Date(document.lastModified);
+        var options = { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric'
+        };
+        lastUpdatedElement.textContent = lastModified.toLocaleDateString('en-US', options);
+      }
     })();
     </script>
    
