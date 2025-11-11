@@ -49,6 +49,11 @@
       btn.setAttribute('aria-expanded','true');
       btn.querySelector('.btn-label').textContent = 'Hide';
     }
+    // Keep the floating show button's aria state in sync so CSS + assistive tech match
+    if(showBtn){
+      // When collapsed === true, showBtn should be visible (aria-hidden=false)
+      showBtn.setAttribute('aria-hidden', String(!collapsed));
+    }
   }
 
   // Toggle on click
@@ -59,7 +64,7 @@
 
   // Floating show button restores the news panel when collapsed
   if(showBtn){
-    showBtn.addEventListener('click', function(){ setState(false); showBtn.setAttribute('aria-hidden','true'); });
+    showBtn.addEventListener('click', function(){ setState(false); });
   }
 
   // Allow Escape to hide
