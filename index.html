@@ -23,241 +23,56 @@
     To add a new publication, copy an existing <tr> inside the Publications table and update image/links/text.
     Prefer editing content only (text/links). For style changes, update `stylesheet.css` or the inline <style> at the top.
   -->
-  <!-- Inline styles: small page-specific CSS (WeChat popup, patents list). Move to stylesheet.css if you prefer central styles. -->
-  <style>
-    .wechat-container { position: relative; display: inline-block; }
-    .wechat-popup { display: none; position: absolute; top: 110%; left: 50%; transform: translateX(-50%); padding: 6px; background: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); z-index: 200; }
-    .wechat-popup img { width: 180px; height: auto; display: block; }
-    .wechat-container:hover .wechat-popup { display: block; }
-    .wechat-link { text-decoration: none; color: #1772d0; cursor: pointer; }
-    .wechat-link:hover { color: #f09228; }
-    ol.patents-list { list-style-position: outside; padding-left: 36px; margin: 0 0 16px 0; }
-    ol.patents-list li { margin: 10px 0; }
-    ol.patents-list li p { margin: 0; }
-    ol.patents-list li::marker { font-weight: 700; color: inherit; }
-    ol.patents-list li { color: #000; }
-  </style>
+  </head>
 
   <body>
     <!-- Main container: centers page content and sets a max width for readable line lengths -->
-    <table style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-      <tr style="padding:0px">
-        <td style="padding:0px">
-          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-            <tr style="padding:0px">
-              <!-- Profile / Contact: name, short bio, contact links (email, WeChat, Github, etc.) -->
-              <td style="padding:2.5%;width:63%;vertical-align:middle">
-                <p class="name" style="text-align: center;">
-                  Jiahao Zhang （张家豪）
-                </p>
-                <p>
-		I am a first-year Ph.D. of Computer Science and Technology candidate in the School of Computer Science at Beihang University (BUAA), under the supervision of Professor <a href="http://miaowang.me"> Miao Wang </a>.
-    Prior to joining BUAA, I received my Master of Engineering in Software Engineering from the Beijing Institute of Technology (BIT), under the supervision of Professor <a href="http://guangyugao-master.cn/"> Guangyu Gao </a> .
+    <table class="main-wrapper"><tbody>
+      <!-- profile -->
+      <tr><td colspan="2"><div data-include="partials/profile.html"></div></td></tr>
+      <!-- research & interests -->
+      <tr><td colspan="2"><div data-include="partials/research.html"></div></td></tr>
+      <!-- publications -->
+      <tr><td colspan="2"><div data-include="partials/publications.html"></div></td></tr>
+      <!-- patents -->
+      <tr><td colspan="2"><div data-include="partials/patents.html"></div></td></tr>
+      <!-- honors & visitors -->
+      <tr><td colspan="2"><div data-include="partials/honors.html"></div></td></tr>
+      <!-- news (aside) -->
+      <tr><td colspan="2"><div data-include="partials/news.html"></div></td></tr>
+      <!-- footer / attribution -->
+      <tr><td colspan="2"><div class="center small">Design and source code from <a class="small" href="https://jonbarron.info" target="_blank">Jon Barron's website</a></div></td></tr>
+    </tbody></table>
 
-                </p>
-                <p style="text-align:center">
-                  <a href="mailto:quinn_zhang@buaa.com" target="_blank">Email</a> &nbsp;/&nbsp;
-                  <a href="https://www.zhihu.com/people/mei-you-dao-bu-liao-de-ming-tian-9" target="_blank">Zhihu</a> &nbsp;/&nbsp;
-                  <a href="https://scholar.google.com/citations?user=-yfIyeAAAAAJ&hl=zh-CN" target="_blank">Scholar</a> &nbsp;/&nbsp;
-                  <span class="wechat-container">
-                    <a class="wechat-link" href="#">Wechat</a>
-                    <span class="wechat-popup" aria-hidden="true">
-                      <img src="images/wechat.jpg" alt="WeChat QR code">
-                    </span>
-                  </span>
-                  &nbsp;/&nbsp;
-                  <a href="https://github.com/jiahaozhang6/" target="_blank">Github</a>
-                </p>
-              </td>
-              <td style="padding:2.5%;width:37%;max-width:37%">
-                <a href="images/jiahaozhang6.jpg"><img style="width:100%;max-width:100%;object-fit: cover; border-radius: 50%;" alt="profile photo" src="images/jiahaozhang6.jpg" class="hoverZoomLink"></a>
-              </td>
-            </tr>
-          </tbody></table>
-          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-              <tr>
-              <td style="padding:16px;width:100%;vertical-align:middle">
-                <!-- Research: brief summary of research interests and keywords -->
-                <h2>Research</h2>
-                <p>
-                    3D Vision, Panoramic Generation, Generative AI ...
-                </p>
-              </td>
-            </tr>
-          </tbody></table>
+    <script>
+    (function(){
+      function loadInclude(el){
+        var src = el.getAttribute('data-include');
+        if(!src) return Promise.resolve();
+        // when opened via file://, fetch may be blocked; handle errors gracefully
+        return fetch(src).then(function(r){ if(!r.ok) throw new Error('Failed to load ' + src); return r.text(); }).then(function(html){
+          el.innerHTML = html;
+          // Execute inline scripts in the included fragment
+          var scripts = el.querySelectorAll('script');
+          scripts.forEach(function(s){
+            var ns = document.createElement('script');
+            if(s.src){ ns.src = s.src; ns.async = false; document.head.appendChild(ns); }
+            else { ns.textContent = s.textContent; document.head.appendChild(ns); }
+            // remove original to avoid double-run if re-inserted
+            s.parentNode && s.parentNode.removeChild(s);
+          });
+        }).catch(function(err){
+          console.error('Include failed for', src, err);
+          // show a minimal fallback so the page isn't blank
+          el.innerHTML = '<div class="center small">(Failed to load: ' + src + ')</div>';
+        });
+      }
 
-          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-              <tr>
-              <td style="padding:16px;width:100%;vertical-align:middle">
-                <!-- Personal Interests: non-academic activities and hobbies -->
-                <h2>Personal Interests</h2>
-                <p>
-                    Outside of academic research, I am a passionate long-distance runner. 
-                    The discipline and endurance cultivated through training for and completing a half-marathon deeply influence my approach to research, teaching me the value of consistency and perseverance in tackling long-term challenges.
-                </p>
-              </td>
-            </tr>
-          </tbody></table>
+      var includes = document.querySelectorAll('[data-include]');
+      var promises = Array.from(includes).map(loadInclude);
+      Promise.all(promises).catch(function(e){ console.error('Include load failed', e); });
+    })();
+    </script>
 
-<!-- Publications: list of published papers and project pages (each entry includes title, authors, venue, and links) -->
-<h2 style="padding: 16px; width: 100%; vertical-align: middle">Publications</h2>
-
-<table style="width:100%; border:0px; border-spacing:0px 10px; border-collapse:separate; margin-right:auto; margin-left:auto;">
-<tbody>   
-    <tr onmouseout="mksnet_stop()" onmouseover="mksnet_start()">
-      <td style="padding:16px;width:20%;vertical-align:middle">
-        <div class="one">
-          <div class="two" id="mksnet_image" style="opacity: 0;">
-            <img src="images/mksnet_after.png" width="100%" height="90%">
-          </div>
-            <img src="images/mksnet_image.png" width="100%" height="90%">
-        </div>
-        <script type="text/javascript">
-          function mksnet_start() {
-            document.getElementById('mksnet_image').style.opacity = "1";
-          }
-
-          function mksnet_stop() {
-            document.getElementById('mksnet_image').style.opacity = "0";
-          }
-          mksnet_stop()
-        </script>
-      </td>
-      <td style="padding:8px;width:80%;vertical-align:middle">
-        <a href="https://doi.org/10.1007/978-981-96-2061-6_29">
-          <span class="papertitle">MKSNet: Advanced Small Object Detection in Remote Sensing Imagery with Multi-Kernel and Dual Attention Mechanisms</span>
-        </a>
-        <br>
-        <a href="https://orcid.org/0009-0009-0847-5805">Jiahao Zhang</a>,
-        <a href="#">Xiao Zhao</a>,
-        <a href="https://orcid.org/0000-0002-0083-3016">Guangyu Gao</a>
-        <br>
-        <em>MultiMedia Modeling (MMM)</em>, 2025
-        <br>
-        <a href="https://doi.org/10.1007/978-981-96-2061-6_29">paper</a>
-        /
-        <a href="data/MMM2025.pdf" target="_blank">pdf</a>
-        <p></p>
-        <p>
-          MKSNet introduces a novel Multi-Kernel Selection mechanism and dual attention modules to address small object detection challenges in remote sensing imagery, achieving state-of-the-art performance on DOTA-v1.0 and HRSC2016 benchmarks.
-        </p>
-      </td>
-    </tr>
-</tbody>
-</table>
-
-<!--
-  Patents
--->
-<h2 style="padding: 16px; width: 100%; vertical-align: middle">Patents</h2>
-
-<section style="padding:0 16px 16px 16px;">
-  <ol class="patents-list">
-    <li>
-      <p>Gao G, Zhang J, Zhao X, Zhang S. 一种基于多尺度Census变换的图像脉冲编码方法 [P]. CN 120088344 A. 2025.  中国国家知识产权局.</p>
-    </li>
-  </ol>
-</section>
-
-
-
-          
-<table style="width:100%; margin:0 auto; border:0; border-spacing:0; padding:16px;">
-<tbody>
-  <tr>
-    <td>
-      <!-- Honors & Awards: academic prizes, scholarships, recognitions (chronological or grouped by degree) -->
-      <h2>Honors & Awards</h2>
-    </td>
-  </tr>
-</tbody></table>
-
- <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-    
-    <!-- Doctoral Period -->
-    <tr>
-        <td align="center" style="padding:16px;width:20%;vertical-align:middle">
-            <div>
-                <h4 style="margin:0;font-size:12pt;">Doctoral Period</h4>
-            </div>
-        </td>
-        <td style="padding:8px;width:80%;vertical-align:center">
-            <p>2025: Freshman Scholarship for PhD Student</p>
-        </td>
-    </tr>
-    
-    <!-- Master's Period -->
-    <tr>
-        <td align="center" style="padding:16px;width:20%;vertical-align:middle">
-            <div>
-                <h4 style="margin:0;font-size:12pt;">Master's Period</h4>
-            </div>
-        </td>
-        <td style="padding:8px;width:80%;vertical-align:center">
-            <p>2025: Beijing Institute of Technology Excellent Master's Thesis</p>
-            <p>2025: Beijing Outstanding Graduate</p>
-            <p>2025: Beijing Institute of Technology Outstanding Graduate</p>
-            <p>2025: Beijing Institute of Technology Outstanding Graduate Student</p>
-            <p>2025: Beijing Institute of Technology Research Competition Scholarship</p>
-            <p>2024: Beijing Institute of Technology Second-Class Academic Scholarship</p>
-            <p>2024: Beijing Institute of Technology Outstanding Student</p>
-            <p>2024: Beijing Fangshan Liangxiang University Town Half Marathon Finisher Award</p>
-            <p>2024: Beijing Institute of Technology Debate Competition Second Prize</p>
-            <p>2023: Beijing Institute of Technology First-Class Academic Scholarship</p>
-        </td>
-    </tr>
-    
-    <!-- Bachelor's Period -->
-    <tr>
-        <td align="center" style="padding:16px;width:20%;vertical-align:middle">
-            <div>
-                <h4 style="margin:0;font-size:12pt;">Bachelor's Period</h4>
-            </div>
-        </td>
-        <td style="padding:8px;width:80%;vertical-align:center">
-            <p>2021: National Encouragement Scholarship</p>
-            <p>2021: Blue Bridge Cup Provincial Third Prize</p>
-            <p>2021: University First-Class Scholarship</p>
-            <p>2021: "Three Good Student" Honorary Title</p>
-            <p>2020: "Internet Plus" College Student Innovation and Entrepreneurship Competition Henan Division First Prize</p>
-            <p>2020: First-Class Scholarship</p>
-            <p>2020: "Three Good Student" Honorary Title</p>
-            <p>2020: 7th National College Engineering Training Integration Ability Competition Third Prize</p>
-            <p>2020: College Student Science and Technology Activity Project Excellence Award</p>
-            <p>2019: Blue Bridge Cup Provincial Second Prize</p>
-            <p>2019: University First-Class Scholarship</p>
-            <p>2019: "Three Good Student" Honorary Title</p>
-            <p>2018-2022: Academic Excellence and Technological Innovation Scholarship</p>
-            <p>2018: University First-Class Scholarship</p>
-            <p>2018: "Three Good Student" Honorary Title</p>
-        </td>
-    </tr>
-    
-</tbody></table>
-         
-          
-          <table style="width:100%; margin:0 auto; border:0; border-spacing:0; padding:16px;"><tbody>
-            <tr>
-              <td style="padding:0px">
-                <br>
-                <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=Z2nHOhbXqcwWDWOcsFYCjU-1zcLfuJJC1pGVK-hXIY8"></script>
-              </td>
-            </tr>
-          </tbody></table>
-
-
-          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-            <tr>
-              <td style="padding:0px">
-                <br>
-                <p style="text-align:center;font-size:small;">
-                  Design and source code from <a style="font-size:small;" href="https://jonbarron.info" target="_blank">Jon Barron's website</a>
-                </p>
-              </td>
-            </tr>
-          </tbody></table>
-        </td>
-      </tr>
-    </table>
   </body>
 </html>

@@ -1,0 +1,54 @@
+<table class="full-table"><tbody>
+  <tr>
+    <td class="pad-2-5 col-63 vcenter">
+      <p class="name">Jiahao Zhang （张家豪）</p>
+      <p>
+        I am a first-year Ph.D. of Computer Science and Technology candidate in the School of Computer Science at Beihang University (BUAA), under the supervision of Professor <a href="http://miaowang.me"> Miao Wang </a>.
+        Prior to joining BUAA, I received my Master of Engineering in Software Engineering from the Beijing Institute of Technology (BIT), under the supervision of Professor <a href="http://guangyugao-master.cn/"> Guangyu Gao </a> .
+      </p>
+      <p class="center">
+        <a href="mailto:quinn_zhang@buaa.com" target="_blank">Email</a> &nbsp;/&nbsp;
+        <a href="https://www.zhihu.com/people/mei-you-dao-bu-liao-de-ming-tian-9" target="_blank">Zhihu</a> &nbsp;/&nbsp;
+        <a href="https://scholar.google.com/citations?user=-yfIyeAAAAAJ&hl=zh-CN" target="_blank">Scholar</a> &nbsp;/&nbsp;
+        <span class="wechat-container">
+          <a class="wechat-link" href="#">Wechat</a>
+          <span class="wechat-popup" aria-hidden="true">
+            <img src="images/wechat.jpg" alt="WeChat QR code">
+          </span>
+        </span>
+        &nbsp;/&nbsp;
+        <a href="https://github.com/jiahaozhang6/" target="_blank">Github</a>
+      </p>
+    </td>
+    <td class="pad-2-5 col-37">
+      <a href="images/jiahaozhang6.jpg"><img class="profile-photo hoverZoomLink" alt="profile photo" src="images/jiahaozhang6.jpg"></a>
+    </td>
+  </tr>
+</tbody></table>
+
+<script>
+// WeChat popup click toggle (works for touch devices) and outside-click close
+(function(){
+  document.addEventListener('click', function(e){
+    var link = e.target.closest && e.target.closest('.wechat-link');
+    if(link){
+      var container = link.closest('.wechat-container');
+      if(container){
+        var open = container.classList.toggle('open');
+        var popup = container.querySelector('.wechat-popup');
+        if(popup) popup.setAttribute('aria-hidden', open ? 'false' : 'true');
+        e.preventDefault();
+        return;
+      }
+    }
+    // click outside closes any open wechat popups
+    var openContainers = document.querySelectorAll('.wechat-container.open');
+    openContainers.forEach(function(c){
+      if(!c.contains(e.target)){
+        c.classList.remove('open');
+        var p = c.querySelector('.wechat-popup'); if(p) p.setAttribute('aria-hidden','true');
+      }
+    });
+  });
+})();
+</script>

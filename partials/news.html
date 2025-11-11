@@ -1,0 +1,77 @@
+<aside class="news-column" id="news-column" aria-label="News">
+  <header>
+    <span>News</span>
+    <button class="news-toggle-btn" id="news-toggle" aria-controls="news-column" aria-expanded="true" title="Hide/Show News">
+      <svg class="arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M8 5l8 7-8 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="btn-label">Hide</span>
+    </button>
+  </header>
+  <div class="news-item">
+    <div class="news-date">2025-11-11</div>
+    <a href="#">MKSNet: paper accepted at MMM 2025</a>
+    <div class="news-summary">MKSNet introduces a multi-kernel selection and dual-attention architecture for small object detection.</div>
+  </div>
+  <div class="news-item">
+    <div class="news-date">2025-09-30</div>
+    <a href="#">Released demo for MipNeRF project</a>
+  </div>
+  <div class="news-item">
+    <div class="news-date">2025-07-15</div>
+    <a href="#">Joined Beihang University (BUAA) PhD program</a>
+  </div>
+</aside>
+
+<!-- Floating show button (visible when news is collapsed) -->
+<button id="news-show" class="news-show-button" aria-controls="news-column" aria-hidden="true" title="Show News">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M16 5l-8 7 8 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <span>Show News</span>
+</button>
+
+<script>
+(function(){
+  var btn = document.getElementById('news-toggle');
+  var newsCol = document.getElementById('news-column');
+  var showBtn = document.getElementById('news-show');
+  var body = document.body;
+  if(!btn || !newsCol) return;
+
+  function setState(collapsed){
+    if(collapsed){
+      newsCol.classList.add('collapsed');
+      body.classList.add('news-collapsed');
+      btn.setAttribute('aria-expanded','false');
+      btn.querySelector('.btn-label').textContent = 'Show';
+    } else {
+      newsCol.classList.remove('collapsed');
+      body.classList.remove('news-collapsed');
+      btn.setAttribute('aria-expanded','true');
+      btn.querySelector('.btn-label').textContent = 'Hide';
+    }
+  }
+
+  // Toggle on click
+  btn.addEventListener('click', function(){
+    var collapsed = newsCol.classList.toggle('collapsed');
+    setState(collapsed);
+  });
+
+  // Floating show button restores the news panel when collapsed
+  if(showBtn){
+    showBtn.addEventListener('click', function(){ setState(false); showBtn.setAttribute('aria-hidden','true'); });
+  }
+
+  // Allow Escape to hide
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && !newsCol.classList.contains('collapsed')){
+      setState(true);
+    }
+  });
+
+  // Initialize
+  var initialCollapsed = newsCol.classList.contains('collapsed');
+  setState(initialCollapsed);
+  if(showBtn) showBtn.setAttribute('aria-hidden', String(!initialCollapsed));
+})();
+</script>
