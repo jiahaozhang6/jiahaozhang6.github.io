@@ -20,6 +20,12 @@
   /* 让 Wechat 文本颜色和普通链接的浅蓝色一致，悬停时也变为链接的 hover 色（橙色） */
   .wechat-link { text-decoration: none; color: #1772d0; cursor: pointer; }
   .wechat-link:hover { color: #f09228; }
+  /* 专利列表样式：数字置于外侧、显著、与站点链接色一致 */
+  ol.patents-list { list-style-position: outside; padding-left: 36px; margin: 0 0 16px 0; }
+  ol.patents-list li { margin: 10px 0; }
+  ol.patents-list li p { margin: 0; }
+  /* 给数字（marker）加粗并使用站点浅蓝色，以增强可见性（现代浏览器支持） */
+  ol.patents-list li::marker { font-weight: 700; color: #1772d0; }
   </style>
 
   <body>
@@ -126,19 +132,19 @@
 </tbody>
 </table>
 
-
+<!--
+  Patents
+-->
 <h2 style="padding: 16px; width: 100%; vertical-align: middle">Patents</h2>
 
-<table style="width:100%; border:0px; border-spacing:0px 10px; border-collapse:separate; margin-right:auto; margin-left:auto;"> 
-  <tbody>
-    <tr>
-      <td style="padding:8px;width:80%;vertical-align:center">
-        <p>Gao, G., Zhang, J., Zhao, X., & Zhang, S. (2025). 一种基于多尺度Census变换的图像脉冲编码方法[A Image Pulse Coding Method Based on Multi-scale Census Transform] (中国专利 No. CN120088344A). 中国国家知识产权局.</p>
-      </td>
-    </tr>
-  </tbody>
-
-</table>
+<!-- 专利部分：使用有序列表（数字编号）显示每条专利 -->
+<section style="padding:0 16px 16px 16px;">
+  <ol class="patents-list">
+    <li>
+      <p>Gao, G., Zhang, J., Zhao, X., &amp; Zhang, S. (2025). 一种基于多尺度Census变换的图像脉冲编码方法 [A Image Pulse Coding Method Based on Multi-scale Census Transform] (中国专利 No. CN120088344A). 中国国家知识产权局.</p>
+    </li>
+  </ol>
+</section>
 
 
 
