@@ -207,6 +207,21 @@ body.news-collapsed .news-toggle-btn .arrow { transform: rotate(180deg); }
   }
 }
 
+/* Reserve space for the fixed news column on wider screens using padding so the
+   main content never flows under the fixed panel. Padding works reliably with
+   the table layout used by the page and avoids horizontal overflow. */
+@media (min-width: 961px) {
+  .main-wrapper {
+    box-sizing: border-box;
+    padding-right: 360px; /* news width (320px) + 40px gutter */
+    transition: padding-right 320ms cubic-bezier(.2,.8,.2,1);
+  }
+  /* When collapsed, remove the reserved padding so content recenters */
+  body.news-collapsed .main-wrapper {
+    padding-right: 0 !important;
+  }
+}
+
 /* Floating show button */
 .news-show-button{ position: fixed; right: 12px; top: 12px; z-index: 1002; background: linear-gradient(180deg,#2a7bd4,#1764c8); color: #fff; border: 0; padding: 8px 12px; border-radius: 999px; box-shadow: 0 6px 18px rgba(23,100,200,0.14); cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight:700; opacity: 0; transform: translateY(-6px) scale(0.98); pointer-events: none; transition: opacity 260ms ease, transform 320ms cubic-bezier(.2,.8,.2,1); }
 @keyframes popIn { 0% { opacity: 0; transform: translateY(-8px) scale(0.94); } 60% { opacity: 1; transform: translateY(2px) scale(1.06); } 100% { opacity: 1; transform: translateY(0) scale(1); } }

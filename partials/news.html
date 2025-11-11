@@ -1,11 +1,11 @@
-<aside class="news-column" id="news-column" aria-label="News">
+<aside class="news-column collapsed" id="news-column" aria-label="News">
   <header>
     <span>📣 News</span>
-    <button class="news-toggle-btn" id="news-toggle" aria-controls="news-column" aria-expanded="true" title="Hide/Show News">
+    <button class="news-toggle-btn" id="news-toggle" aria-controls="news-column" aria-expanded="false" title="Hide/Show News">
       <svg class="arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M8 5l8 7-8 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <span class="btn-label">Hide</span>
+      <span class="btn-label">Show</span>
     </button>
   </header>
   <div class="news-item">
@@ -71,9 +71,9 @@
     }
   });
 
-  // Initialize
-  var initialCollapsed = newsCol.classList.contains('collapsed');
+  // Initialize: default to collapsed on first load for a cleaner entry point
+  var defaultCollapsed = true;
+  var initialCollapsed = newsCol.classList.contains('collapsed') || defaultCollapsed;
   setState(initialCollapsed);
-  if(showBtn) showBtn.setAttribute('aria-hidden', String(!initialCollapsed));
 })();
 </script>
