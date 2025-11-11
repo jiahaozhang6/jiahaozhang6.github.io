@@ -186,10 +186,42 @@ span.highlight {
 .news-column.collapsed { transform: translateX(104%); opacity: 0; pointer-events: none; }
 body.news-collapsed .main-wrapper { margin-right: auto !important; margin-left: auto !important; }
 body.news-collapsed .news-toggle-btn .arrow { transform: rotate(180deg); }
-@media (max-width:960px){ .main-wrapper { margin-right: 0; } .news-column{ position:relative; width:100%; height:auto; box-shadow:none; border-left: none; margin-top:12px; transform:none; opacity:1; pointer-events:auto; } }
+@media (max-width:960px){
+  .main-wrapper { margin-right: 0; }
+  /* On small screens the news column becomes a stacked block below the main content.
+     When collapsed we should fully hide it (display:none) so it doesn't take space.
+     Also ensure pointer events and transforms don't interfere with touch scrolling. */
+  .news-column{
+    position: relative;
+    width: 100%;
+    height: auto;
+    box-shadow: none;
+    border-left: none;
+    margin-top: 12px;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .news-column.collapsed {
+    display: none !important;
+  }
+}
 
 /* Floating show button */
 .news-show-button{ position: fixed; right: 12px; top: 12px; z-index: 1002; background: linear-gradient(180deg,#2a7bd4,#1764c8); color: #fff; border: 0; padding: 8px 12px; border-radius: 999px; box-shadow: 0 6px 18px rgba(23,100,200,0.14); cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight:700; opacity: 0; transform: translateY(-6px) scale(0.98); pointer-events: none; transition: opacity 260ms ease, transform 320ms cubic-bezier(.2,.8,.2,1); }
 @keyframes popIn { 0% { opacity: 0; transform: translateY(-8px) scale(0.94); } 60% { opacity: 1; transform: translateY(2px) scale(1.06); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
 body.news-collapsed .news-show-button { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; animation: popIn 360ms cubic-bezier(.2,.8,.2,1); }
-@media (max-width:960px){ .news-show-button{ display:none !important; } }
+@media (max-width:960px){
+  /* Make the floating show button visible on phones and place it within easy reach.
+     Hide the top-right floating button (desktop placement) and move it to bottom-right. */
+  .news-show-button{
+    display: flex !important;
+    right: 12px;
+    bottom: 12px;
+    top: auto;
+    z-index: 1002;
+    /* slightly larger hit area on touch devices */
+    padding: 12px 16px;
+    font-size: 15px;
+  }
+}
