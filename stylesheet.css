@@ -1,3 +1,126 @@
+.affiliations {
+  text-align: left;
+  margin: 24px 0 8px;
+}
+
+.affiliations h2 {
+  font-size: 20px;
+  margin: 0 0 10px;
+}
+
+.affiliations p {
+  margin: 4px 0;
+  color: #4a4a4a;
+  line-height: 1.5;
+}
+
+.institution-logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin: 16px 0 24px;
+}
+
+.institution-logos img {
+  max-height: 140px;
+  height: auto;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.institution-logos.single {
+  margin-bottom: 12px;
+}
+
+.institution-logos.single img {
+  max-height: 95px;
+}
+
+.institution-logos.pair {
+  gap: 56px;
+}
+
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.nav-inner {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.nav-brand {
+  font-weight: 700;
+  font-size: 18px;
+  color: #0f172a;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.nav-links a {
+  color: #1f2a37;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  transition: background-color 160ms ease, color 160ms ease, box-shadow 200ms ease;
+}
+
+.nav-links a:focus,
+.nav-links a:hover {
+  color: #ffffff;
+  background-color: #1772d0;
+  box-shadow: 0 6px 14px rgba(23, 114, 208, 0.24);
+}
+
+@media (max-width: 640px) {
+  .nav-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .nav-links a {
+    padding: 6px 12px;
+  }
+}
+
+#profile,
+#research,
+#publications,
+#patents,
+#honors,
+#news,
+#affiliations {
+  scroll-margin-top: 96px;
+}
 /* latin-ext */
 @font-face {
   font-family: 'Lato';

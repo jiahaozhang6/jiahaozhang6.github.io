@@ -26,20 +26,35 @@
   </head>
 
   <body class="news-collapsed">
+    <header class="site-nav" id="top" role="navigation">
+      <div class="nav-inner">
+        <a class="nav-brand" href="#top">Jiahao Zhang</a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="#profile">Profile</a>
+          <a href="#research">Research</a>
+          <a href="#publications">Publications</a>
+          <a href="#patents">Patents</a>
+          <a href="#honors">Honors</a>
+          <a href="#affiliations">Affiliations</a>
+        </nav>
+      </div>
+    </header>
     <!-- Main container: centers page content and sets a max width for readable line lengths -->
     <table class="main-wrapper"><tbody>
       <!-- profile -->
-      <tr><td colspan="2"><div data-include="partials/profile.html"></div></td></tr>
+      <tr><td colspan="2"><div id="profile" data-include="partials/profile.html"></div></td></tr>
       <!-- research & interests -->
-      <tr><td colspan="2"><div data-include="partials/research.html"></div></td></tr>
+      <tr><td colspan="2"><div id="research" data-include="partials/research.html"></div></td></tr>
       <!-- publications -->
-      <tr><td colspan="2"><div data-include="partials/publications.html"></div></td></tr>
+      <tr><td colspan="2"><div id="publications" data-include="partials/publications.html"></div></td></tr>
       <!-- patents -->
-      <tr><td colspan="2"><div data-include="partials/patents.html"></div></td></tr>
+      <tr><td colspan="2"><div id="patents" data-include="partials/patents.html"></div></td></tr>
       <!-- honors & visitors -->
-      <tr><td colspan="2"><div data-include="partials/honors.html"></div></td></tr>
+      <tr><td colspan="2"><div id="honors" data-include="partials/honors.html"></div></td></tr>
       <!-- news (aside) -->
-      <tr><td colspan="2"><div data-include="partials/news.html"></div></td></tr>
+      <tr><td colspan="2"><div id="news" data-include="partials/news.html"></div></td></tr>
+      <!-- university logos -->
+      <tr><td colspan="2"><div id="affiliations" data-include="partials/logos.html"></div></td></tr>
       <!-- visitor map -->
       <tr><td colspan="2"><div class="center small">
         <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=Z2nHOhbXqcwWDWOcsFYCjU-1zcLfuJJC1pGVK-hXIY8"></script>
@@ -51,6 +66,7 @@
           <div style="font-size: 12px;">Design and source code from <a style="font-size: 12px;" href="https://jonbarron.info" target="_blank">Jon Barron's website</a></div>
         </div>
       </td></tr>
+
     </tbody></table>
 
     <script>
