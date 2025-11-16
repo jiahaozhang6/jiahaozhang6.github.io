@@ -3,6 +3,10 @@
   margin: 24px 0 8px;
 }
 
+:root {
+  --site-nav-height: 64px;
+}
+
 .affiliations h2 {
   font-size: 20px;
   margin: 0 0 10px;
@@ -18,13 +22,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 40px;
+  gap: 28px;
   flex-wrap: wrap;
-  margin: 16px 0 24px;
+  margin: 16px auto 24px;
+  max-width: 540px;
+  padding: 0 12px;
 }
 
 .institution-logos img {
-  max-height: 140px;
+  max-width: 180px;
+  max-height: 100px;
   height: auto;
   width: auto;
   display: block;
@@ -33,14 +40,21 @@
 
 .institution-logos.single {
   margin-bottom: 12px;
+  justify-content: center;
 }
 
 .institution-logos.single img {
-  max-height: 95px;
+  max-width: 320px;
+  max-height: 160px;
+}
+
+.institution-logos.pair img {
+  max-width: 90px;
+  max-height: 70px;
 }
 
 .institution-logos.pair {
-  gap: 56px;
+  gap: 24px;
 }
 
 .site-nav {
@@ -232,39 +246,36 @@ h2 {
   font-size: 32px;
 }
 
-.one {
+/* Page-specific and component styles (WeChat popup, News, layout helpers) */
+.publication-thumbnail {
   width: 160px;
   height: 160px;
   position: relative;
 }
 
-.two {
-  width: 160px;
-  height: 160px;
+.publication-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+}
+
+.publication-thumbnail__overlay {
   position: absolute;
-  transition: opacity .2s ease-in-out;
-  -moz-transition: opacity .2s ease-in-out;
-  -webkit-transition: opacity .2s ease-in-out;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 280ms ease;
+  pointer-events: none;
+  border-radius: 8px;
 }
 
-.fade {
-  transition: opacity .2s ease-in-out;
-  -moz-transition: opacity .2s ease-in-out;
-  -webkit-transition: opacity .2s ease-in-out;
+.publication-thumbnail__overlay img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
-
-span.highlight {
-  background-color: #ffffd0;
-}
-
-.colored-box {
-    color: black;
-    padding: 20px;
-    display: inline-block;
-    border-radius: 10px;
-}
-
-/* Page-specific and component styles (WeChat popup, News, layout helpers) */
 .main-wrapper {
   width: 100%;
   max-width: 800px;
@@ -299,7 +310,7 @@ span.highlight {
 .wechat-link:hover { color: #f09228; }
 
 /* News column and controls */
-.news-column { position: fixed; right: 0; top: 0; width: 320px; height: 100vh; overflow: auto; background: #fff; border-left: 1px solid #eee; padding: 12px; box-shadow: -6px 0 18px rgba(15,23,35,0.04); -webkit-overflow-scrolling: touch; z-index: 999; transition: transform 320ms cubic-bezier(.2,.8,.2,1), opacity 220ms ease; }
+.news-column { position: fixed; right: 0; top: var(--site-nav-height, 64px); width: 320px; height: calc(100vh - var(--site-nav-height, 64px)); overflow: auto; background: #fff; border-left: 1px solid #eee; padding: 12px; box-shadow: -6px 0 18px rgba(15,23,35,0.04); -webkit-overflow-scrolling: touch; z-index: 999; transition: transform 320ms cubic-bezier(.2,.8,.2,1), opacity 220ms ease; }
 .news-column header{ display:flex; justify-content:space-between; align-items:center; gap:8px; font-weight:700; color:#1772d0; }
 .news-item{ margin-bottom:12px; }
 .news-date{ font-size:0.85em; color:#666; }
@@ -316,6 +327,7 @@ body.news-collapsed .news-toggle-btn .arrow { transform: rotate(180deg); }
      Also ensure pointer events and transforms don't interfere with touch scrolling. */
   .news-column{
     position: relative;
+    top: 0;
     width: 100%;
     height: auto;
     box-shadow: none;

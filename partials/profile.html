@@ -29,26 +29,42 @@
 <script>
 // WeChat popup click toggle (works for touch devices) and outside-click close
 (function(){
+  var container = document.querySelector('.wechat-container');
+  if(!container) return;
+  var link = container.querySelector('.wechat-link');
+  var popup = container.querySelector('.wechat-popup');
+  if(!link || !popup) return;
+
+  function closePopup(){
+    container.classList.remove('open');
+    popup.setAttribute('aria-hidden','true');
+    link.setAttribute('aria-expanded','false');
+  }
+
+  function openPopup(){
+    container.classList.add('open');
+    popup.setAttribute('aria-hidden','false');
+    link.setAttribute('aria-expanded','true');
+  }
+
+  link.addEventListener('click', function(e){
+    e.preventDefault();
+    openPopup();
+  });
+
+  container.addEventListener('mouseenter', openPopup);
+  container.addEventListener('mouseleave', closePopup);
+
   document.addEventListener('click', function(e){
-    var link = e.target.closest && e.target.closest('.wechat-link');
-    if(link){
-      var container = link.closest('.wechat-container');
-      if(container){
-        var open = container.classList.toggle('open');
-        var popup = container.querySelector('.wechat-popup');
-        if(popup) popup.setAttribute('aria-hidden', open ? 'false' : 'true');
-        e.preventDefault();
-        return;
-      }
+    if(!container.contains(e.target)){
+      closePopup();
     }
-    // click outside closes any open wechat popups
-    var openContainers = document.querySelectorAll('.wechat-container.open');
-    openContainers.forEach(function(c){
-      if(!c.contains(e.target)){
-        c.classList.remove('open');
-        var p = c.querySelector('.wechat-popup'); if(p) p.setAttribute('aria-hidden','true');
-      }
-    });
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+      closePopup();
+    }
   });
 })();
 </script>
