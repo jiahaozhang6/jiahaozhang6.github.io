@@ -1,9 +1,53 @@
-<h2 class="section-title">Patents</h2>
+<table class="full-table"><tbody>
+  <tr>
+    <td class="pad-16 vcenter">
+      <h2>Patents</h2>
+    </td>
+  </tr>
+</tbody></table>
 
-<section class="pad-16">
-  <ol class="patents-list">
-    <li>
-      <p>Gao G, Zhang J, Zhao X, Zhang S. 一种基于多尺度Census变换的图像脉冲编码方法 [P]. CN 120088344 A. 2025.  中国国家知识产权局.</p>
-    </li>
-  </ol>
-</section>
+<table class="full-table spaced-rows">
+<tbody>
+  <tr onmouseout="patent_census_stop()" onmouseover="patent_census_start()">
+    <td class="pad-16 vcenter" style="width: 30%;">
+      <div class="publication-thumbnail" style="height: auto; width: 100%; max-width: 100%;">
+        <img id="patent_census_base" src="images/patent_census1.png" alt="Patent Census Diagram" style="object-fit: contain; height: auto; width: 100%; transition: opacity 0.2s ease;">
+        <div class="publication-thumbnail__overlay" id="patent_census_image">
+          <img src="images/patent_census2.png" alt="Patent Census Detail" style="object-fit: contain; height: 100%; width: 100%;">
+        </div>
+      </div>
+      <script type="text/javascript">
+        function patent_census_start() {
+          document.getElementById('patent_census_image').style.opacity = "1";
+          document.getElementById('patent_census_base').style.opacity = "0";
+        }
+
+        function patent_census_stop() {
+          document.getElementById('patent_census_image').style.opacity = "0";
+          document.getElementById('patent_census_base').style.opacity = "1";
+        }
+        patent_census_stop();
+      </script>
+    </td>
+    <td class="pad-8 vcenter" style="width: 70%;">
+      <a href="https://pss-system.cponline.cnipa.gov.cn/">
+        <span class="papertitle">一种基于多尺度Census变换的图像脉冲编码方法</span>
+      </a>
+      <br>
+      <a href="#">高广宇</a>,
+      <a href="#"><strong>张家豪</strong></a>,
+      <a href="#">赵晓</a>,
+      <a href="#">张帅</a>
+      <br>
+      北京理工大学; 上海卫星工程研究所
+      <br>
+      <em>CN 120088344 A ,&nbsp;中国国家知识产权局 (CNIPA)</em>
+      <p></p>
+      <p>
+        本发明提出了一种结合多尺度特征提取与Census变换的图像脉冲编码方法。通过多尺度Census编码与加权融合机制，将图像转换为高鲁棒性的脉冲序列，有效提升了脉冲神经网络在图像处理任务中的精度与效率。
+      </p>
+    </td>
+
+  </tr>
+</tbody>
+</table>
