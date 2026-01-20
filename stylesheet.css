@@ -323,10 +323,7 @@ h2 {
 .news-tags { margin-top: 8px; }
 .tag { display: inline-block; background: #eef2ff; color: #1e3a8a; font-size: 12px; padding: 4px 8px; border-radius: 999px; margin-right: 6px; }
 
-/* Guestbook removed */
-
-
-/* Giscus removed */
+/* guestbook/giscus styles removed */
 
 /* News column and controls */
 .news-column { position: fixed; right: 0; top: var(--site-nav-height, 64px); width: 320px; height: calc(100vh - var(--site-nav-height, 64px)); overflow: auto; background: #fff; border-left: 1px solid #eee; padding: 12px; box-shadow: -6px 0 18px rgba(15,23,35,0.04); -webkit-overflow-scrolling: touch; z-index: 999; transition: transform 320ms cubic-bezier(.2,.8,.2,1), opacity 220ms ease; }
