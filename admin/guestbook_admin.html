@@ -18,8 +18,22 @@
 <body>
   <div class="admin">
     <h1>留言板管理</h1>
-    <p>本页面帮助你在本地编辑和导出 `data/guestbook.json`。提交后可下载更新后的 JSON，或复制粘贴到仓库文件中。</p>
-    <p>提示：若你想使用在线留言并在 GitHub 中管理，推荐使用 <a href="https://giscus.app" target="_blank">Giscus</a>（将留言保存在 GitHub Discussions）。在启用 Giscus 后，无需手动维护 `data/guestbook.json`。</p>
+    <p>本页面帮助你在本地编辑和导出 <code>data/guestbook.json</code>。提交后可下载更新后的 JSON，或复制粘贴到仓库文件中。</p>
+    <p>提示：若你想使用在线留言并在 GitHub 中管理，推荐使用 <a href="https://giscus.app" target="_blank">Giscus</a>（将留言保存在 GitHub Discussions）。在启用 Giscus 后，无需手动维护 <code>data/guestbook.json</code>。</p>
+
+    <h2>检查并获取 Discussions 分类 ID（用于 Giscus 配置）</h2>
+    <p>若要把评论保存到某个 Discussion category，你需要该 category 的 <strong>name</strong> 与 <strong>id</strong>。可选方式：</p>
+    <ol>
+      <li>在 <a href="https://giscus.app" target="_blank">giscus.app</a> 使用向导并复制页面生成的 <code>data-*</code> 值（最简单）；</li>
+      <li>或在本地运行仓库内的脚本查询（需 GitHub Personal Access Token）：</li>
+    </ol>
+    <pre style="background:#f8f9fb;padding:8px;border-radius:6px"># 在终端运行（需设置 GITHUB_TOKEN）
+python tools/check_github_discussions.py --repo jiahaozhang6/jiahaozhang6.github.io
+
+# 或直接传入 token（不推荐在共享环境使用）：
+python tools/check_github_discussions.py --repo jiahaozhang6/jiahaozhang6.github.io --token YOUR_TOKEN
+</pre>
+    <p>脚本会列出 repository 下的 discussion categories 及对应 ID；如果返回为空，请到仓库设置启用 Discussions（Settings → Features → Discussions）。</p>
 
     <form id="gb-form">
       <label>名字<input id="gb-name" type="text" placeholder="你的名字"></label>
@@ -32,7 +46,7 @@
     </form>
 
     <div class="output" id="output">
-      <div>当前 `data/guestbook.json` 内容：</div>
+      <div>当前 <code>data/guestbook.json</code> 内容：</div>
       <pre id="current-json">加载中…</pre>
     </div>
   </div>

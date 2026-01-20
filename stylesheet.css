@@ -337,6 +337,21 @@ h2 {
 .button-ghost { background: transparent; color: #1772d0; border:1px solid rgba(23,114,208,0.12); }
 .guestbook-loading, .guestbook-empty { color:#666 }
 
+/* Guestbook: avatar and layout for items */
+.gb-item { display:flex; gap:12px; align-items:flex-start; padding:12px; border-radius:10px; background: #fff; border:1px solid rgba(15,23,35,0.03); }
+.gb-avatar { width:44px; height:44px; border-radius:50%; background:#e6eef8; display:flex; align-items:center; justify-content:center; font-weight:700; color:#0f172a; font-size:18px; flex:0 0 44px; }
+.gb-body { flex:1 }
+.gb-name { font-weight:700 }
+.gb-date { font-size:12px; color:#6b7280; margin-top:4px }
+.gb-message { margin-top:8px; color:#374151; white-space:pre-wrap }
+.guestbook-controls { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:12px }
+.guestbook-toggle label { color:#475569 }
+.gb-empty { color:#666 }
+
+/* Pagination buttons small style */
+#gb-pagination button { background:transparent; border:1px solid #e5e7eb; padding:6px 8px; border-radius:6px; cursor:pointer }
+
+
 /* Giscus container helpers (customize if you want different layout) */
 .giscus { margin-top: 12px; }
 .giscus-frame { width: 100%; border-radius: 8px; overflow: hidden; }

@@ -17,6 +17,7 @@ parser = argparse.ArgumentParser(description='Append a guestbook entry to data/g
 parser.add_argument('--name', required=True)
 parser.add_argument('--message', required=True)
 parser.add_argument('--tags', default='')
+parser.add_argument('--list', action='store_true', help='List current entries')
 args = parser.parse_args()
 
 def load():
@@ -27,6 +28,11 @@ def load():
     except Exception as e:
         print('Failed to read JSON:', e)
         return []
+
+if args.list:
+    for e in load():
+        print(e.get('date'), e.get('name'), '-', (e.get('message') or '').replace('\n',' '))
+    sys.exit(0)
 
 entries = load()
 entry = {

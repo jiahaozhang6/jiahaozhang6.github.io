@@ -5,10 +5,23 @@
   <div id="guestbook-list" class="guestbook-list">
     <div class="guestbook-loading">加载留言…</div>
   </div>
+  
+  <div class="guestbook-controls">
+    <div class="guestbook-actions">
+      <a href="admin/guestbook_admin.html" class="button">管理留言（Admin）</a>
+      <button id="guestbook-local-add" class="button button-ghost">临时本地留言</button>
+    </div>
+    <div class="guestbook-toggle">
+      <label><input type="checkbox" id="toggle-history"> 显示历史静态留言</label>
+    </div>
+  </div>
 
-  <div class="guestbook-actions">
-    <a href="admin/guestbook_admin.html" class="button">管理留言（Admin）</a>
-    <button id="guestbook-local-add" class="button button-ghost">临时本地留言</button>
+  <div id="guestbook-history" style="display:none; margin-top:12px">
+    <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+      <input id="gb-search" placeholder="搜索留言或名字" style="flex:1;padding:8px;border-radius:6px;border:1px solid #ddd">
+      <div id="gb-pagination" style="display:flex;gap:6px;align-items:center"></div>
+    </div>
+    <div id="guestbook-history-list" class="guestbook-list"></div>
   </div>
 
   <!-- Giscus (GitHub Discussions) comment widget: recommended for GitHub Pages -->
@@ -71,21 +84,30 @@
   <script>
   (function(){
     var listEl = document.getElementById('guestbook-list');
-    function render(items){
-      if(!items || !items.length){ listEl.innerHTML = '<div class="guestbook-empty">还没有留言。</div>'; return; }
+    function formatDate(d){
+      try{ return new Date(d).toLocaleDateString(); }catch(e){ return d; }
+    }
+
+    function avatarInitial(name){ return (name && name[0]) ? name[0].toUpperCase() : '?'; }
+
+    function render(items, target){
+      target = target || listEl;
+      if(!items || !items.length){ target.innerHTML = '<div class="guestbook-empty">还没有留言。</div>'; return; }
       items.sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
       var html = items.map(function(it){
         var name = it.name ? ('<div class="gb-name">' + it.name + '</div>') : '';
-        var date = it.date ? ('<div class="gb-date">' + it.date + '</div>') : '';
+        var date = it.date ? ('<div class="gb-date">' + formatDate(it.date) + '</div>') : '';
         var msg = it.message ? ('<div class="gb-message">' + it.message + '</div>') : '';
         var tags = it.tags && it.tags.length ? ('<div class="gb-tags">' + it.tags.map(function(t){ return '<span class="tag">' + t + '</span>'; }).join(' ') + '</div>') : '';
-        return '<article class="gb-item">' + name + date + msg + tags + '</article>';
+        var avatar = '<div class="gb-avatar">' + avatarInitial(it.name) + '</div>';
+        return '<article class="gb-item">' + avatar + '<div class="gb-body">' + name + date + msg + tags + '</div></article>';
       }).join('\n');
-      listEl.innerHTML = html;
+      target.innerHTML = html;
     }
 
+    var staticEntries = [];
     function load(){
-      fetch('data/guestbook.json').then(function(r){ if(!r.ok) throw new Error('no file'); return r.json(); }).then(function(json){ render(json); }).catch(function(){ listEl.innerHTML = '<div class="guestbook-empty">留言数据不可用。若在本地预览，请使用提供的管理脚本或 HTTP 服务器。</div>'; });
+      fetch('data/guestbook.json').then(function(r){ if(!r.ok) throw new Error('no file'); return r.json(); }).then(function(json){ staticEntries = json || []; render(staticEntries); }).catch(function(){ listEl.innerHTML = '<div class="guestbook-empty">留言数据不可用。若在本地预览，请使用提供的管理脚本或 HTTP 服务器。</div>'; });
     }
 
     document.getElementById('guestbook-local-add').addEventListener('click', function(){
@@ -98,13 +120,51 @@
       saved.push({ name: name, date: now, message: message });
       localStorage.setItem('guestbook-local', JSON.stringify(saved));
       // render combined view
-      fetch('data/guestbook.json').then(function(r){ if(!r.ok) throw new Error('no'); return r.json(); }).then(function(json){ render(json.concat(saved)); }).catch(function(){ render(saved); });
+      render(saved.concat(staticEntries));
     });
 
     // show stored local entries alongside remote ones
     load();
     var local = JSON.parse(localStorage.getItem('guestbook-local')||'[]');
-    if(local && local.length){ fetch('data/guestbook.json').then(function(r){ if(!r.ok) throw new Error('no'); return r.json(); }).then(function(json){ render(json.concat(local)); }).catch(function(){ render(local); }); }
+    if(local && local.length){ render(local.concat(staticEntries)); }
+
+    // History toggle
+    var toggle = document.getElementById('toggle-history');
+    var historyWrap = document.getElementById('guestbook-history');
+    var historyList = document.getElementById('guestbook-history-list');
+    var searchInput = document.getElementById('gb-search');
+    var pagination = document.getElementById('gb-pagination');
+    var pageSize = 5, currentPage = 1;
+
+    function paginate(items, page){
+      var start = (page-1)*pageSize; return items.slice(start, start+pageSize);
+    }
+
+    function renderHistory(filtered){
+      render(filtered, historyList);
+      // pagination
+      var total = Math.max(0, filtered.length);
+      var pages = Math.max(1, Math.ceil(total/pageSize));
+      pagination.innerHTML = '';
+      var prev = document.createElement('button'); prev.textContent = '‹'; prev.disabled = currentPage===1; prev.addEventListener('click', function(){ if(currentPage>1){ currentPage--; updateHistory(); }});
+      var next = document.createElement('button'); next.textContent = '›'; next.disabled = currentPage===pages; next.addEventListener('click', function(){ if(currentPage<pages){ currentPage++; updateHistory(); }});
+      var label = document.createElement('span'); label.textContent = currentPage + ' / ' + pages;
+      pagination.appendChild(prev); pagination.appendChild(label); pagination.appendChild(next);
+    }
+
+    function updateHistory(){
+      var q = (searchInput && searchInput.value || '').toLowerCase();
+      var filtered = staticEntries.filter(function(it){ return !q || (it.message && it.message.toLowerCase().indexOf(q)!==-1) || (it.name && it.name.toLowerCase().indexOf(q)!==-1); });
+      var pages = Math.max(1, Math.ceil(filtered.length/pageSize));
+      if(currentPage>pages) currentPage = pages;
+      var pageItems = paginate(filtered, currentPage);
+      renderHistory(filtered);
+      // render actual page items in history list
+      render(pageItems, historyList);
+    }
+
+    if(toggle){ toggle.addEventListener('change', function(){ historyWrap.style.display = toggle.checked ? 'block' : 'none'; if(toggle.checked) { currentPage = 1; updateHistory(); } }); }
+    if(searchInput){ searchInput.addEventListener('input', function(){ currentPage = 1; updateHistory(); }); }
   })();
   </script>
 </section>
