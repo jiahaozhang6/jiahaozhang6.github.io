@@ -323,57 +323,10 @@ h2 {
 .news-tags { margin-top: 8px; }
 .tag { display: inline-block; background: #eef2ff; color: #1e3a8a; font-size: 12px; padding: 4px 8px; border-radius: 999px; margin-right: 6px; }
 
-/* Guestbook styles */
-.guestbook { padding: 14px; margin: 18px 0; border-radius: 12px; background: linear-gradient(180deg,#ffffff,#fbfdff); box-shadow: 0 8px 20px rgba(15,23,35,0.04); border: 1px solid rgba(15,23,35,0.04); }
-.guestbook h2 { margin: 0 0 8px 0; font-size: 20px; }
-.guestbook-note { color: #6b7280; margin-bottom: 12px; }
-.guestbook-list { display: grid; grid-template-columns: 1fr; gap: 10px; }
-.gb-item { padding: 12px; border-radius: 10px; background: #fff; border: 1px solid rgba(15,23,35,0.03); }
-.gb-name { font-weight: 700; color: #0f172a; }
-.gb-date { font-size: 12px; color: #6b7280; margin-top: 6px; }
-.gb-message { margin-top: 8px; color: #374151; white-space: pre-wrap; }
-.guestbook-actions { margin-top: 12px; display:flex; gap:8px; }
-.button { background: linear-gradient(180deg,#2a7bd4,#1764c8); color:#fff; border:0; padding:8px 12px; border-radius:8px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:8px; }
-.button-ghost { background: transparent; color: #1772d0; border:1px solid rgba(23,114,208,0.12); }
-.guestbook-loading, .guestbook-empty { color:#666 }
-
-/* Guestbook: avatar and layout for items */
-.gb-item { display:flex; gap:12px; align-items:flex-start; padding:12px; border-radius:10px; background: #fff; border:1px solid rgba(15,23,35,0.03); }
-.gb-avatar { width:44px; height:44px; border-radius:50%; background:#e6eef8; display:flex; align-items:center; justify-content:center; font-weight:700; color:#0f172a; font-size:18px; flex:0 0 44px; }
-.gb-body { flex:1 }
-.gb-name { font-weight:700 }
-.gb-date { font-size:12px; color:#6b7280; margin-top:4px }
-.gb-message { margin-top:8px; color:#374151; white-space:pre-wrap }
-.guestbook-controls { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:12px }
-.guestbook-toggle label { color:#475569 }
-.gb-empty { color:#666 }
-
-/* Pagination buttons small style */
-#gb-pagination button { background:transparent; border:1px solid #e5e7eb; padding:6px 8px; border-radius:6px; cursor:pointer }
+/* Guestbook removed */
 
 
-/* Giscus container helpers (customize if you want different layout) */
-.giscus { margin-top: 12px; }
-.giscus-frame { width: 100%; border-radius: 8px; overflow: hidden; }
-
-/* Giscus theme examples
-   Copy one of these and set `data-theme` to the matching value on the giscus <script>.
-   You can also provide a custom CSS by hosting a file and setting data-theme to the CSS URL. */
-
-/* Light (default) */
-:root .giscus { --giscus-background: #ffffff; --giscus-text: #0f172a; }
-
-/* Dark theme */
-@media (prefers-color-scheme: dark) {
-  :root .giscus { --giscus-background: #0b1220; --giscus-text: #e6eef8; }
-}
-
-/* Compact appearance: reduce paddings inside the iframe container */
-.giscus.giscus-compact .giscus-frame { padding: 8px; }
-
-/* Example: center the widget and limit width */
-.giscus.centered { display: flex; justify-content: center; }
-.giscus.centered .giscus-frame { max-width: 760px; }
+/* Giscus removed */
 
 /* News column and controls */
 .news-column { position: fixed; right: 0; top: var(--site-nav-height, 64px); width: 320px; height: calc(100vh - var(--site-nav-height, 64px)); overflow: auto; background: #fff; border-left: 1px solid #eee; padding: 12px; box-shadow: -6px 0 18px rgba(15,23,35,0.04); -webkit-overflow-scrolling: touch; z-index: 999; transition: transform 320ms cubic-bezier(.2,.8,.2,1), opacity 220ms ease; }
