@@ -22,12 +22,26 @@
       data-repo="OWNER/REPO" data-repo-id="REPO_ID" data-category="Discussions" data-category-id="CATEGORY_ID"
     -->
     <div id="giscus-container">
-      <div class="guestbook-note">Giscus 未配置 — 请在 <code>partials/guestbook.html</code> 中填入你的仓库信息以启用。</div>
+      <script src="https://giscus.app/client.js"
+              data-repo="jiahaozhang6/jiahaozhang6.github.io"
+              data-repo-id="R_kgDOQSlo9w"
+              data-category="Announcements"
+              data-category-id="DIC_kwDOQSlo984C1Lbj"
+              data-mapping="pathname"
+              data-strict="0"
+              data-reactions-enabled="1"
+              data-emit-metadata="0"
+              data-input-position="bottom"
+              data-theme="preferred_color_scheme"
+              data-lang="zh-CN"
+              crossorigin="anonymous"
+              async>
+      </script>
     </div>
 
     <!-- Example embed (commented out). Uncomment & fill values to enable. -->
     <!--
-    <div id="giscus-container">
+    <div id="giscus-container" class="giscus centered giscus-compact">
       <script src="https://giscus.app/client.js"
         data-repo="OWNER/REPO"
         data-repo-id="REPO_ID"
@@ -43,6 +57,15 @@
       </script>
     </div>
     -->
+
+    <details>
+      <summary>如何自定义外观（示例）</summary>
+      <div style="margin-top:8px">
+        - 更改主题：修改 `data-theme`（例如 `light` / `dark` / `preferred_color_scheme` 或自定义 CSS URL）。<br>
+        - 使用内置样式钩子：在 CSS 中使用 `.giscus`, `.giscus-frame`，或添加类如 `giscus-compact` / `centered` 来控制布局。<br>
+        - 示例：将容器设置为紧凑居中（取消注释上面的 `div#giscus-container` 并保留 `class="giscus centered giscus-compact"`）。
+      </div>
+    </details>
   </div>
 
   <script>

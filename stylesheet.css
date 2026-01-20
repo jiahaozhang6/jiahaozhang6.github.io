@@ -337,6 +337,29 @@ h2 {
 .button-ghost { background: transparent; color: #1772d0; border:1px solid rgba(23,114,208,0.12); }
 .guestbook-loading, .guestbook-empty { color:#666 }
 
+/* Giscus container helpers (customize if you want different layout) */
+.giscus { margin-top: 12px; }
+.giscus-frame { width: 100%; border-radius: 8px; overflow: hidden; }
+
+/* Giscus theme examples
+   Copy one of these and set `data-theme` to the matching value on the giscus <script>.
+   You can also provide a custom CSS by hosting a file and setting data-theme to the CSS URL. */
+
+/* Light (default) */
+:root .giscus { --giscus-background: #ffffff; --giscus-text: #0f172a; }
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  :root .giscus { --giscus-background: #0b1220; --giscus-text: #e6eef8; }
+}
+
+/* Compact appearance: reduce paddings inside the iframe container */
+.giscus.giscus-compact .giscus-frame { padding: 8px; }
+
+/* Example: center the widget and limit width */
+.giscus.centered { display: flex; justify-content: center; }
+.giscus.centered .giscus-frame { max-width: 760px; }
+
 /* News column and controls */
 .news-column { position: fixed; right: 0; top: var(--site-nav-height, 64px); width: 320px; height: calc(100vh - var(--site-nav-height, 64px)); overflow: auto; background: #fff; border-left: 1px solid #eee; padding: 12px; box-shadow: -6px 0 18px rgba(15,23,35,0.04); -webkit-overflow-scrolling: touch; z-index: 999; transition: transform 320ms cubic-bezier(.2,.8,.2,1), opacity 220ms ease; }
 .news-column header{ display:flex; justify-content:space-between; align-items:center; gap:8px; font-weight:700; color:#1772d0; }
