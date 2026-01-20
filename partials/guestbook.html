@@ -1,6 +1,6 @@
 <section class="guestbook" aria-label="Guestbook">
   <h2>留言板</h2>
-  <p class="guestbook-note">欢迎留言。</p>
+  <p class="guestbook-note">欢迎留下想说的话 — 谢谢你的到访。</p>
 
   <div id="guestbook-list" class="guestbook-list">
     <div class="guestbook-loading">加载留言…</div>
@@ -8,16 +8,16 @@
   
   <div class="guestbook-controls">
     <div class="guestbook-actions">
-      <button id="guestbook-local-add" class="button button-ghost">临时本地留言</button>
+      <button id="guestbook-local-add" class="button button-ghost">本地留言</button>
     </div>
     <div class="guestbook-toggle">
-      <label><input type="checkbox" id="toggle-history"> 显示历史静态留言</label>
+      <label><input type="checkbox" id="toggle-history"> 显示历史留言</label>
     </div>
   </div>
 
   <div id="guestbook-history" style="display:none; margin-top:12px">
     <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
-      <input id="gb-search" placeholder="搜索留言或名字" style="flex:1;padding:8px;border-radius:6px;border:1px solid #ddd">
+      <input id="gb-search" placeholder="搜索留言或姓名" style="flex:1;padding:8px;border-radius:6px;border:1px solid #ddd">
       <div id="gb-pagination" style="display:flex;gap:6px;align-items:center"></div>
     </div>
     <div id="guestbook-history-list" class="guestbook-list"></div>
@@ -25,8 +25,8 @@
 
   <!-- Giscus (GitHub Discussions) comment widget: recommended for GitHub Pages -->
   <div class="guestbook-discuss">
-    <h3>讨论与留言（建议）</h3>
-    <p class="guestbook-note">使用 Giscus 将留言保存为 GitHub Discussions，UI 美观且在仓库中管理。若要启用，请按下方说明配置（或访问 <a href="https://giscus.app" target="_blank">giscus.app</a> 生成配置）。</p>
+    <h3>线上留言（Giscus）</h3>
+    <p class="guestbook-note">已启用 Giscus（GitHub Discussions）以便保存留言和管理讨论。若需更改配置，请访问 <a href="https://giscus.app" target="_blank">giscus.app</a>。</p>
 
     <!--
       To enable Giscus, replace the placeholder values below with the attributes
@@ -34,23 +34,6 @@
       data-repo="OWNER/REPO" data-repo-id="REPO_ID" data-category="Discussions" data-category-id="CATEGORY_ID"
     -->
     <div id="giscus-container">
-      <script>
-        (function(){
-          try{
-            var sc = document.currentScript;
-            // find the next script node inside the container (the actual giscus script)
-            var node = sc.nextSibling;
-            while(node && node.nodeType !== 1) node = node.nextSibling;
-            var gscript = (node && node.tagName === 'SCRIPT') ? node : document.querySelector('#giscus-container script[src*="giscus.app"]');
-            var ds = {};
-            if(gscript && gscript.dataset){
-              for(var k in gscript.dataset) ds[k] = gscript.dataset[k];
-            }
-            console.log('[guestbook debug] location.pathname =', location.pathname);
-            console.log('[guestbook debug] giscus dataset =', ds);
-          }catch(e){ console.log('[guestbook debug] error', e); }
-        })();
-      </script>
             <script src="https://giscus.app/client.js"
               data-repo="jiahaozhang6/jiahaozhang6.github.io"
               data-repo-id="R_kgDOQSlo9w"
