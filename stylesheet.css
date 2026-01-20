@@ -7,6 +7,9 @@
   --site-nav-height: 64px;
 }
 
+/* Enable smooth scrolling for in-page anchor navigation */
+html { scroll-behavior: smooth; }
+
 .affiliations h2 {
   font-size: 20px;
   margin: 0 0 10px;

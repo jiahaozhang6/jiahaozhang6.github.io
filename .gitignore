@@ -1,0 +1,4 @@
+*.sh
+*.bat
+*.ps1
+.DS_Store
