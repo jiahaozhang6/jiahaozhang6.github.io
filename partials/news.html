@@ -8,14 +8,10 @@
       <span class="btn-label">Show</span>
     </button>
   </header>
-  <div class="news-item">
-    <div class="news-date">2025-09-06</div>
-    <a href="#">I joined Beihang University as a Ph.D. candidate in Computer Science and Technology 💪</a>
-  </div>
-  
-  <div class="news-item">
-    <div class="news-date">2025-06-30</div>
-    <a href="#">I got Master of Engineering degree from Beijing Institute of Technology (BIT) 🎓</a>
+
+  <div id="news-list" class="news-list" role="region" aria-live="polite">
+    <!-- News items will be rendered here from data/news.json -->
+    <div class="news-loading">Loading news…</div>
   </div>
 
 </aside>
@@ -32,7 +28,8 @@
   var newsCol = document.getElementById('news-column');
   var showBtn = document.getElementById('news-show');
   var body = document.body;
-  if(!btn || !newsCol) return;
+  var listEl = document.getElementById('news-list');
+  if(!btn || !newsCol || !listEl) return;
 
   function setState(collapsed){
     if(collapsed){
@@ -46,34 +43,43 @@
       btn.setAttribute('aria-expanded','true');
       btn.querySelector('.btn-label').textContent = 'Hide';
     }
-    // Keep the floating show button's aria state in sync so CSS + assistive tech match
-    if(showBtn){
-      // When collapsed === true, showBtn should be visible (aria-hidden=false)
-      showBtn.setAttribute('aria-hidden', String(!collapsed));
-    }
+    if(showBtn){ showBtn.setAttribute('aria-hidden', String(!collapsed)); }
   }
 
-  // Toggle on click
-  btn.addEventListener('click', function(){
-    var collapsed = newsCol.classList.toggle('collapsed');
-    setState(collapsed);
-  });
+  btn.addEventListener('click', function(){ var collapsed = newsCol.classList.toggle('collapsed'); setState(collapsed); });
+  if(showBtn){ showBtn.addEventListener('click', function(){ setState(false); }); }
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !newsCol.classList.contains('collapsed')) setState(true); });
+  setState(true);
 
-  // Floating show button restores the news panel when collapsed
-  if(showBtn){
-    showBtn.addEventListener('click', function(){ setState(false); });
+  // Load structured news data from data/news.json
+  function renderNews(items){
+    if(!items || !items.length){ listEl.innerHTML = '<div class="news-empty">No news yet.</div>'; return; }
+    // sort by date desc
+    items.sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
+    var html = items.map(function(it){
+      var url = it.url ? (' href="' + it.url + '" target="_blank" rel="noopener"') : '';
+      var summary = it.summary ? ('<div class="news-summary">' + it.summary + '</div>') : '';
+      var tags = it.tags && it.tags.length ? ('<div class="news-tags">' + it.tags.map(function(t){ return '<span class="tag">' + t + '</span>'; }).join(' ') + '</div>') : '';
+      return '<article class="news-item">\n' +
+             '  <div class="news-date">' + it.date + '</div>\n' +
+             '  <a class="news-title"' + url + '>' + it.title + '</a>\n' +
+             summary + '\n' + tags + '\n' +
+             '</article>';
+    }).join('\n');
+    listEl.innerHTML = html;
   }
 
-  // Allow Escape to hide
-  document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape' && !newsCol.classList.contains('collapsed')){
-      setState(true);
-    }
-  });
+  function loadNews(){
+    var src = 'data/news.json';
+    fetch(src).then(function(r){ if(!r.ok) throw new Error('Failed to load ' + src); return r.json(); }).then(function(json){ renderNews(json); }).catch(function(err){
+      console.error('News load failed', err);
+      // fallback: show a simple static message so UI isn't empty
+      listEl.innerHTML = '<div class="news-error">(Failed to load news.)</div>';
+    });
+  }
 
-  // Initialize: default to collapsed on first load for a cleaner entry point
-  var defaultCollapsed = true;
-  var initialCollapsed = newsCol.classList.contains('collapsed') || defaultCollapsed;
-  setState(initialCollapsed);
+  // Attempt to load news; when opened via file:// fetch may be blocked by browser.
+  loadNews();
+
 })();
 </script>
