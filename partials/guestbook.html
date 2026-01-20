@@ -1,6 +1,6 @@
 <section class="guestbook" aria-label="Guestbook">
   <h2>留言板</h2>
-  <p class="guestbook-note">欢迎留言。站点为静态托管；管理者可以通过后台页面添加永久条目。</p>
+  <p class="guestbook-note">欢迎留言。</p>
 
   <div id="guestbook-list" class="guestbook-list">
     <div class="guestbook-loading">加载留言…</div>
@@ -8,7 +8,6 @@
   
   <div class="guestbook-controls">
     <div class="guestbook-actions">
-      <a href="admin/guestbook_admin.html" class="button">管理留言（Admin）</a>
       <button id="guestbook-local-add" class="button button-ghost">临时本地留言</button>
     </div>
     <div class="guestbook-toggle">
@@ -52,33 +51,7 @@
       </script>
     </div>
 
-    <!-- Example embed (commented out). Uncomment & fill values to enable. -->
-    <!--
-    <div id="giscus-container" class="giscus centered giscus-compact">
-      <script src="https://giscus.app/client.js"
-        data-repo="OWNER/REPO"
-        data-repo-id="REPO_ID"
-        data-category="General"
-        data-category-id="CATEGORY_ID"
-        data-mapping="pathname"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="light"
-        crossorigin="anonymous"
-        async>
-      </script>
-    </div>
-    -->
-
-    <details>
-      <summary>如何自定义外观（示例）</summary>
-      <div style="margin-top:8px">
-        - 更改主题：修改 `data-theme`（例如 `light` / `dark` / `preferred_color_scheme` 或自定义 CSS URL）。<br>
-        - 使用内置样式钩子：在 CSS 中使用 `.giscus`, `.giscus-frame`，或添加类如 `giscus-compact` / `centered` 来控制布局。<br>
-        - 示例：将容器设置为紧凑居中（取消注释上面的 `div#giscus-container` 并保留 `class="giscus centered giscus-compact"`）。
-      </div>
-    </details>
+    
   </div>
 
   <script>
