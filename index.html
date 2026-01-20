@@ -79,10 +79,17 @@
         return fetch(src).then(function(r){ if(!r.ok) throw new Error('Failed to load ' + src); return r.text(); }).then(function(html){
           el.innerHTML = html;
           // Execute inline scripts in the included fragment
+          // When moving scripts to the document head we must copy ALL attributes
+          // (e.g. data-* for widgets like Giscus) otherwise the widget won't receive its config.
           var scripts = el.querySelectorAll('script');
           scripts.forEach(function(s){
             var ns = document.createElement('script');
-            if(s.src){ ns.src = s.src; ns.async = false; document.head.appendChild(ns); }
+            // copy attributes from original script
+            for(var i = 0; i < s.attributes.length; i++){
+              var a = s.attributes[i];
+              try { ns.setAttribute(a.name, a.value); } catch(e) { /* ignore */ }
+            }
+            if(s.src){ ns.async = false; document.head.appendChild(ns); }
             else { ns.textContent = s.textContent; document.head.appendChild(ns); }
             // remove original to avoid double-run if re-inserted
             s.parentNode && s.parentNode.removeChild(s);
