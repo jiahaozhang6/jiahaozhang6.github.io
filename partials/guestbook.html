@@ -34,6 +34,23 @@
       data-repo="OWNER/REPO" data-repo-id="REPO_ID" data-category="Discussions" data-category-id="CATEGORY_ID"
     -->
     <div id="giscus-container">
+      <script>
+        (function(){
+          try{
+            var sc = document.currentScript;
+            // find the next script node inside the container (the actual giscus script)
+            var node = sc.nextSibling;
+            while(node && node.nodeType !== 1) node = node.nextSibling;
+            var gscript = (node && node.tagName === 'SCRIPT') ? node : document.querySelector('#giscus-container script[src*="giscus.app"]');
+            var ds = {};
+            if(gscript && gscript.dataset){
+              for(var k in gscript.dataset) ds[k] = gscript.dataset[k];
+            }
+            console.log('[guestbook debug] location.pathname =', location.pathname);
+            console.log('[guestbook debug] giscus dataset =', ds);
+          }catch(e){ console.log('[guestbook debug] error', e); }
+        })();
+      </script>
             <script src="https://giscus.app/client.js"
               data-repo="jiahaozhang6/jiahaozhang6.github.io"
               data-repo-id="R_kgDOQSlo9w"
