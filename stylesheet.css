@@ -5,6 +5,16 @@
 
 :root {
   --site-nav-height: 64px;
+  /* Typography / spacing tokens to keep layout consistent */
+  --font-family: 'Lato', Verdana, Helvetica, sans-serif;
+  --base-font-size: 14px;
+  --base-line-height: 1.5;
+  --space-1: 6px;
+  --space-2: 12px;
+  --space-3: 18px;
+  --space-4: 24px;
+  --radius: 10px;
+  --muted: #666666;
 }
 
 /* Enable smooth scrolling for in-page anchor navigation */
@@ -129,6 +139,21 @@ html { scroll-behavior: smooth; }
   }
 }
 
+/* Mobile nav toggle (hamburger) */
+.nav-toggle { display: none; background: transparent; border: 0; cursor: pointer; padding: 8px; border-radius: 8px; }
+.nav-toggle .hamburger { display: inline-block; width: 22px; height: 2px; background: #0f172a; position: relative; }
+.nav-toggle .hamburger::before, .nav-toggle .hamburger::after { content: ''; position: absolute; left: 0; right: 0; height: 2px; background: #0f172a; }
+.nav-toggle .hamburger::before { top: -6px; }
+.nav-toggle .hamburger::after { top: 6px; }
+.nav-toggle:focus-visible { outline: 3px solid rgba(23,100,200,0.18); }
+
+@media (max-width: 960px) {
+  .nav-toggle { display: inline-flex; align-items: center; }
+  .nav-links { display: none; width: 100%; }
+  .nav-links.open { display: flex; flex-direction: column; gap: 8px; }
+  .nav-links a { width: 100%; display: inline-block; }
+}
+
 #profile,
 #research,
 #publications,
@@ -220,8 +245,9 @@ th,
 tr,
 p,
 a {
-  font-family: 'Lato', Verdana, Helvetica, sans-serif;
-  font-size: 14px;
+  font-family: var(--font-family);
+  font-size: var(--base-font-size);
+  line-height: var(--base-line-height);
 }
 
 strong {
@@ -229,12 +255,16 @@ strong {
   font-size: 14px;
 }
 
-h2 {
+h1,h2,h3,h4,h5,h6 {
   margin: 0;
-  font-weight: normal;
-  font-family: 'Lato', Verdana, Helvetica, sans-serif;
-  font-size: 22px;
+  font-weight: 700;
+  font-family: var(--font-family);
 }
+
+h1 { font-size: 28px; }
+h2 { font-size: 22px; font-weight: 600; }
+h3 { font-size: 18px; }
+
 
 .papertitle {
   font-family: 'Lato', Verdana, Helvetica, sans-serif;
@@ -318,6 +348,17 @@ h2 {
 /* Responsive image helper */
 .responsive-img { max-width: 100%; height: auto; display: block; }
 
+/* News card grid and refined card styles */
+.news-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.news-item { padding: 14px; border-radius: var(--radius); background: linear-gradient(180deg,#ffffff,#f8fafc); box-shadow: 0 8px 26px rgba(12,20,35,0.06); border: 1px solid rgba(15,23,35,0.04); transition: transform 220ms ease, box-shadow 220ms ease; }
+.news-item:hover, .news-item:focus-within { transform: translateY(-4px); box-shadow: 0 16px 34px rgba(12,20,35,0.08); }
+.news-date { font-size: 12px; color: #6b7280; margin-bottom: 6px; }
+.news-title { display: block; font-weight: 700; color: #0f172a; text-decoration: none; margin-bottom: 6px; }
+.news-title:hover { color: #1772d0; }
+.news-summary { color: #374151; font-size: 13px; margin-top: 6px; }
+.news-tags { margin-top: 8px; }
+.tag { display: inline-block; background: #eef2ff; color: #1e3a8a; font-size: 12px; padding: 4px 8px; border-radius: 999px; margin-right: 6px; }
+
 /* WeChat popup (hover + click for touch) */
 .wechat-container { position: relative; display: inline-block; }
 .wechat-popup { display: none; position: absolute; top: 110%; left: 50%; transform: translateX(-50%); padding: 6px; background: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); z-index: 200; }
@@ -398,6 +439,26 @@ body.news-collapsed .news-toggle-btn .arrow { transform: rotate(180deg); }
 /* Floating show button */
 .news-show-button{ position: fixed; right: 12px; top: 50%; transform: translateY(-50%); z-index: 1002; background: linear-gradient(180deg,#2a7bd4,#1764c8); color: #fff; border: 0; padding: 8px 12px; border-radius: 999px; box-shadow: 0 6px 18px rgba(23,100,200,0.14); cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight:700; opacity: 0; pointer-events: none; transition: opacity 260ms ease; }
 @keyframes popIn { 0% { opacity: 0; transform: translateY(-50%) scale(0.94); } 60% { opacity: 1; transform: translateY(-50%) scale(1.06); } 100% { opacity: 1; transform: translateY(-50%) scale(1); } }
+
+/* Accessibility helpers */
+.skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+.skip-link:focus, .skip-link:active { position: fixed; left: 12px; top: 12px; width: auto; height: auto; padding: 8px 12px; background: #fff; color: #0f172a; z-index: 2000; border: 1px solid rgba(15,23,35,0.08); box-shadow: 0 6px 18px rgba(12,20,35,0.08); border-radius: 6px; }
+
+/* Focus styles using focus-visible for keyboard users */
+:focus { outline: none; }
+:focus-visible { outline: 3px solid #1764c8; outline-offset: 3px; }
+
+/* Improve tap targets for nav links */
+.nav-links a { padding: 10px 16px; }
+
+/* Ensure form controls have clear focus */
+input:focus-visible, button:focus-visible, a:focus-visible { box-shadow: 0 0 0 4px rgba(23,100,200,0.12); }
+
+/* Show the floating news show button when news is collapsed */
+body.news-collapsed .news-show-button { opacity: 1; pointer-events: auto; }
+
+/* Improve contrast for muted notes */
+.muted-note { color: var(--muted); }
 body.news-collapsed .news-show-button { opacity: 1; pointer-events: auto; animation: popIn 360ms cubic-bezier(.2,.8,.2,1); }
 @media (max-width:960px){
   /* Make the floating show button visible on phones and place it within easy reach.

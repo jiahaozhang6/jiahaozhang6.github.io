@@ -26,10 +26,14 @@
   </head>
 
   <body class="news-collapsed">
+    <a href="#profile" class="skip-link">Skip to content</a>
     <header class="site-nav" id="top" role="navigation">
       <div class="nav-inner">
         <a class="nav-brand" href="#top">Jiahao Zhang</a>
-        <nav class="nav-links" aria-label="Primary">
+        <button id="nav-toggle" class="nav-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="hamburger" aria-hidden="true"></span>
+        </button>
+        <nav id="primary-nav" class="nav-links" aria-label="Primary">
           <a href="#profile">Profile</a>
           <a href="#research">Research</a>
           <a href="#publications">Publications</a>
@@ -114,6 +118,21 @@
         };
         lastUpdatedElement.textContent = lastModified.toLocaleDateString('en-US', options);
       }
+    })();
+    </script>
+    <script>
+    // Mobile nav toggle for small screens
+    (function(){
+      var toggle = document.getElementById('nav-toggle');
+      var nav = document.getElementById('primary-nav');
+      if(!toggle || !nav) return;
+      function setOpen(open){
+        if(open){ nav.classList.add('open'); toggle.setAttribute('aria-expanded','true'); }
+        else { nav.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
+      }
+      toggle.addEventListener('click', function(e){ e.stopPropagation(); setOpen(!nav.classList.contains('open')); });
+      // Close nav when clicking outside
+      document.addEventListener('click', function(e){ if(!nav.contains(e.target) && !toggle.contains(e.target)) setOpen(false); });
     })();
     </script>
    
