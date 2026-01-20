@@ -56,14 +56,14 @@
       <!-- university logos -->
       <tr><td colspan="2"><div id="affiliations" data-include="partials/logos.html"></div></td></tr>
       <!-- visitor map -->
-      <tr><td colspan="2"><div class="center small" style="max-width: 200px; margin: 0 auto;">
+      <tr><td colspan="2"><div class="center small small-center">
         <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=Z2nHOhbXqcwWDWOcsFYCjU-1zcLfuJJC1pGVK-hXIY8"></script>
       </div></td></tr>
       <!-- footer / attribution -->
       <tr><td colspan="2">
         <div class="center small">
           <div>Last updated: <span id="last-updated"></span></div><br>
-          <div style="font-size: 12px;">Design and source code from <a style="font-size: 12px;" href="https://jonbarron.info" target="_blank">Jon Barron's website</a></div>
+          <div class="muted-note">Design and source code from <a class="muted-note" href="https://jonbarron.info" target="_blank">Jon Barron's website</a></div>
         </div>
       </td></tr>
 
@@ -94,15 +94,14 @@
             s.parentNode && s.parentNode.removeChild(s);
           });
         }).catch(function(err){
-          console.error('Include failed for', src, err);
-          // show a minimal fallback so the page isn't blank
+          // Include failed; show a minimal fallback so the page isn't blank
           el.innerHTML = '<div class="center small">(Failed to load: ' + src + ')</div>';
         });
       }
 
       var includes = document.querySelectorAll('[data-include]');
       var promises = Array.from(includes).map(loadInclude);
-      Promise.all(promises).catch(function(e){ console.error('Include load failed', e); });
+      Promise.all(promises).catch(function(){ /* ignore include load errors */ });
       
       // Display last updated time
       var lastUpdatedElement = document.getElementById('last-updated');

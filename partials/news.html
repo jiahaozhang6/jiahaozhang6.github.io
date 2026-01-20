@@ -84,8 +84,7 @@
   function loadNews(){
     var src = 'data/news.json';
     fetch(src).then(function(r){ if(!r.ok) throw new Error('Failed to load ' + src); return r.json(); }).then(function(json){ renderNews(json); }).catch(function(err){
-      console.error('News load failed', err);
-      // fallback: show a simple static message so UI isn't empty
+      // News load failed; show a simple static message so UI isn't empty
       listEl.innerHTML = '<div class="news-error">(Failed to load news.)</div>';
     });
   }
@@ -113,7 +112,7 @@
   function loadNews(){
     var src = 'data/news.json';
     fetch(src).then(function(r){ if(!r.ok) throw new Error('Failed to load ' + src); return r.json(); }).then(function(json){ loadedItems = json || []; renderWithSearch(loadedItems); }).catch(function(err){
-      console.error('News load failed', err);
+      // News load failed; show fallback
       listEl.innerHTML = '<div class="news-error">(Failed to load news.)</div>';
     });
   }

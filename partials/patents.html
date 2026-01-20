@@ -9,11 +9,11 @@
 <table class="full-table spaced-rows">
 <tbody>
   <tr onmouseout="patent_census_stop()" onmouseover="patent_census_start()">
-    <td class="pad-16 vcenter" style="width: 30%;">
-      <div class="publication-thumbnail" style="height: auto; width: 100%; max-width: 100%;">
-        <img id="patent_census_base" src="images/patent_census1.png" alt="Patent Census Diagram" style="object-fit: contain; height: auto; width: 100%; transition: opacity 0.2s ease;">
+    <td class="pad-16 vcenter patent-cell-left">
+      <div class="publication-thumbnail publication-thumbnail--fluid">
+        <img id="patent_census_base" class="patent-img" src="images/patent_census1.png" alt="Patent Census Diagram">
         <div class="publication-thumbnail__overlay" id="patent_census_image">
-          <img src="images/patent_census2.png" alt="Patent Census Detail" style="object-fit: contain; height: 100%; width: 100%;">
+          <img src="images/patent_census2.png" alt="Patent Census Detail">
         </div>
       </div>
       <script type="text/javascript">
@@ -29,7 +29,7 @@
         patent_census_stop();
       </script>
     </td>
-    <td class="pad-8 vcenter" style="width: 70%;">
+    <td class="pad-8 vcenter patent-cell-right">
       <a href="https://pss-system.cponline.cnipa.gov.cn/">
         <span class="papertitle">一种基于多尺度Census变换的图像脉冲编码方法</span>
       </a>
