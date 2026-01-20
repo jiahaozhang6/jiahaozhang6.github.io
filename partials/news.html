@@ -22,6 +22,9 @@
   <span>📣 Show News</span>
 </button>
 
+<!-- Backdrop shown when news panel is open -->
+<div id="news-backdrop" class="news-backdrop" aria-hidden="true"></div>
+
 <script>
 (function(){
   var btn = document.getElementById('news-toggle');
@@ -44,10 +47,12 @@
       btn.querySelector('.btn-label').textContent = 'Hide';
     }
     if(showBtn){ showBtn.setAttribute('aria-hidden', String(!collapsed)); }
+    if(backdrop){ backdrop.setAttribute('aria-hidden', String(collapsed)); }
   }
-
   btn.addEventListener('click', function(){ var collapsed = newsCol.classList.toggle('collapsed'); setState(collapsed); });
   if(showBtn){ showBtn.addEventListener('click', function(){ setState(false); }); }
+  var backdrop = document.getElementById('news-backdrop');
+  if(backdrop){ backdrop.addEventListener('click', function(){ setState(true); }); }
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !newsCol.classList.contains('collapsed')) setState(true); });
   setState(true);
 
