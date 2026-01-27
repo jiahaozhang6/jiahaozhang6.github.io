@@ -43,8 +43,8 @@ html { scroll-behavior: smooth; }
 }
 
 .institution-logos img {
-  max-width: 180px;
-  max-height: 100px;
+  max-width: 220px;
+  max-height: 140px;
   height: auto;
   width: auto;
   display: block;
@@ -281,8 +281,8 @@ h3 { font-size: 18px; }
 
 /* Page-specific and component styles (WeChat popup, News, layout helpers) */
 .publication-thumbnail {
-  width: 160px;
-  height: 160px;
+  width: 200px;
+  height: 200px;
   position: relative;
 }
 
@@ -331,7 +331,7 @@ h3 { font-size: 18px; }
 .vcenter { vertical-align: middle !important; }
 .center { text-align: center; }
 .small { font-size: small; }
-.profile-photo { width:100%; max-width:100%; object-fit: cover; border-radius:50%; display:block; }
+.profile-photo { width: auto; max-width: 240px; height: auto; object-fit: cover; border-radius:50%; display:block; }
 
 /* Utility classes replacing inline styles */
 .small-center { max-width: 200px; margin: 0 auto; }
@@ -344,6 +344,23 @@ h3 { font-size: 18px; }
 /* Fluid thumbnail variant for patents (object-fit: contain) */
 .publication-thumbnail--fluid { width: 100%; height: auto; max-width: 100%; }
 .publication-thumbnail--fluid img { object-fit: contain; height: auto; width: 100%; transition: opacity 0.2s ease; border-radius: 8px; display:block; }
+
+/* Patent images and overlays should scale and not be constrained by table cells */
+.patent-img { width: 100%; height: auto; display: block; max-width: 880px; }
+.publication-thumbnail__overlay img { width: 100%; height: auto; display: block; }
+
+/* Logos: ensure readable size and allow wrapping */
+.institution-logos img { display: inline-block; }
+
+/* Publication thumbnails slightly larger on wider screens */
+@media (min-width: 960px) {
+  .publication-thumbnail { width: 220px; height: 220px; }
+}
+
+@media (max-width: 640px) {
+  .publication-thumbnail { width: 140px; height: 140px; }
+  .institution-logos img { max-width: 140px; max-height: 80px; }
+}
 
 /* Responsive image helper */
 .responsive-img { max-width: 100%; height: auto; display: block; }
@@ -361,8 +378,8 @@ h3 { font-size: 18px; }
 
 /* WeChat popup (hover + click for touch) */
 .wechat-container { position: relative; display: inline-block; }
-.wechat-popup { display: none; position: absolute; top: 110%; left: 50%; transform: translateX(-50%); padding: 6px; background: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); z-index: 200; }
-.wechat-popup img { width: 180px; height: auto; display: block; }
+.wechat-popup { display: none; position: absolute; top: 110%; left: 50%; transform: translateX(-50%); padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 6px 18px rgba(12,20,35,0.12); z-index: 220; }
+.wechat-popup img { width: 220px; max-width: 80vw; height: auto; display: block; }
 .wechat-container:hover .wechat-popup { display: block; }
 .wechat-container.open .wechat-popup { display: block; }
 .wechat-link { text-decoration: none; color: #1772d0; cursor: pointer; }
