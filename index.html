@@ -9,7 +9,7 @@
     <meta name="author" content="Jiahao Zhang">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20251113">
+    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260328-4">
     
   </head>
   <!-- Developer notes: Major sections in this file (top to bottom):
@@ -23,9 +23,8 @@
     To add a new publication, copy an existing <tr> inside the Publications table and update image/links/text.
     Prefer editing content only (text/links). For style changes, update `stylesheet.css` or the inline <style> at the top.
   -->
-  </head>
 
-  <body class="news-collapsed">
+  <body>
     <a href="#profile" class="skip-link">Skip to content</a>
     <header class="site-nav" id="top" role="navigation">
       <div class="nav-inner">
@@ -79,7 +78,7 @@
         var src = el.getAttribute('data-include');
         if(!src) return Promise.resolve();
         // when opened via file://, fetch may be blocked; handle errors gracefully
-        return fetch(src).then(function(r){ if(!r.ok) throw new Error('Failed to load ' + src); return r.text(); }).then(function(html){
+        return fetch(src, { cache: 'no-store' }).then(function(r){ if(!r.ok) throw new Error('Failed to load ' + src); return r.text(); }).then(function(html){
           el.innerHTML = html;
           // Execute inline scripts in the included fragment
           // When moving scripts to the document head we must copy ALL attributes

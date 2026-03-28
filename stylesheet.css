@@ -531,3 +531,869 @@ body::before {
 .news-summary{ color:#374151; font-size:13px; margin-top:6px; }
 .news-tags { margin-top:8px; }
 .news-item .tag{ background:#eef2ff; color:#1e3a8a; padding:4px 8px; border-radius:999px; margin-right:6px; font-size:12px; }
+
+/* 2026 visual refresh: unified typography, color system, and section/card hierarchy */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+:root {
+  --site-nav-height: 72px;
+  --content-max: 980px;
+  --font-family: 'Manrope', 'Noto Sans SC', 'Lato', Verdana, Helvetica, sans-serif;
+  --font-serif: 'IBM Plex Serif', 'Noto Serif SC', 'Times New Roman', serif;
+  --base-font-size: 15px;
+  --base-line-height: 1.72;
+
+  --bg-mint: #edf8f4;
+  --bg-sky: #edf3fb;
+  --bg-cream: #fbf5ea;
+  --surface: rgba(255, 255, 255, 0.84);
+  --surface-strong: #ffffff;
+  --ink-strong: #10243e;
+  --ink: #22384d;
+  --ink-soft: #54677a;
+  --line: rgba(16, 36, 62, 0.14);
+  --brand: #118d82;
+  --brand-deep: #0a6581;
+  --accent: #e1712a;
+
+  --radius-xl: 24px;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --shadow-lg: 0 26px 60px rgba(13, 42, 58, 0.12);
+  --shadow-md: 0 14px 34px rgba(13, 42, 58, 0.1);
+  --shadow-sm: 0 8px 18px rgba(13, 42, 58, 0.08);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(980px 560px at -12% -12%, #daf4eb 0%, rgba(218, 244, 235, 0) 72%),
+    radial-gradient(760px 420px at 110% 6%, #ffe7d2 0%, rgba(255, 231, 210, 0) 70%),
+    linear-gradient(160deg, var(--bg-mint) 0%, var(--bg-sky) 48%, var(--bg-cream) 100%);
+}
+
+/* Override previous watermark with layered atmospheric background */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.24) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(0deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px) 0 0 / 32px 32px;
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: -2;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  width: min(48vw, 560px);
+  aspect-ratio: 1 / 1;
+  right: -140px;
+  bottom: -180px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, rgba(17, 141, 130, 0.2) 0%, rgba(17, 141, 130, 0) 72%);
+  filter: blur(6px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+body,
+td,
+th,
+tr,
+p,
+a {
+  color: var(--ink);
+  font-family: var(--font-family);
+  font-size: var(--base-font-size);
+  line-height: var(--base-line-height);
+}
+
+p {
+  margin: 0 0 12px;
+}
+
+a {
+  color: var(--brand-deep);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 180ms ease, border-color 180ms ease;
+}
+
+a:focus,
+a:hover {
+  color: var(--accent);
+  border-bottom-color: currentColor;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--ink-strong);
+}
+
+h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.36rem, 1.3rem + 0.34vw, 1.6rem);
+  letter-spacing: 0.02em;
+}
+
+h3 {
+  font-size: 1.05rem;
+}
+
+.name {
+  margin: 0;
+  padding-top: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 1.8rem + 0.8vw, 2.7rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+.papertitle {
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--ink-strong);
+}
+
+.main-wrapper {
+  width: min(var(--content-max), calc(100% - 24px));
+  max-width: var(--content-max);
+  margin: 14px auto 36px;
+  border-spacing: 0 14px;
+}
+
+.main-wrapper > tbody > tr > td {
+  padding: 0;
+}
+
+#profile,
+#research,
+#publications,
+#patents,
+#honors,
+#news,
+#affiliations {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(6px);
+}
+
+/* Let WeChat popup extend outside the profile card without clipping. */
+#profile {
+  overflow: visible;
+  z-index: 2;
+}
+
+#profile::before,
+#research::before,
+#publications::before,
+#patents::before,
+#honors::before,
+#news::before,
+#affiliations::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--brand) 0%, var(--brand-deep) 52%, var(--accent) 100%);
+  opacity: 0.82;
+}
+
+#profile .full-table,
+#research .full-table,
+#publications .full-table,
+#patents .full-table,
+#honors .full-table,
+#affiliations .full-table {
+  margin: 0;
+}
+
+#profile .full-table td,
+#research .full-table td,
+#publications .full-table td,
+#patents .full-table td,
+#honors .full-table td,
+#affiliations .full-table td {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+#profile p.center {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-photo {
+  width: min(100%, 250px);
+  max-width: 250px;
+  border-radius: 28px;
+  border: 4px solid rgba(255, 255, 255, 0.78);
+  box-shadow: var(--shadow-lg);
+}
+
+.wechat-popup {
+  display: none;
+  position: absolute;
+  top: auto;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 1200;
+}
+
+.wechat-popup.is-fixed {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%) !important;
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+}
+
+.wechat-popup img {
+  width: 220px;
+  max-width: min(220px, calc(100vw - 32px));
+  max-height: min(340px, calc(100vh - 170px));
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.wechat-popup.is-fixed img {
+  max-width: min(280px, calc(100vw - 48px));
+  max-height: calc(100vh - 80px);
+}
+
+.wechat-container:hover .wechat-popup,
+.wechat-container.open .wechat-popup {
+  display: block;
+}
+
+#research p,
+#patents p,
+#publications p,
+#honors p {
+  color: var(--ink-soft);
+}
+
+#publications .spaced-rows,
+#patents .spaced-rows {
+  border-spacing: 0 16px;
+}
+
+#publications .spaced-rows tr > td,
+#patents .spaced-rows tr > td {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 252, 255, 0.9) 100%);
+  border-top: 1px solid rgba(16, 36, 62, 0.1);
+  border-bottom: 1px solid rgba(16, 36, 62, 0.1);
+}
+
+#publications .spaced-rows tr > td:first-child,
+#patents .spaced-rows tr > td:first-child {
+  border-left: 1px solid rgba(16, 36, 62, 0.1);
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+
+#publications .spaced-rows tr > td:last-child,
+#patents .spaced-rows tr > td:last-child {
+  border-right: 1px solid rgba(16, 36, 62, 0.1);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+
+.publication-thumbnail {
+  width: min(100%, 230px);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.publication-thumbnail img {
+  border-radius: 14px;
+}
+
+.publication-thumbnail__overlay {
+  border-radius: 14px;
+}
+
+.publication-thumbnail--fluid {
+  aspect-ratio: auto;
+  width: min(100%, 340px);
+  max-width: 340px;
+}
+
+.patent-img {
+  max-width: 340px;
+}
+
+#honors .full-table tr + tr td {
+  border-top: 1px dashed rgba(16, 36, 62, 0.14);
+}
+
+.period-title {
+  margin: 0;
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: linear-gradient(130deg, rgba(17, 141, 130, 0.14), rgba(10, 101, 129, 0.14));
+  color: var(--ink-strong);
+  font-family: var(--font-family);
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.institution-logos {
+  max-width: 720px;
+  gap: 18px;
+}
+
+.institution-logos a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 88px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(16, 36, 62, 0.12);
+  box-shadow: var(--shadow-sm);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.institution-logos a:hover,
+.institution-logos a:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(10, 101, 129, 0.32);
+}
+
+.site-nav {
+  width: min(var(--content-max), calc(100% - 24px));
+  margin: 12px auto 8px;
+  top: 10px;
+  border: 1px solid rgba(16, 36, 62, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 12px 30px rgba(13, 42, 58, 0.14);
+  backdrop-filter: blur(10px);
+}
+
+.nav-inner {
+  max-width: none;
+  padding: 10px 14px 10px 18px;
+  gap: 14px;
+}
+
+.nav-brand {
+  color: var(--ink-strong);
+  font-weight: 800;
+  font-size: 1.02rem;
+  letter-spacing: 0.01em;
+}
+
+.nav-links {
+  gap: 8px;
+}
+
+.nav-links a {
+  color: var(--ink);
+  font-weight: 700;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 999px;
+}
+
+.nav-links a:focus,
+.nav-links a:hover {
+  color: #ffffff;
+  background: linear-gradient(130deg, var(--brand) 0%, var(--brand-deep) 100%);
+  box-shadow: 0 10px 18px rgba(10, 101, 129, 0.3);
+}
+
+.nav-toggle .hamburger,
+.nav-toggle .hamburger::before,
+.nav-toggle .hamburger::after {
+  background: var(--ink-strong);
+}
+
+.news-column {
+  right: 14px;
+  top: calc(var(--site-nav-height) + 18px);
+  width: min(360px, calc(100vw - 28px));
+  height: calc(100vh - var(--site-nav-height) - 30px);
+  border-radius: 20px;
+  border: 1px solid rgba(16, 36, 62, 0.16);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(247, 252, 255, 0.95) 100%),
+    radial-gradient(200px 120px at 95% 0%, rgba(17, 141, 130, 0.12), rgba(17, 141, 130, 0));
+  box-shadow: 0 28px 52px rgba(13, 42, 58, 0.2);
+  padding: 14px;
+}
+
+.news-header {
+  margin-bottom: 10px;
+}
+
+.news-heading {
+  font-family: var(--font-serif);
+  font-size: 1.22rem;
+  font-weight: 600;
+}
+
+.news-count {
+  color: var(--ink-soft);
+}
+
+.news-search {
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(16, 36, 62, 0.18);
+  background: #fff;
+  color: var(--ink);
+}
+
+.news-search:focus {
+  border-color: rgba(10, 101, 129, 0.4);
+  box-shadow: 0 0 0 4px rgba(17, 141, 130, 0.12);
+}
+
+.news-toggle-btn,
+.news-show-button {
+  background: linear-gradient(132deg, var(--brand) 0%, var(--brand-deep) 100%);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(10, 101, 129, 0.3);
+}
+
+.news-list {
+  padding: 4px 2px 16px;
+}
+
+.news-list .news-item {
+  padding: 12px;
+  border-radius: 12px;
+  background: linear-gradient(160deg, #ffffff 0%, #f6fbff 100%);
+  border: 1px solid rgba(16, 36, 62, 0.1);
+  box-shadow: 0 10px 18px rgba(13, 42, 58, 0.08);
+}
+
+.news-date {
+  color: #61758a;
+  font-weight: 600;
+}
+
+.news-title {
+  display: inline-block;
+  color: var(--ink-strong);
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.news-item .tag {
+  background: rgba(17, 141, 130, 0.12);
+  color: #0d4f62;
+  font-weight: 700;
+}
+
+.news-footer {
+  color: var(--ink-soft);
+}
+
+@media (min-width: 961px) {
+  .main-wrapper {
+    padding-right: 0;
+    box-sizing: border-box;
+    transition: padding-right 320ms cubic-bezier(.2, .8, .2, 1);
+  }
+
+  body.news-expanded .main-wrapper {
+    padding-right: 390px;
+  }
+
+  body.news-collapsed .main-wrapper {
+    padding-right: 0 !important;
+  }
+}
+
+@media (max-width: 960px) {
+  :root {
+    --site-nav-height: 64px;
+  }
+
+  .site-nav {
+    width: calc(100% - 16px);
+    margin-top: 8px;
+    border-radius: 20px;
+  }
+
+  .nav-inner {
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .nav-links.open {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+  }
+
+  .nav-links a {
+    text-align: center;
+    width: 100%;
+  }
+
+  .main-wrapper {
+    width: calc(100% - 16px);
+    margin-top: 10px;
+  }
+
+  #profile,
+  #research,
+  #publications,
+  #patents,
+  #honors,
+  #news,
+  #affiliations {
+    border-radius: 18px;
+  }
+
+  .news-column {
+    position: relative;
+    top: 0;
+    right: auto;
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 16px 30px rgba(13, 42, 58, 0.12);
+    margin: 8px 0 0;
+  }
+
+  .news-column.collapsed {
+    display: none !important;
+  }
+
+  .news-show-button {
+    right: 14px;
+    bottom: 14px;
+    top: auto;
+    transform: none;
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 900px) {
+  #publications .spaced-rows,
+  #patents .spaced-rows {
+    border-spacing: 0 14px;
+  }
+
+  #publications .spaced-rows tbody,
+  #publications .spaced-rows tr,
+  #publications .spaced-rows td,
+  #patents .spaced-rows tbody,
+  #patents .spaced-rows tr,
+  #patents .spaced-rows td {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #publications .spaced-rows tr > td,
+  #patents .spaced-rows tr > td {
+    border-left: 1px solid rgba(16, 36, 62, 0.12);
+    border-right: 1px solid rgba(16, 36, 62, 0.12);
+    border-radius: 0;
+  }
+
+  #publications .spaced-rows tr > td:first-child,
+  #patents .spaced-rows tr > td:first-child {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: 0;
+  }
+
+  #publications .spaced-rows tr > td:last-child,
+  #patents .spaced-rows tr > td:last-child {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    border-top: 0;
+  }
+
+  .publication-thumbnail,
+  .publication-thumbnail--fluid {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 760px) {
+  #profile .full-table tbody,
+  #profile .full-table tr,
+  #profile .full-table td {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #profile .col-37 {
+    margin-top: 8px;
+    text-align: center;
+  }
+
+  #profile p.center {
+    justify-content: center;
+  }
+
+  .profile-photo {
+    margin: 0 auto;
+  }
+
+  .wechat-popup {
+    position: fixed;
+    left: 50%;
+    right: auto;
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    max-height: calc(100vh - 24px);
+    overflow: auto;
+  }
+
+  .wechat-popup img {
+    max-width: min(280px, calc(100vw - 40px));
+    max-height: calc(100vh - 80px);
+  }
+}
+
+@media (max-width: 520px) {
+  .nav-links.open {
+    grid-template-columns: 1fr;
+  }
+
+  #profile .full-table td,
+  #research .full-table td,
+  #publications .full-table td,
+  #patents .full-table td,
+  #honors .full-table td,
+  #affiliations .full-table td {
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  .name {
+    font-size: 1.92rem;
+  }
+}
+
+@keyframes sectionRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.main-wrapper > tbody > tr > td > div {
+  animation: sectionRise 560ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.main-wrapper > tbody > tr:nth-of-type(1) > td > div { animation-delay: 40ms; }
+.main-wrapper > tbody > tr:nth-of-type(2) > td > div { animation-delay: 80ms; }
+.main-wrapper > tbody > tr:nth-of-type(3) > td > div { animation-delay: 120ms; }
+.main-wrapper > tbody > tr:nth-of-type(4) > td > div { animation-delay: 160ms; }
+.main-wrapper > tbody > tr:nth-of-type(5) > td > div { animation-delay: 200ms; }
+.main-wrapper > tbody > tr:nth-of-type(6) > td > div { animation-delay: 240ms; }
+.main-wrapper > tbody > tr:nth-of-type(7) > td > div { animation-delay: 280ms; }
+
+/* Keep accessibility focus ring visible after prior global reset */
+:focus-visible {
+  outline: 3px solid rgba(10, 101, 129, 0.62);
+  outline-offset: 2px;
+}
+
+/* Floating side controls for news panel. */
+.main-wrapper {
+  width: calc(100% - 24px);
+  max-width: var(--content-max);
+  padding-right: 0 !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+body .news-column {
+  display: block !important;
+  position: fixed !important;
+  top: calc(var(--site-nav-height) + 18px) !important;
+  right: 14px !important;
+  width: min(360px, calc(100vw - 28px)) !important;
+  height: calc(100vh - var(--site-nav-height) - 30px) !important;
+  max-height: calc(100vh - var(--site-nav-height) - 30px) !important;
+  margin-top: 0 !important;
+  overflow: auto !important;
+  z-index: 1100;
+  opacity: 1 !important;
+  transform: translateX(0) !important;
+  pointer-events: auto !important;
+  transition: transform 260ms ease, opacity 220ms ease;
+  box-shadow: 0 24px 48px rgba(13, 42, 58, 0.2);
+}
+
+body .news-column.collapsed {
+  display: block !important;
+  opacity: 0 !important;
+  transform: translateX(calc(100% + 24px)) !important;
+  pointer-events: none !important;
+}
+
+body .news-controls .news-toggle-btn {
+  display: none !important;
+}
+
+body .news-show-button {
+  display: inline-flex !important;
+  position: fixed !important;
+  right: 14px !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+  z-index: 1150;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 700;
+  background: linear-gradient(132deg, var(--brand) 0%, var(--brand-deep) 100%);
+  color: #ffffff;
+  box-shadow: 0 12px 22px rgba(10, 101, 129, 0.32);
+}
+
+/* Avoid transformed ancestor so fixed-position news controls anchor to viewport. */
+.main-wrapper > tbody > tr > td > #news {
+  animation: none !important;
+  transform: none !important;
+}
+
+@media (max-width: 680px) {
+  body .news-column {
+    width: min(92vw, 360px) !important;
+    height: min(72vh, 560px) !important;
+    max-height: min(72vh, 560px) !important;
+    top: 84px !important;
+    right: 8px !important;
+  }
+
+  body .news-show-button {
+    right: 10px !important;
+    top: auto !important;
+    bottom: 12px !important;
+    transform: none !important;
+  }
+}
+
+/* News drawer mode (final override): body-level floating panel + side capsule toggle. */
+body > .news-column {
+  display: block !important;
+  position: fixed !important;
+  top: 86px !important;
+  right: 14px !important;
+  width: min(360px, calc(100vw - 28px)) !important;
+  height: calc(100vh - 104px) !important;
+  max-height: calc(100vh - 104px) !important;
+  margin: 0 !important;
+  overflow: auto !important;
+  z-index: 1160 !important;
+  opacity: 1 !important;
+  transform: translateX(0) !important;
+  pointer-events: auto !important;
+  transition: transform 240ms ease, opacity 200ms ease;
+}
+
+body > .news-column.collapsed {
+  display: block !important;
+  opacity: 0 !important;
+  transform: translateX(calc(100% + 22px)) !important;
+  pointer-events: none !important;
+}
+
+body > .news-column .news-toggle-btn {
+  display: none !important;
+}
+
+body > .news-show-button {
+  display: inline-flex !important;
+  position: fixed !important;
+  right: 14px !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+  z-index: 1170 !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  padding: 10px 14px !important;
+  border-radius: 999px !important;
+  border: 0 !important;
+  font-weight: 700;
+  white-space: nowrap;
+  background: linear-gradient(132deg, var(--brand) 0%, var(--brand-deep) 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 14px 26px rgba(10, 101, 129, 0.34) !important;
+}
+
+body.news-panel-collapsed > .news-show-button {
+  box-shadow: 0 10px 20px rgba(10, 101, 129, 0.28) !important;
+}
+
+@media (max-width: 900px) {
+  body > .news-column {
+    width: min(92vw, 360px) !important;
+    height: min(70vh, 560px) !important;
+    max-height: min(70vh, 560px) !important;
+    top: auto !important;
+    bottom: 70px !important;
+    right: 10px !important;
+    border-radius: 16px !important;
+  }
+
+  body > .news-show-button {
+    top: auto !important;
+    bottom: 14px !important;
+    right: 10px !important;
+    transform: none !important;
+  }
+}

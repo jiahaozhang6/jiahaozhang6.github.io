@@ -1,4 +1,4 @@
-<aside class="news-column collapsed" id="news-column" aria-label="News">
+<aside class="news-column" id="news-column" aria-label="News">
   <header class="news-header">
     <div class="news-title-wrap">
       <h3 class="news-heading">News</h3>
@@ -25,15 +25,16 @@
 </aside>
 
 <!-- Floating show button (visible when news is collapsed) -->
-<button id="news-show" class="news-show-button" aria-controls="news-column" aria-hidden="true" title="Show News">
+<button id="news-show" class="news-show-button" aria-controls="news-column" aria-hidden="false" aria-expanded="true" title="Hide News">
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M16 5l-8 7 8 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  <span>Show News</span>
+  <span>Hide News</span>
 </button>
 
 <!-- backdrop removed -->
 
 <script>
 (function(){
+  var newsHost = document.getElementById('news');
   var btn = document.getElementById('news-toggle');
   var newsCol = document.getElementById('news-column');
   var showBtn = document.getElementById('news-show');
@@ -41,62 +42,100 @@
   var listEl = document.getElementById('news-list');
   var searchInput = document.getElementById('news-search');
   var countEl = document.getElementById('news-count');
+  var btnLabel = btn ? btn.querySelector('.btn-label') : null;
+  var loadedItems = [];
+  var storageKey = 'news-panel-collapsed';
   if(!btn || !newsCol || !listEl) return;
 
+  // Portal the news panel and side button to body so floating layout is isolated.
+  if(newsCol && newsCol.parentNode !== document.body){
+    document.body.appendChild(newsCol);
+  }
+  if(showBtn && showBtn.parentNode !== document.body){
+    document.body.appendChild(showBtn);
+  }
+  if(newsHost){
+    newsHost.style.display = 'none';
+  }
+
   function setState(collapsed){
+    body.classList.toggle('news-panel-collapsed', !!collapsed);
     if(collapsed){
       newsCol.classList.add('collapsed');
-      body.classList.add('news-collapsed');
       btn.setAttribute('aria-expanded','false');
-      btn.querySelector('.btn-label').textContent = 'Show';
+      if(btnLabel) btnLabel.textContent = 'Show';
     } else {
       newsCol.classList.remove('collapsed');
-      body.classList.remove('news-collapsed');
       btn.setAttribute('aria-expanded','true');
-      btn.querySelector('.btn-label').textContent = 'Hide';
+      if(btnLabel) btnLabel.textContent = 'Hide';
     }
-    if(showBtn){ showBtn.setAttribute('aria-hidden', String(!collapsed)); }
+    if(showBtn){
+      var sideLabel = showBtn.querySelector('span');
+      showBtn.setAttribute('aria-hidden', 'false');
+      showBtn.setAttribute('aria-expanded', String(!collapsed));
+      showBtn.setAttribute('title', collapsed ? 'Show News' : 'Hide News');
+      if(sideLabel) sideLabel.textContent = collapsed ? 'Show News' : 'Hide News';
+    }
+    try { localStorage.setItem(storageKey, collapsed ? '1' : '0'); } catch(_) {}
   }
-  btn.addEventListener('click', function(){ var collapsed = newsCol.classList.toggle('collapsed'); setState(collapsed); });
-  if(showBtn){ showBtn.addEventListener('click', function(){ setState(false); }); }
+  btn.addEventListener('click', function(){ setState(!newsCol.classList.contains('collapsed')); });
+  if(showBtn){ showBtn.addEventListener('click', function(){ setState(!newsCol.classList.contains('collapsed')); }); }
   // backdrop removed: no overlay click handler
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !newsCol.classList.contains('collapsed')) setState(true); });
-  setState(true);
+  // Restore previous preference; default is open.
+  try {
+    setState(localStorage.getItem(storageKey) === '1');
+  } catch(_) {
+    setState(false);
+  }
 
-  // Load structured news data from data/news.json
+  function escapeHtml(text){
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function parseDateValue(v){
+    var t = Date.parse(v || '');
+    return isNaN(t) ? 0 : t;
+  }
+
   function renderNews(items){
     if(!items || !items.length){ listEl.innerHTML = '<div class="news-empty">No news yet.</div>'; return; }
-    // sort by date desc
-    items.sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
-    var html = items.map(function(it){
-      var url = it.url ? (' href="' + it.url + '" target="_blank" rel="noopener"') : '';
-      var summary = it.summary ? ('<div class="news-summary">' + it.summary + '</div>') : '';
-      var tags = it.tags && it.tags.length ? ('<div class="news-tags">' + it.tags.map(function(t){ return '<span class="tag">' + t + '</span>'; }).join(' ') + '</div>') : '';
+    // render sorted copy so original data order remains untouched
+    var sortedItems = items.slice().sort(function(a,b){ return parseDateValue(b.date) - parseDateValue(a.date); });
+    var html = sortedItems.map(function(it){
+      var title = escapeHtml(it.title || 'Untitled');
+      var date = escapeHtml(it.date || '');
+      var summary = it.summary ? ('<div class="news-summary">' + escapeHtml(it.summary) + '</div>') : '';
+      var tags = Array.isArray(it.tags) && it.tags.length ? ('<div class="news-tags">' + it.tags.map(function(t){ return '<span class="tag">' + escapeHtml(t) + '</span>'; }).join(' ') + '</div>') : '';
+      var url = (typeof it.url === 'string') ? it.url.trim() : '';
+      var titleHtml = '<span class="news-title">' + title + '</span>';
+      if(url && url !== '#'){
+        titleHtml = '<a class="news-title" href="' + escapeHtml(url) + '" target="_blank" rel="noopener">' + title + '</a>';
+      }
       return '<article class="news-item">\n' +
-             '  <div class="news-date">' + it.date + '</div>\n' +
-             '  <a class="news-title"' + url + '>' + it.title + '</a>\n' +
+             '  <div class="news-date">' + date + '</div>\n' +
+             '  ' + titleHtml + '\n' +
              summary + '\n' + tags + '\n' +
              '</article>';
     }).join('\n');
     listEl.innerHTML = html;
   }
 
-  function loadNews(){
-    var src = 'data/news.json';
-    fetch(src).then(function(r){ if(!r.ok) throw new Error('Failed to load ' + src); return r.json(); }).then(function(json){ renderNews(json); }).catch(function(err){
-      // News load failed; show a simple static message so UI isn't empty
-      listEl.innerHTML = '<div class="news-error">(Failed to load news.)</div>';
-    });
-  }
-
-  // Attempt to load news; when opened via file:// fetch may be blocked by browser.
-  loadNews();
-
   // Filter/search support
   function filterNews(query, items){
     if(!query) return items;
     query = query.toLowerCase();
-    return items.filter(function(it){ return (it.title || '').toLowerCase().indexOf(query) !== -1 || (it.summary||'').toLowerCase().indexOf(query) !== -1; });
+    return items.filter(function(it){
+      var title = (it.title || '').toLowerCase();
+      var summary = (it.summary || '').toLowerCase();
+      var tags = Array.isArray(it.tags) ? it.tags.join(' ').toLowerCase() : '';
+      return title.indexOf(query) !== -1 || summary.indexOf(query) !== -1 || tags.indexOf(query) !== -1;
+    });
   }
 
   // Re-render with optional search value
@@ -104,20 +143,24 @@
     var q = (searchInput && searchInput.value) ? searchInput.value.trim() : '';
     var filtered = filterNews(q, items);
     renderNews(filtered);
-    if(countEl) countEl.textContent = filtered.length + ' 条';
+    if(countEl) countEl.textContent = filtered.length + ' item' + (filtered.length === 1 ? '' : 's');
   }
 
-  // store loaded items for search
-  var loadedItems = [];
   function loadNews(){
     var src = 'data/news.json';
-    fetch(src).then(function(r){ if(!r.ok) throw new Error('Failed to load ' + src); return r.json(); }).then(function(json){ loadedItems = json || []; renderWithSearch(loadedItems); }).catch(function(err){
-      // News load failed; show fallback
-      listEl.innerHTML = '<div class="news-error">(Failed to load news.)</div>';
+    fetch(src).then(function(r){ if(!r.ok) throw new Error('Failed to load ' + src); return r.json(); }).then(function(json){
+      loadedItems = Array.isArray(json) ? json : [];
+      renderWithSearch(loadedItems);
+    }).catch(function(err){
+      if(countEl) countEl.textContent = '0 items';
+      // News load failed; show fallback while keeping the panel usable.
+      listEl.innerHTML = '<div class="news-error">(Failed to load news. Run this page through the local server.)</div>';
     });
   }
 
   if(searchInput){ searchInput.addEventListener('input', function(){ renderWithSearch(loadedItems); }); }
+  // Attempt to load news; when opened via file:// fetch may be blocked by browser.
+  loadNews();
 
 })();
 </script>
