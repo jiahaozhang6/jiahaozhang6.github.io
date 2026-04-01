@@ -700,7 +700,7 @@ h3 {
 /* Let WeChat popup extend outside the profile card without clipping. */
 #profile {
   overflow: visible;
-  z-index: 2;
+  z-index: auto;
 }
 
 #profile::before,
@@ -757,48 +757,41 @@ h3 {
 }
 
 .wechat-popup {
-  display: none;
-  position: absolute;
-  top: auto;
-  bottom: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 8px;
+  display: none !important;
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%) !important;
+  padding: 10px;
   background: #ffffff;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  z-index: 1200;
+  box-shadow: 0 20px 48px rgba(10, 24, 39, 0.3);
+  z-index: 5000 !important;
 }
 
 .wechat-popup.is-fixed {
-  position: fixed !important;
-  left: 50% !important;
-  right: auto !important;
-  top: 50% !important;
-  bottom: auto !important;
-  transform: translate(-50%, -50%) !important;
-  max-height: calc(100vh - 24px);
-  overflow: auto;
+  z-index: 5001 !important;
 }
 
 .wechat-popup img {
-  width: 220px;
-  max-width: min(220px, calc(100vw - 32px));
-  max-height: min(340px, calc(100vh - 170px));
+  width: min(320px, calc(100vw - 56px));
+  max-width: min(320px, calc(100vw - 56px));
+  max-height: calc(100vh - 120px);
   height: auto;
   display: block;
   object-fit: contain;
 }
 
-.wechat-popup.is-fixed img {
-  max-width: min(280px, calc(100vw - 48px));
-  max-height: calc(100vh - 80px);
+.wechat-popup.open {
+  display: block !important;
 }
 
-.wechat-container:hover .wechat-popup,
-.wechat-container.open .wechat-popup {
-  display: block;
+.wechat-popup.is-fixed img {
+  max-width: min(320px, calc(100vw - 56px));
+  max-height: calc(100vh - 120px);
 }
 
 #research p,

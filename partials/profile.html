@@ -35,10 +35,17 @@
   var popup = container.querySelector('.wechat-popup');
   if(!link || !popup) return;
 
+  // Move popup to body so it is not trapped by section stacking contexts.
+  if(popup.parentNode !== document.body){
+    document.body.appendChild(popup);
+  }
+
   function closePopup(){
     container.classList.remove('open');
+    document.body.classList.remove('wechat-open');
     popup.setAttribute('aria-hidden','true');
     link.setAttribute('aria-expanded','false');
+    popup.classList.remove('open');
     popup.classList.remove('is-fixed');
     popup.style.left = '';
     popup.style.right = '';
@@ -48,57 +55,33 @@
   }
 
   function positionPopup(){
-    // Prefer showing the popup above the link, then adapt if the viewport is tight.
+    // Use a centered floating panel so the QR code is never covered by side drawers.
     popup.classList.remove('is-fixed');
+    popup.classList.add('is-fixed');
     popup.style.left = '50%';
     popup.style.right = 'auto';
-    popup.style.top = 'auto';
-    popup.style.bottom = 'calc(100% + 10px)';
-    popup.style.transform = 'translateX(-50%)';
-
-    var margin = 8;
-    var rect = popup.getBoundingClientRect();
-
-    if(rect.top < margin){
-      popup.style.top = 'calc(100% + 10px)';
-      popup.style.bottom = 'auto';
-      rect = popup.getBoundingClientRect();
-    }
-
-    if(rect.left < margin){
-      popup.style.left = '0';
-      popup.style.right = 'auto';
-      popup.style.transform = 'none';
-      rect = popup.getBoundingClientRect();
-    } else if(rect.right > window.innerWidth - margin){
-      popup.style.left = 'auto';
-      popup.style.right = '0';
-      popup.style.transform = 'none';
-      rect = popup.getBoundingClientRect();
-    }
-
-    if(rect.top < margin || rect.bottom > window.innerHeight - margin){
-      popup.classList.add('is-fixed');
-    }
+    popup.style.top = '50%';
+    popup.style.bottom = 'auto';
+    popup.style.transform = 'translate(-50%, -50%)';
   }
 
   function openPopup(){
     container.classList.add('open');
+    document.body.classList.add('wechat-open');
     popup.setAttribute('aria-hidden','false');
     link.setAttribute('aria-expanded','true');
+    popup.classList.add('open');
     positionPopup();
   }
 
   link.addEventListener('click', function(e){
     e.preventDefault();
-    openPopup();
+    if(container.classList.contains('open')) closePopup();
+    else openPopup();
   });
 
-  container.addEventListener('mouseenter', openPopup);
-  container.addEventListener('mouseleave', closePopup);
-
   document.addEventListener('click', function(e){
-    if(!container.contains(e.target)){
+    if(!container.contains(e.target) && !popup.contains(e.target)){
       closePopup();
     }
   });
