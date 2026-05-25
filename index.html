@@ -9,7 +9,7 @@
     <meta name="author" content="Jiahao Zhang">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260401-2">
+    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260526-2">
     
   </head>
   <!-- Developer notes: Major sections in this file (top to bottom):
@@ -39,6 +39,10 @@
           <a href="#patents">Patents</a>
           <a href="#honors">Honors</a>
         </nav>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+          <span class="theme-icon" aria-hidden="true"></span>
+          <span class="theme-text">Dark</span>
+        </button>
       </div>
     </header>
     <!-- Main container: centers page content and sets a max width for readable line lengths -->
@@ -54,8 +58,6 @@
       <!-- honors & visitors -->
       <tr><td colspan="2"><div id="honors" data-include="partials/honors.html"></div></td></tr>
       
-      <!-- news (aside) -->
-      <tr><td colspan="2"><div id="news" data-include="partials/news.html"></div></td></tr>
       <!-- university logos -->
       <tr><td colspan="2"><div id="affiliations" data-include="partials/logos.html"></div></td></tr>
       <!-- visitor map -->
@@ -132,6 +134,37 @@
       toggle.addEventListener('click', function(e){ e.stopPropagation(); setOpen(!nav.classList.contains('open')); });
       // Close nav when clicking outside
       document.addEventListener('click', function(e){ if(!nav.contains(e.target) && !toggle.contains(e.target)) setOpen(false); });
+    })();
+    </script>
+    <script>
+    // Manual light/dark theme switcher. Preference is saved locally.
+    (function(){
+      var key = 'preferred-theme';
+      var root = document.documentElement;
+      var btn = document.getElementById('theme-toggle');
+      var text = btn ? btn.querySelector('.theme-text') : null;
+
+      function applyTheme(theme){
+        var dark = theme === 'dark';
+        root.setAttribute('data-theme', dark ? 'dark' : 'light');
+        if(btn){
+          btn.setAttribute('aria-pressed', String(dark));
+          btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+        }
+        if(text) text.textContent = dark ? 'Light' : 'Dark';
+      }
+
+      var saved = null;
+      try { saved = localStorage.getItem(key); } catch(_) {}
+      applyTheme(saved === 'dark' ? 'dark' : 'light');
+
+      if(btn){
+        btn.addEventListener('click', function(){
+          var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          applyTheme(next);
+          try { localStorage.setItem(key, next); } catch(_) {}
+        });
+      }
     })();
     </script>
    
