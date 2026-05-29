@@ -838,30 +838,38 @@ hr {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 24px;
-  margin: 16px auto 22px;
+  gap: 18px;
+  margin: 14px auto 20px;
 }
 
 .institution-logos a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-bottom: 0;
+  background: transparent;
 }
 
 .institution-logos img {
   width: auto;
-  max-width: 220px;
-  max-height: 120px;
   object-fit: contain;
-  filter: saturate(0.86) contrast(1.02);
+  mix-blend-mode: multiply;
+  filter: grayscale(0.08) saturate(0.86) contrast(1.14);
+  opacity: 0.82;
+}
+
+.institution-logos.single {
+  margin-bottom: 10px;
 }
 
 .institution-logos.single img {
-  max-width: 330px;
-  max-height: 160px;
+  max-width: 280px;
+  max-height: 92px;
 }
 
 .institution-logos.pair img {
-  max-width: 92px;
-  max-height: 70px;
+  max-width: 76px;
+  max-height: 58px;
 }
 
 .wechat-container {
@@ -896,9 +904,14 @@ body.wechat-open::after {
   background: rgba(3, 9, 15, 0.42);
 }
 
-:root[data-theme="dark"] .profile-photo,
-:root[data-theme="dark"] .institution-logos img {
+:root[data-theme="dark"] .profile-photo {
   filter: brightness(0.92) contrast(1.05);
+}
+
+:root[data-theme="dark"] .institution-logos img {
+  mix-blend-mode: screen;
+  filter: grayscale(0.18) invert(1) brightness(0.88) contrast(1.08);
+  opacity: 0.68;
 }
 
 @keyframes circuitDrift {
@@ -1084,6 +1097,18 @@ body.wechat-open::after {
 
   .period-title {
     margin-bottom: 7px;
+  }
+
+  .institution-logos {
+    gap: 14px;
+  }
+
+  .institution-logos.single img {
+    max-width: min(78vw, 260px);
+  }
+
+  .institution-logos.pair img {
+    max-width: 70px;
   }
 }
 
