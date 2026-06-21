@@ -430,7 +430,7 @@ p {
 }
 
 .name::after {
-  content: "Generative Vision / Multimodal Video / Embodied Intelligence / 3D Generation";
+  content: "Video Generation / Long Video Generation / Video World Models / Distillation / Memory";
   display: block;
   margin-top: 9px;
   color: var(--brand);
@@ -564,7 +564,7 @@ p {
 
 .console-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .console-grid span,
@@ -697,13 +697,13 @@ p {
 
 .research-stack {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 11px;
   margin: 15px 0 12px;
 }
 
 .research-focus {
-  min-height: 158px;
+  min-height: 176px;
   display: flex;
   flex-direction: column;
   padding: 13px;
@@ -1093,7 +1093,7 @@ body.wechat-open::after {
   }
 
   .console-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
