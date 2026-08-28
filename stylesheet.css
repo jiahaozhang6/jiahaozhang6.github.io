@@ -326,7 +326,8 @@ figure {
 #publications,
 #patents,
 #honors,
-#affiliations {
+#affiliations,
+#heatmap {
   scroll-margin-top: 86px;
   padding: 22px 0;
   border-top: 1px solid var(--line-soft);
