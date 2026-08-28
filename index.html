@@ -9,16 +9,18 @@
     <meta name="author" content="Jiahao Zhang">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260621-1">
+    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260828-1">
     
   </head>
   <!-- Developer notes: Major sections in this file (top to bottom):
     - Profile / Contact
     - Research
     - Personal Interests
+    - Publications (project/paper entries are each a <tr> block)
     - Patents (ordered list)
     - Honors & Awards (grouped by degree/period)
     - Visitor map and footer
+    To add a new publication, copy an existing <tr> inside the Publications table and update image/links/text.
     Prefer editing content only (text/links). For style changes, update `stylesheet.css` or the inline <style> at the top.
   -->
 
@@ -39,6 +41,7 @@
         <nav id="primary-nav" class="nav-links" aria-label="Primary">
           <a href="#profile">Profile</a>
           <a href="#research">Research</a>
+          <a href="#publications">Publications</a>
           <a href="#patents">Patents</a>
           <a href="#honors">Honors</a>
         </nav>
@@ -51,6 +54,7 @@
     <main class="main-wrapper">
       <section id="profile" data-include="partials/profile.html"></section>
       <section id="research" data-include="partials/research.html"></section>
+      <section id="publications" data-include="partials/publications.html"></section>
       <section id="patents" data-include="partials/patents.html"></section>
       <section id="honors" data-include="partials/honors.html"></section>
       <section id="affiliations" data-include="partials/logos.html"></section>

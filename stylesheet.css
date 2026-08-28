@@ -798,6 +798,10 @@ em {
   object-fit: cover;
 }
 
+.publication-thumbnail img.publication-thumbnail__image--contain {
+  object-fit: contain;
+}
+
 .publication-thumbnail__overlay {
   position: absolute;
   inset: 0;
