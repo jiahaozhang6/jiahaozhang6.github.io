@@ -327,10 +327,34 @@ figure {
 #patents,
 #honors,
 #affiliations,
-#heatmap {
+#visitors {
   scroll-margin-top: 86px;
   padding: 22px 0;
   border-top: 1px solid var(--line-soft);
+}
+
+.visitor-map {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.visitor-map-link {
+  display: inline-block;
+  max-width: 100%;
+  border-bottom: 0;
+}
+
+.visitor-map-link:hover,
+.visitor-map-link:focus-visible {
+  border-bottom: 0;
+}
+
+.visitor-map-image {
+  width: auto;
+  max-width: 100%;
+  height: auto;
 }
 
 #profile {
