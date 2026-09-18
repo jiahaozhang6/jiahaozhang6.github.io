@@ -1002,9 +1002,9 @@ body.wechat-open::after {
 }
 
 :root[data-theme="dark"] .institution-logos img {
-  mix-blend-mode: screen;
-  filter: grayscale(0.18) invert(1) brightness(0.88) contrast(1.08);
-  opacity: 0.68;
+  mix-blend-mode: normal;
+  filter: brightness(1.12) saturate(0.95);
+  opacity: 0.94;
 }
 
 @keyframes circuitDrift {
