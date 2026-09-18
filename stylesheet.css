@@ -243,6 +243,20 @@ figure {
   color: var(--brand);
 }
 
+.nav-links .nav-cv-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  color: var(--brand-deep);
+}
+
+.nav-cv-date {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
 .theme-toggle,
 .nav-toggle {
   appearance: none;
@@ -419,56 +433,6 @@ p {
 
 .profile-copy {
   min-width: 0;
-}
-
-.profile-title-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
-}
-
-.profile-title-row .name {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.cv-title-link {
-  flex: 0 0 auto;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-  margin-top: 2px;
-  padding: 8px 10px 7px;
-  color: var(--brand-deep);
-  border: 1px solid var(--line);
-  background: var(--surface-code);
-  box-shadow: 4px 4px 0 color-mix(in srgb, var(--brand), transparent 86%);
-  font-family: var(--font-mono);
-  line-height: 1.2;
-  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
-}
-
-.cv-title-link:hover,
-.cv-title-link:focus-visible {
-  color: var(--brand);
-  border-color: var(--brand);
-  transform: translate(-1px, -1px);
-  box-shadow: 6px 6px 0 color-mix(in srgb, var(--brand), transparent 82%);
-}
-
-.cv-title-label {
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-}
-
-.cv-title-date {
-  color: var(--muted);
-  font-size: 9px;
-  font-weight: 700;
-  white-space: nowrap;
 }
 
 .name {
@@ -1267,19 +1231,6 @@ body.wechat-open::after {
 
   .name {
     font-size: 29px;
-  }
-
-  .profile-title-row {
-    display: block;
-  }
-
-  .profile-title-row .name {
-    margin-bottom: 10px;
-  }
-
-  .cv-title-link {
-    align-items: flex-start;
-    margin: 0 0 14px;
   }
 
   .name::after {
