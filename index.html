@@ -9,7 +9,7 @@
     <meta name="author" content="Jiahao Zhang">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260920-2">
+    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260920-3">
     
   </head>
   <!-- Developer notes: Major sections in this file (top to bottom):
@@ -125,6 +125,8 @@
         else { nav.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
       }
       toggle.addEventListener('click', function(e){ e.stopPropagation(); setOpen(!nav.classList.contains('open')); });
+      nav.addEventListener('click', function(e){ if(e.target.closest('a')) setOpen(false); });
+      document.addEventListener('keydown', function(e){ if(e.key === 'Escape') setOpen(false); });
       // Close nav when clicking outside
       document.addEventListener('click', function(e){ if(!nav.contains(e.target) && !toggle.contains(e.target)) setOpen(false); });
     })();
