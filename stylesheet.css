@@ -800,15 +800,6 @@ em {
   aspect-ratio: 16 / 10;
 }
 
-.publication-thumbnail--wide {
-  aspect-ratio: 2.17 / 1;
-}
-
-.publication-thumbnail--portrait {
-  max-width: 168px;
-  aspect-ratio: 3 / 4;
-}
-
 .publication-thumbnail--fluid {
   max-width: 225px;
   aspect-ratio: 4 / 3;
@@ -1191,10 +1182,6 @@ body.wechat-open::after {
   .publication-thumbnail--fluid {
     max-width: 280px;
     margin: 0 auto 12px;
-  }
-
-  .publication-thumbnail--portrait {
-    max-width: 190px;
   }
 
   .period-title {
