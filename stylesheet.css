@@ -816,6 +816,49 @@ p {
   font-weight: 780;
 }
 
+.publication-entry {
+  line-height: 1.5;
+}
+
+.publication-title {
+  line-height: 1.45;
+}
+
+.publication-authors,
+.publication-venue {
+  margin-top: 2px;
+}
+
+.publication-authors a {
+  color: inherit;
+  border-bottom-color: transparent;
+}
+
+.publication-authors a:hover {
+  color: var(--brand);
+  border-bottom-color: currentColor;
+}
+
+.author-self {
+  color: var(--brand);
+  font-weight: 780;
+}
+
+.publication-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+}
+
+.publication-links span {
+  color: var(--muted);
+}
+
+.publication-summary {
+  margin: 11px 0 0;
+}
+
 em {
   color: var(--ink-soft);
 }
