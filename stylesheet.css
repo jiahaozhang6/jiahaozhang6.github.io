@@ -1117,7 +1117,7 @@ body.wechat-open::after {
 
 .footer-grid {
   display: flex;
-  width: min(100%, 280px);
+  width: min(100%, 240px);
   margin: 0 auto;
   align-items: stretch;
   flex-direction: column;
