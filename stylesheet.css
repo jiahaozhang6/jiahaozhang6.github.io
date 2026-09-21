@@ -469,6 +469,12 @@ p {
   color: var(--muted);
 }
 
+.profile-links-break {
+  flex-basis: 100%;
+  width: 0;
+  height: 0;
+}
+
 .profile-links a,
 .wechat-link {
   font-family: var(--font-mono);
