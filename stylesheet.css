@@ -1117,7 +1117,7 @@ body.wechat-open::after {
 
 .footer-grid {
   display: flex;
-  width: min(100%, 200px);
+  width: min(100%, 420px);
   margin: 0 auto;
   align-items: stretch;
   flex-direction: column;
@@ -1143,8 +1143,10 @@ body.wechat-open::after {
 
 .visitor-map__embed {
   display: block;
-  width: 100%;
+  width: min(100%, 200px);
   max-width: 100%;
+  margin-right: auto;
+  margin-left: auto;
   overflow: hidden;
 }
 
