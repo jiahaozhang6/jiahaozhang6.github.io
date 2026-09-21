@@ -1141,30 +1141,16 @@ body.wechat-open::after {
 }
 
 .visitor-map__embed {
-  display: flex;
-  width: 104px;
-  height: 104px;
+  display: block;
+  width: 100%;
   max-width: 100%;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
 }
 
-.visitor-map__embed .mmvst_outer,
-.visitor-map__embed .mmvst_inner,
-.visitor-map__embed .mmvst_globe {
-  width: 104px !important;
-  height: 104px !important;
-}
-
-.visitor-map__embed > *,
-.visitor-map__embed iframe,
-.visitor-map__embed canvas,
-.visitor-map__embed img,
-.visitor-map__embed object,
-.visitor-map__embed embed {
+.visitor-map__embed #mapmyvisitors-widget,
+.visitor-map__embed .mapmyvisitors-map-container,
+.visitor-map__embed .mapmyvisitors-map {
   max-width: 100% !important;
-  max-height: 104px !important;
   margin-right: auto !important;
   margin-left: auto !important;
 }
