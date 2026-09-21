@@ -1063,6 +1063,10 @@ hr {
   max-height: 58px;
 }
 
+.institution-logos.pair {
+  margin-bottom: 6px;
+}
+
 .wechat-container {
   position: relative;
 }
@@ -1103,6 +1107,72 @@ body.wechat-open::after {
   mix-blend-mode: normal;
   filter: brightness(1.12) saturate(0.95);
   opacity: 0.94;
+}
+
+.site-footer {
+  margin-top: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.footer-grid {
+  display: flex;
+  width: min(100%, 420px);
+  margin: 0 auto;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.visitor-map {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-info {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 14px 20px;
+  text-align: center;
+}
+
+.visitor-map__embed {
+  display: flex;
+  width: 104px;
+  height: 104px;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.visitor-map__embed .mmvst_outer,
+.visitor-map__embed .mmvst_inner,
+.visitor-map__embed .mmvst_globe {
+  width: 104px !important;
+  height: 104px !important;
+}
+
+.visitor-map__embed > *,
+.visitor-map__embed iframe,
+.visitor-map__embed canvas,
+.visitor-map__embed img,
+.visitor-map__embed object,
+.visitor-map__embed embed {
+  max-width: 100% !important;
+  max-height: 104px !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+@media (max-width: 560px) {
+  .site-footer {
+    padding-top: 10px;
+  }
 }
 
 @keyframes circuitDrift {
