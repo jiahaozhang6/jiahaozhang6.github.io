@@ -11,8 +11,11 @@
   <tr>
     <td class="pad-16 col-20 vcenter">
       <div class="publication-thumbnail">
-        <img class="responsive-img" src="images/panotask_overview.jpg" alt="PanoTask framework overview" loading="lazy" decoding="async">
+        <a class="thumbnail-link" href="images/panotask_overview.jpg" target="_blank" rel="noopener noreferrer" aria-label="Open full-size PanoTask figure">
+          <img class="responsive-img" src="images/panotask_overview.jpg" alt="PanoTask framework overview" width="2828" height="1302" loading="lazy" decoding="async">
+        </a>
       </div>
+      <div class="thumbnail-actions"><a href="images/panotask_overview.jpg" target="_blank" rel="noopener noreferrer">View full image</a></div>
     </td>
     <td class="pad-8 col-80 vcenter">
       <a href="https://faculty.runi.ac.il/arik/site/papers/PanoTask-task-driven-panoramic-video-generation/">
@@ -35,24 +38,20 @@
       </p>
     </td>
   </tr>
-  <tr onmouseout="mksnet_stop()" onmouseover="mksnet_start()">
+  <tr>
     <td class="pad-16 col-20 vcenter">
       <div class="publication-thumbnail">
-        <img class="responsive-img" src="images/mksnet_image.png" alt="MKSNet model overview" loading="lazy" decoding="async">
-        <div class="publication-thumbnail__overlay" id="mksnet_image">
-          <img class="responsive-img" src="images/mksnet_after.png" alt="MKSNet attention map" loading="lazy" decoding="async">
-        </div>
+        <a class="thumbnail-link" href="images/mksnet_image.png" target="_blank" rel="noopener noreferrer" aria-label="Open full-size MKSNet image">
+          <img class="responsive-img" src="images/mksnet_image.png" alt="MKSNet model overview" width="203" height="279" loading="lazy" decoding="async">
+        </a>
+        <a class="publication-thumbnail__overlay thumbnail-link" href="images/mksnet_after.png" target="_blank" rel="noopener noreferrer" aria-label="Open MKSNet attention map">
+          <img class="responsive-img" src="images/mksnet_after.png" alt="MKSNet attention map" width="208" height="281" loading="lazy" decoding="async">
+        </a>
       </div>
-      <script type="text/javascript">
-        function mksnet_start() {
-          document.getElementById('mksnet_image').style.opacity = "1";
-        }
-
-        function mksnet_stop() {
-          document.getElementById('mksnet_image').style.opacity = "0";
-        }
-        mksnet_stop();
-      </script>
+      <div class="thumbnail-actions">
+        <a href="images/mksnet_image.png" target="_blank" rel="noopener noreferrer">View full image</a>
+        <a href="images/mksnet_after.png" target="_blank" rel="noopener noreferrer">Attention map</a>
+      </div>
     </td>
     <td class="pad-8 col-80 vcenter">
       <a href="https://doi.org/10.1007/978-981-96-2061-6_29">

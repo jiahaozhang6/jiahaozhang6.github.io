@@ -805,6 +805,14 @@ em {
   aspect-ratio: 4 / 3;
 }
 
+.thumbnail-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-bottom: 0;
+  cursor: zoom-in;
+}
+
 .publication-thumbnail img,
 .publication-thumbnail__overlay img {
   width: 100%;
@@ -816,15 +824,19 @@ em {
   position: absolute;
   inset: 0;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 220ms ease;
 }
 
-.publication-thumbnail:hover .publication-thumbnail__overlay {
-  opacity: 1;
+@media (hover: hover) and (pointer: fine) {
+  .publication-thumbnail:hover .publication-thumbnail__overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 
-.patent-img {
-  transition: opacity 220ms ease;
+.thumbnail-actions {
+  display: none;
 }
 
 #honors .full-table + .full-table tr + tr td {
@@ -1180,8 +1192,27 @@ body.wechat-open::after {
 
   .publication-thumbnail,
   .publication-thumbnail--fluid {
-    max-width: 280px;
-    margin: 0 auto 12px;
+    max-width: 320px;
+    margin: 0 auto 7px;
+    background: var(--surface-code);
+  }
+
+  .publication-thumbnail {
+    aspect-ratio: 4 / 3;
+  }
+
+  .thumbnail-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-bottom: 8px;
+  }
+
+  .thumbnail-actions a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
   }
 
   .period-title {

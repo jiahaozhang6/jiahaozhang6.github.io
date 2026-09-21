@@ -8,26 +8,20 @@
 
 <table class="full-table spaced-rows">
 <tbody>
-  <tr onmouseout="patent_census_stop()" onmouseover="patent_census_start()">
+  <tr>
     <td class="pad-16 vcenter patent-cell-left">
       <div class="publication-thumbnail publication-thumbnail--fluid">
-        <img id="patent_census_base" class="patent-img responsive-img" src="images/patent_census1.png" alt="Patent Census Diagram" loading="lazy" decoding="async">
-        <div class="publication-thumbnail__overlay" id="patent_census_image">
-          <img class="responsive-img" src="images/patent_census2.png" alt="Patent Census Detail" loading="lazy" decoding="async">
-        </div>
+        <a class="thumbnail-link" href="images/patent_census1.png" target="_blank" rel="noopener noreferrer" aria-label="查看专利原图">
+          <img class="responsive-img" src="images/patent_census1.png" alt="Patent Census Diagram" width="1000" height="549" loading="lazy" decoding="async">
+        </a>
+        <a class="publication-thumbnail__overlay thumbnail-link" href="images/patent_census2.png" target="_blank" rel="noopener noreferrer" aria-label="查看专利细节图">
+          <img class="responsive-img" src="images/patent_census2.png" alt="Patent Census Detail" width="1000" height="490" loading="lazy" decoding="async">
+        </a>
       </div>
-      <script type="text/javascript">
-        function patent_census_start() {
-          document.getElementById('patent_census_image').style.opacity = "1";
-          document.getElementById('patent_census_base').style.opacity = "0";
-        }
-
-        function patent_census_stop() {
-          document.getElementById('patent_census_image').style.opacity = "0";
-          document.getElementById('patent_census_base').style.opacity = "1";
-        }
-        patent_census_stop();
-      </script>
+      <div class="thumbnail-actions">
+        <a href="images/patent_census1.png" target="_blank" rel="noopener noreferrer">查看原图</a>
+        <a href="images/patent_census2.png" target="_blank" rel="noopener noreferrer">查看细节图</a>
+      </div>
     </td>
     <td class="pad-8 vcenter patent-cell-right">
       <a href="https://pss-system.cponline.cnipa.gov.cn/">
