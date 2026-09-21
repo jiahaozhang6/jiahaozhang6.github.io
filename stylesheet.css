@@ -813,11 +813,21 @@ em {
   cursor: zoom-in;
 }
 
+.thumbnail-link--video {
+  cursor: pointer;
+}
+
 .publication-thumbnail img,
-.publication-thumbnail__overlay img {
+.publication-thumbnail__overlay img,
+.publication-preview-video {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.publication-preview-video {
+  display: block;
+  background: var(--surface-code);
 }
 
 .publication-thumbnail__overlay {
