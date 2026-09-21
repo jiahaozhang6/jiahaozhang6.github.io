@@ -469,12 +469,6 @@ p {
   color: var(--muted);
 }
 
-.profile-links-break {
-  flex-basis: 100%;
-  width: 0;
-  height: 0;
-}
-
 .profile-links a,
 .wechat-link {
   font-family: var(--font-mono);
@@ -512,6 +506,43 @@ p {
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.45;
+}
+
+.portrait-resource-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 6px auto 0;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.055em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.portrait-resource-links a {
+  color: var(--brand);
+  border-bottom: 0;
+}
+
+.portrait-resource-links a::after {
+  content: "↗";
+  margin-left: 3px;
+  color: var(--muted);
+  font-size: 0.85em;
+}
+
+.portrait-resource-links a:hover {
+  color: var(--brand);
+  border-bottom: 0;
+}
+
+.portrait-resource-links span {
+  color: var(--muted);
+  opacity: 0.55;
 }
 
 .research-console {
@@ -1331,6 +1362,11 @@ body.wechat-open::after {
 
   .portrait-caption {
     margin-top: 8px;
+  }
+
+  .portrait-resource-links {
+    margin-top: 6px;
+    font-size: 9px;
   }
 
   .profile-intro {
