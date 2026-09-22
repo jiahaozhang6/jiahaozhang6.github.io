@@ -13,7 +13,8 @@
     <link rel="preload" as="video" href="videos/panotask_camera_work.mp4" type="video/mp4">
     <link rel="preload" as="image" href="images/mksnet_image_preview.webp" type="image/webp">
     <link rel="preload" as="image" href="images/patent_census1_preview.webp" type="image/webp">
-    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260922-2">
+    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260922-3">
+    <script src="visitor-origins.js?v=20260922-1" defer></script>
     
   </head>
   <!-- Developer notes: Major sections in this file (top to bottom):
@@ -67,16 +68,26 @@
       <section id="affiliations" data-include="partials/logos.html"></section>
       <footer class="site-footer small">
         <div class="footer-grid">
-          <div class="visitor-map" aria-label="Visitor map">
-            <div class="visitor-map__embed">
-              <iframe
-                class="visitor-map__frame"
-                src="visitor-map.html?v=20260922-1"
-                title="Visitor map"
-                width="180"
-                height="121">
-              </iframe>
+          <div class="visitor-origins" id="visitor-origins">
+            <div class="visitor-origins__panel" id="visitor-origins-panel" hidden>
+              <div class="visitor-origins__head">
+                <canvas id="visitor-origins-map" width="120" height="120" aria-hidden="true"></canvas>
+                <div>
+                  <span class="visitor-origins__title">Visitor origins</span>
+                  <span class="visitor-origins__summary"><span id="visitor-country-count">—</span> countries/regions</span>
+                </div>
+              </div>
+              <ol class="visitor-origins__list" id="visitor-origins-list">
+                <li class="visitor-origins__empty">Loading…</li>
+              </ol>
+              <p class="visitor-origins__scan" id="visitor-origins-scan" hidden>Scanning visitor origins…</p>
+              <p class="visitor-origins__privacy">Only aggregate country/region counts are stored. No IP address, city, cookie, or per-visit profile is retained.</p>
             </div>
+            <button class="visitor-origins__toggle" id="visitor-origins-toggle" type="button" aria-expanded="false" aria-controls="visitor-origins-panel">
+              <canvas id="visitor-origins-globe" width="26" height="26" aria-hidden="true"></canvas>
+              <span class="visitor-origins__total"><span id="visitor-total-count">—</span> visits</span>
+              <span class="visitor-origins__caret" aria-hidden="true">▾</span>
+            </button>
           </div>
           <div class="footer-info">
             <div>Last updated: <span id="last-updated"></span></div>
