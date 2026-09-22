@@ -1460,6 +1460,10 @@ body.wechat-open::after {
   transform: translate(var(--shiba-look-x), var(--shiba-look-y)) scale(1.08);
 }
 
+.shiba-pet.is-touch-looking .shiba-pet__sprite {
+  transform: none;
+}
+
 .shiba-pet__sparkle,
 .shiba-pet__heart {
   position: absolute;
@@ -1614,6 +1618,13 @@ body.wechat-open::after {
   animation: none;
 }
 
+@media (hover: none), (pointer: coarse) {
+  .shiba-pet__button {
+    cursor: default;
+    touch-action: none;
+  }
+}
+
 @keyframes shibaIdle {
   0%, 100% { transform: translateY(0) scale(1); }
   50% { transform: translateY(-2px) scale(1.008); }
@@ -1701,12 +1712,6 @@ body.wechat-open::after {
     gap: 2px;
     padding: 0 14px 20px;
     text-align: center;
-  }
-
-  body.visitor-panel-open .shiba-pet {
-    opacity: 0;
-    transform: translateY(18px);
-    pointer-events: none;
   }
 
   .shiba-pet {

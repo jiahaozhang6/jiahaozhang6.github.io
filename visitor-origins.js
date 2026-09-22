@@ -56,6 +56,12 @@
     ['EG', 26.5, 29.9, 'Egypt'], ['SA', 24.1, 44.5, 'Saudi Arabia']
   ];
 
+  // Abacus returns HTTP 404 for a counter that has never been created. Only
+  // request established origin counters so opening the panel does not flood
+  // the browser console with expected "not found" responses. The current
+  // visitor's country is still counted and rendered immediately below.
+  var establishedOriginCodes = ['CN', 'US', 'JP', 'IN', 'TW', 'HK', 'SG', 'RU', 'AR'];
+
   /* Simplified coastlines used by both globes. Coordinates are [longitude, latitude]. */
   var landOutlines = [
     [[-168, 72], [-150, 70], [-140, 61], [-130, 55], [-124, 48], [-117, 32], [-107, 23], [-97, 18], [-89, 20], [-82, 25], [-80, 31], [-74, 40], [-66, 46], [-58, 52], [-62, 59], [-79, 63], [-92, 70], [-112, 73], [-138, 72]],
@@ -268,7 +274,7 @@
     scanStarted = true;
     scanElement.hidden = false;
 
-    var queue = countries.map(function (country) { return country[0]; }).filter(function (code) {
+    var queue = establishedOriginCodes.filter(function (code) {
       return code !== currentCountry;
     });
 

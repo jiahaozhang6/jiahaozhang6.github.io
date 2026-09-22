@@ -9,11 +9,10 @@
     <meta name="author" content="Jiahao Zhang">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
-    <link rel="preload" as="video" href="videos/panotask_camera_work.mp4" type="video/mp4">
     <link rel="preload" as="image" href="images/mksnet_image_preview.webp" type="image/webp">
     <link rel="preload" as="image" href="images/patent_census1_preview.webp" type="image/webp">
-    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260922-13">
-    <script src="visitor-origins.js?v=20260922-8" defer></script>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260922-16">
+    <script src="visitor-origins.js?v=20260922-9" defer></script>
     
   </head>
   <!-- Developer notes: Major sections in this file (top to bottom):
@@ -285,15 +284,20 @@
       var hideTimer = null;
       var actionTimer = null;
       var clickTimer = null;
+      var touchLookTimer = null;
       var holdTimer = null;
       var idleTimer = null;
       var raf = null;
       var pointerX = 0;
       var pointerY = 0;
       var activePointer = null;
+      var activePointerType = '';
+      var touchDragReady = false;
       var startX = 0;
       var startY = 0;
       var lastDragX = 0;
+      var dragStartRight = 0;
+      var dragStartBottom = 0;
       var dragging = false;
       var longPressed = false;
       var ignoreClick = false;
@@ -301,6 +305,8 @@
       var spriteMode = '';
       var lastLookFrame = -1;
       var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var desktopPointerMode = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      var touchLayoutWidth = window.innerWidth;
 
       function setSpriteFrame(row, column){
         var x = (column / 7) * 100;
@@ -316,7 +322,7 @@
       function playSprite(name, options){
         clearTimeout(spriteTimer);
         spriteTimer = null;
-        pet.classList.remove('is-looking');
+        pet.classList.remove('is-looking', 'is-touch-looking');
         spriteMode = name;
         lastLookFrame = -1;
         var frames = spriteAnimations[name] || spriteAnimations.idle;
@@ -395,26 +401,36 @@
         return Math.max(min, Math.min(max, value));
       }
 
-      function pointerIsNearPet(){
+      function lookRadius(){
+        if(desktopPointerMode){
+          return clamp(window.innerWidth * 0.2, 190, 260);
+        }
+        return clamp(window.innerWidth * 0.42, 135, 185);
+      }
+
+      function pointerIsNearPet(clientX, clientY){
         var rect = button.getBoundingClientRect();
         var centerX = rect.left + rect.width * 0.53;
         var centerY = rect.top + rect.height * 0.43;
-        return Math.hypot(pointerX - centerX, pointerY - centerY) < 210;
+        var targetX = typeof clientX === 'number' ? clientX : pointerX;
+        var targetY = typeof clientY === 'number' ? clientY : pointerY;
+        return Math.hypot(targetX - centerX, targetY - centerY) <= lookRadius();
       }
 
       function resumeAmbientSprite(){
         if(activePointer === null && pointerIsNearPet()){
           updateLook();
         }else{
-          pet.classList.remove('is-curious', 'is-looking');
+          pet.classList.remove('is-curious', 'is-looking', 'is-touch-looking');
           playSprite('idle');
         }
       }
 
-      function setPetPosition(clientX, clientY, save){
+      function positionPet(right, bottom, save){
         var rect = pet.getBoundingClientRect();
-        var right = clamp(window.innerWidth - clientX - rect.width / 2, 4, Math.max(4, window.innerWidth - rect.width - 4));
-        var bottom = clamp(window.innerHeight - clientY - rect.height / 2, 4, Math.max(4, window.innerHeight - rect.height - 4));
+        var edgePadding = desktopPointerMode ? 4 : 8;
+        right = clamp(right, edgePadding, Math.max(edgePadding, window.innerWidth - rect.width - edgePadding));
+        bottom = clamp(bottom, edgePadding, Math.max(edgePadding, window.innerHeight - rect.height - edgePadding));
         pet.style.right = right + 'px';
         pet.style.bottom = bottom + 'px';
         if(save){
@@ -422,14 +438,91 @@
         }
       }
 
-      try {
-        var savedPosition = JSON.parse(localStorage.getItem('shiba-pet-position') || 'null');
-        if(savedPosition && Number.isFinite(savedPosition.right) && Number.isFinite(savedPosition.bottom)){
-          var petRect = pet.getBoundingClientRect();
-          pet.style.right = clamp(savedPosition.right, 4, Math.max(4, window.innerWidth - petRect.width - 4)) + 'px';
-          pet.style.bottom = clamp(savedPosition.bottom, 4, Math.max(4, window.innerHeight - petRect.height - 4)) + 'px';
+      function currentPetPosition(){
+        var rect = pet.getBoundingClientRect();
+        return {
+          right: window.innerWidth - rect.right,
+          bottom: window.innerHeight - rect.bottom
+        };
+      }
+
+      function movePetWithPointer(clientX, clientY, save){
+        positionPet(
+          dragStartRight - (clientX - startX),
+          dragStartBottom - (clientY - startY),
+          save
+        );
+      }
+
+      function stabilizeTouchPetPosition(){
+        activePointer = null;
+        activePointerType = '';
+        touchDragReady = false;
+        dragging = false;
+        longPressed = false;
+        clearTimeout(holdTimer);
+        pet.classList.remove('is-held', 'is-dragging', 'is-curious', 'is-looking', 'is-touch-looking');
+        pet.style.setProperty('--shiba-look-x', '0px');
+        pet.style.setProperty('--shiba-look-y', '0px');
+        var position = currentPetPosition();
+        positionPet(position.right, position.bottom, false);
+      }
+
+      if(desktopPointerMode){
+        try {
+          var savedPosition = JSON.parse(localStorage.getItem('shiba-pet-position') || 'null');
+          if(savedPosition && Number.isFinite(savedPosition.right) && Number.isFinite(savedPosition.bottom)){
+            var petRect = pet.getBoundingClientRect();
+            pet.style.right = clamp(savedPosition.right, 4, Math.max(4, window.innerWidth - petRect.width - 4)) + 'px';
+            pet.style.bottom = clamp(savedPosition.bottom, 4, Math.max(4, window.innerHeight - petRect.height - 4)) + 'px';
+          }
+        } catch(_) {}
+      }else{
+        // Mobile starts at the CSS-defined corner, independent of a desktop
+        // position saved in localStorage. Afterwards it stays where the user
+        // dragged it for the lifetime of the page.
+        window.addEventListener('resize', function(){
+          if(Math.abs(window.innerWidth - touchLayoutWidth) > 80){
+            touchLayoutWidth = window.innerWidth;
+            window.requestAnimationFrame(stabilizeTouchPetPosition);
+          }
+        }, { passive: true });
+        window.addEventListener('orientationchange', function(){
+          window.setTimeout(function(){
+            touchLayoutWidth = window.innerWidth;
+            stabilizeTouchPetPosition();
+          }, 160);
+        }, { passive: true });
+      }
+
+      function showTouchLook(clientX, clientY){
+        if(desktopPointerMode || activePointer !== null || hasActiveAction()) return;
+        if(!pointerIsNearPet(clientX, clientY)){
+          clearTimeout(touchLookTimer);
+          pet.classList.remove('is-looking', 'is-touch-looking', 'is-curious');
+          if(spriteMode === 'look') playSprite('idle');
+          return;
         }
-      } catch(_) {}
+        var rect = button.getBoundingClientRect();
+        var centerX = rect.left + rect.width * 0.53;
+        var centerY = rect.top + rect.height * 0.43;
+        var angle = Math.atan2(clientY - centerY, clientX - centerX);
+        var lookIndex = (Math.round(((angle + Math.PI / 2) / (Math.PI * 2)) * 16) + 16) % 16;
+        clearTimeout(spriteTimer);
+        clearTimeout(touchLookTimer);
+        spriteTimer = null;
+        spriteMode = 'look';
+        lastLookFrame = lookIndex;
+        pet.style.setProperty('--shiba-look-x', '0px');
+        pet.style.setProperty('--shiba-look-y', '0px');
+        pet.classList.remove('is-curious');
+        pet.classList.add('is-looking', 'is-touch-looking');
+        setSpriteFrame(lookIndex < 8 ? 9 : 10, lookIndex % 8);
+        touchLookTimer = setTimeout(function(){
+          pet.classList.remove('is-looking', 'is-touch-looking');
+          if(!hasActiveAction()) playSprite('idle');
+        }, 900);
+      }
 
       function updateLook(){
         var rect = button.getBoundingClientRect();
@@ -439,8 +532,7 @@
         var dy = Math.max(-1.8, Math.min(1.8, (pointerY - centerY) / 90));
         pet.style.setProperty('--shiba-look-x', dx.toFixed(2) + 'px');
         pet.style.setProperty('--shiba-look-y', dy.toFixed(2) + 'px');
-        var distance = Math.hypot(pointerX - centerX, pointerY - centerY);
-        var curious = activePointer === null && distance < 210 && !hasActiveAction();
+        var curious = activePointer === null && pointerIsNearPet() && !hasActiveAction();
         pet.classList.toggle('is-curious', curious);
         if(curious){
           var angle = Math.atan2(pointerY - centerY, pointerX - centerX);
@@ -465,12 +557,22 @@
       }
 
       document.addEventListener('pointermove', function(event){
+        if(!desktopPointerMode || event.pointerType === 'touch') return;
         pointerX = event.clientX;
         pointerY = event.clientY;
         if(!raf) raf = requestAnimationFrame(updateLook);
       }, { passive: true });
 
-      document.addEventListener('pointerleave', function(){
+      document.addEventListener('pointerdown', function(event){
+        if(event.pointerType === 'touch' && !pet.contains(event.target)){
+          showTouchLook(event.clientX, event.clientY);
+        }
+      }, { passive: true, capture: true });
+
+      document.addEventListener('pointerleave', function(event){
+        // Touch pointers always emit a synthetic leave after lifting the
+        // finger; that must not immediately cancel the 900 ms look reaction.
+        if(!desktopPointerMode || event.pointerType === 'touch') return;
         pet.style.setProperty('--shiba-look-x', '0px');
         pet.style.setProperty('--shiba-look-y', '0px');
         pet.classList.remove('is-curious', 'is-looking');
@@ -480,9 +582,16 @@
       button.addEventListener('pointerdown', function(event){
         if(event.button !== undefined && event.button !== 0) return;
         activePointer = event.pointerId;
+        activePointerType = event.pointerType || 'mouse';
+        touchDragReady = activePointerType !== 'touch';
+        clearTimeout(touchLookTimer);
+        pet.classList.remove('is-touch-looking', 'is-looking');
         startX = event.clientX;
         startY = event.clientY;
         lastDragX = event.clientX;
+        var startingPosition = currentPetPosition();
+        dragStartRight = startingPosition.right;
+        dragStartBottom = startingPosition.bottom;
         dragging = false;
         longPressed = false;
         pet.classList.remove('is-curious');
@@ -491,6 +600,12 @@
         clearTimeout(holdTimer);
         holdTimer = setTimeout(function(){
           if(!dragging){
+            if(activePointerType === 'touch'){
+              touchDragReady = true;
+              longPressed = true;
+              ignoreClick = true;
+              return;
+            }
             longPressed = true;
             ignoreClick = true;
             clearActionClasses();
@@ -498,12 +613,15 @@
             playSprite('idle');
             speak('Easy…', 1300);
           }
-        }, 650);
+        }, activePointerType === 'touch' ? 280 : 650);
       });
 
       button.addEventListener('pointermove', function(event){
         if(activePointer !== event.pointerId) return;
-        if(Math.hypot(event.clientX - startX, event.clientY - startY) > 6){
+        var touchPointer = activePointerType === 'touch' || event.pointerType === 'touch';
+        if(touchPointer && !touchDragReady) return;
+        var dragThreshold = touchPointer ? 14 : 6;
+        if(Math.hypot(event.clientX - startX, event.clientY - startY) > dragThreshold){
           if(!dragging){
             clearActionClasses();
             clearTimeout(actionTimer);
@@ -517,7 +635,7 @@
             if(spriteMode !== dragSprite) playSprite(dragSprite);
           }
           lastDragX = event.clientX;
-          setPetPosition(event.clientX, event.clientY, false);
+          movePetWithPointer(event.clientX, event.clientY, false);
         }
       });
 
@@ -527,12 +645,14 @@
         clearTimeout(holdTimer);
         pet.classList.remove('is-held', 'is-dragging');
         if(wasDragging){
-          setPetPosition(event.clientX, event.clientY, true);
+          movePetWithPointer(event.clientX, event.clientY, activePointerType !== 'touch');
           ignoreClick = true;
           speak('New spot!', 900);
           playSprite('idle');
         }
         activePointer = null;
+        activePointerType = '';
+        touchDragReady = false;
         dragging = false;
         if(!wasDragging && !hasActiveAction()) resumeAmbientSprite();
       }
