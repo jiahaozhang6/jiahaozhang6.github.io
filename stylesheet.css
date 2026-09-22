@@ -1148,14 +1148,15 @@ body.wechat-open::after {
   margin-right: auto;
   margin-left: auto;
   overflow: hidden;
+  border-radius: 2px;
 }
 
-.visitor-map__embed #mapmyvisitors-widget,
-.visitor-map__embed .mapmyvisitors-map-container,
-.visitor-map__embed .mapmyvisitors-map {
-  max-width: 100% !important;
-  margin-right: auto !important;
-  margin-left: auto !important;
+.visitor-map__frame {
+  display: block;
+  width: 180px;
+  max-width: 100%;
+  height: 121px;
+  border: 0;
 }
 
 @media (max-width: 560px) {
