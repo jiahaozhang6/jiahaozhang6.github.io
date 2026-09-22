@@ -860,30 +860,6 @@ p {
   font-weight: 780;
 }
 
-.author-role-badge {
-  display: inline-flex;
-  margin: 0 2px;
-  padding: 1px 5px;
-  align-items: center;
-  border-radius: 999px;
-  font: 700 9px/1.35 var(--font-mono);
-  letter-spacing: 0.025em;
-  vertical-align: 1px;
-  white-space: nowrap;
-}
-
-.project-leader-badge {
-  color: var(--brand-deep);
-  background: color-mix(in srgb, var(--accent), transparent 86%);
-  border: 1px solid color-mix(in srgb, var(--brand), transparent 68%);
-}
-
-.advisor-badge {
-  color: var(--warm);
-  background: color-mix(in srgb, var(--warm), transparent 90%);
-  border: 1px solid color-mix(in srgb, var(--warm), transparent 68%);
-}
-
 .publication-links {
   display: flex;
   align-items: center;
