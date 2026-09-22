@@ -1217,28 +1217,6 @@ body.wechat-open::after {
   transition: transform 110ms ease-out, filter 180ms ease;
 }
 
-.shiba-pet__credit {
-  position: absolute;
-  right: 8px;
-  bottom: 0;
-  z-index: 3;
-  color: var(--muted);
-  border-bottom: 0;
-  font-family: var(--font-mono);
-  font-size: 7px;
-  line-height: 1;
-  letter-spacing: 0.04em;
-  opacity: 0.55;
-  pointer-events: auto;
-  transition: color 160ms ease, opacity 160ms ease;
-}
-
-.shiba-pet__credit:hover,
-.shiba-pet__credit:focus-visible {
-  color: var(--brand);
-  opacity: 1;
-}
-
 .shiba-pet__sparkle,
 .shiba-pet__heart {
   position: absolute;
@@ -1274,38 +1252,41 @@ body.wechat-open::after {
 
 .shiba-pet__bubble {
   position: absolute;
-  right: 74%;
-  bottom: 83%;
-  min-width: 60px;
-  max-width: 116px;
-  padding: 6px 9px;
+  left: 50%;
+  bottom: calc(100% - 18px);
+  z-index: 5;
+  width: max-content;
+  min-width: 66px;
+  max-width: 142px;
+  padding: 7px 10px;
   border: 1px solid var(--line);
-  border-radius: 12px 12px 3px;
+  border-radius: 11px;
   background: var(--surface-solid);
   color: var(--ink-strong);
   box-shadow: var(--shadow);
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.35;
   text-align: center;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
   opacity: 0;
-  transform: translate(8px, 6px) scale(0.88);
+  transform: translate(-50%, 7px) scale(0.9);
   transition: opacity 160ms ease, transform 180ms ease;
 }
 
 .shiba-pet__bubble::after {
   content: "";
   position: absolute;
-  right: -5px;
-  bottom: -1px;
-  width: 10px;
-  height: 10px;
+  left: 50%;
+  bottom: -5px;
+  width: 9px;
+  height: 9px;
   border-right: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   background: var(--surface-solid);
-  transform: skew(28deg);
+  transform: translateX(-50%) rotate(45deg);
 }
 
 .shiba-pet:hover .shiba-pet__stage,
@@ -1315,7 +1296,7 @@ body.wechat-open::after {
 
 .shiba-pet.is-speaking .shiba-pet__bubble {
   opacity: 1;
-  transform: translate(0, 0) scale(1);
+  transform: translate(-50%, 0) scale(1);
 }
 
 .shiba-pet.is-happy .shiba-pet__button {
@@ -1441,16 +1422,11 @@ body.wechat-open::after {
   }
 
   .shiba-pet__bubble {
-    right: 67%;
-    bottom: 80%;
-    min-width: 52px;
-    padding: 5px 7px;
+    bottom: calc(100% - 14px);
+    min-width: 58px;
+    max-width: 116px;
+    padding: 6px 8px;
     font-size: 9px;
-  }
-
-  .shiba-pet__credit {
-    right: 5px;
-    font-size: 6px;
   }
 }
 

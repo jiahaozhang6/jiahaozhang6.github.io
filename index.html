@@ -97,7 +97,6 @@
           <span class="shiba-pet__heart">♥</span>
         </span>
       </button>
-      <a class="shiba-pet__credit" href="https://github.com/wildcard/kavana-codex-pet" target="_blank" rel="noopener noreferrer" title="Kavana artwork · CC BY-NC 4.0">Kavana</a>
     </div>
 
     <script>
@@ -224,14 +223,16 @@
       var sprite = pet.querySelector('.shiba-pet__sprite');
       if(!button || !bubble || !sprite) return;
 
-      var reactions = [
-        { className: 'is-happy', message: 'Woof!', duration: 1100 },
-        { className: 'is-pawing', message: 'High five!', duration: 1250 },
-        { className: 'is-listening', message: 'I am listening.', duration: 1300 },
-        { className: 'is-happy', message: 'Good luck!', duration: 1100 },
-        { className: 'is-pawing', message: 'Keep exploring!', duration: 1250 }
+      var messages = ['Woof!', 'Hi!', 'Good luck!', 'Keep exploring!', 'Have a nice day!'];
+      var idleActions = [
+        { className: 'is-happy', duration: 950 },
+        { className: 'is-pawing', duration: 1200 },
+        { className: 'is-listening', duration: 1350 },
+        { className: 'is-spinning', duration: 1150 },
+        { className: 'is-sleeping', duration: 2200 },
+        { className: 'is-sniffing', duration: 1450 }
       ];
-      var reactionIndex = -1;
+      var messageIndex = -1;
       var hideTimer = null;
       var actionTimer = null;
       var clickTimer = null;
@@ -405,7 +406,10 @@
           if(!dragging){
             longPressed = true;
             ignoreClick = true;
-            react('is-sleeping', 'Zzz…', 2400);
+            clearActionClasses();
+            clearTimeout(actionTimer);
+            playSprite('idle');
+            speak('Easy…', 1300);
           }
         }, 650);
       });
@@ -446,26 +450,33 @@
         }
         clearTimeout(clickTimer);
         clickTimer = setTimeout(function(){
-          reactionIndex = (reactionIndex + 1) % reactions.length;
-          var item = reactions[reactionIndex];
-          react(item.className, item.message, item.duration);
+          clearActionClasses();
+          clearTimeout(actionTimer);
+          playSprite('idle');
+          messageIndex = (messageIndex + 1) % messages.length;
+          speak(messages[messageIndex], 1500);
         }, 190);
       });
 
       button.addEventListener('dblclick', function(event){
         event.preventDefault();
         clearTimeout(clickTimer);
-        react('is-spinning', 'Zoomies!', 1100);
+        clearActionClasses();
+        clearTimeout(actionTimer);
+        playSprite('idle');
+        messageIndex = (messageIndex + 1) % messages.length;
+        speak(messages[messageIndex], 1500);
       });
 
       function scheduleIdle(){
         clearTimeout(idleTimer);
         idleTimer = setTimeout(function(){
           if(!document.hidden && activePointer === null && !pet.classList.contains('is-speaking')){
-            react('is-sniffing', null, 1500);
+            var action = idleActions[Math.floor(Math.random() * idleActions.length)];
+            react(action.className, null, action.duration);
           }
           scheduleIdle();
-        }, 9000 + Math.random() * 5000);
+        }, 6500 + Math.random() * 6000);
       }
 
       playSprite('idle');
