@@ -305,13 +305,19 @@
     }
   });
 
-  var globeColor = '#0d6b87';
-  var markerColor = '#08766f';
+  var gridColor = '#b7c8d4';
+  var coastColor = '#27677f';
+  var markerColor = '#d89a38';
+  var currentColor = '#cf5c4a';
+  var markerBorderColor = '#ffffff';
 
   function refreshColors() {
     var style = getComputedStyle(document.documentElement);
-    globeColor = style.getPropertyValue('--brand').trim() || globeColor;
-    markerColor = style.getPropertyValue('--brand-deep').trim() || markerColor;
+    gridColor = style.getPropertyValue('--globe-grid').trim() || gridColor;
+    coastColor = style.getPropertyValue('--globe-coast').trim() || coastColor;
+    markerColor = style.getPropertyValue('--globe-marker').trim() || markerColor;
+    currentColor = style.getPropertyValue('--globe-current').trim() || currentColor;
+    markerBorderColor = style.getPropertyValue('--globe-marker-border').trim() || markerBorderColor;
   }
 
   function createGlobe(canvas, logicalSize, radius, showOrigins) {
@@ -369,13 +375,15 @@
 
     return function draw(rotation, now) {
       context.clearRect(0, 0, logicalSize, logicalSize);
-      context.strokeStyle = globeColor;
-      context.fillStyle = globeColor;
+      context.strokeStyle = coastColor;
+      context.fillStyle = coastColor;
       context.lineWidth = logicalSize > 40 ? 0.85 : 0.7;
       context.globalAlpha = 0.78;
       context.beginPath();
       context.arc(center, center, radius, 0, Math.PI * 2);
       context.stroke();
+
+      context.strokeStyle = gridColor;
 
       var step = logicalSize > 40 ? 5 : 10;
       var latitudes = logicalSize > 40 ? [-60, -40, -20, 0, 20, 40, 60] : [-40, 0, 40];
@@ -397,7 +405,7 @@
         drawLine(points);
       });
 
-      context.strokeStyle = markerColor;
+      context.strokeStyle = coastColor;
       context.lineWidth = logicalSize > 40 ? 1.15 : 0.75;
       landOutlines.forEach(function (outline) {
         var coastline = [];
@@ -420,34 +428,29 @@
         marks.forEach(function (mark) {
           var point = project(mark.lat * Math.PI / 180, -mark.lon * Math.PI / 180, rotation);
           if (point.z <= 0) return;
-          context.fillStyle = mark.current ? globeColor : markerColor;
-          context.globalAlpha = 0.4 + mark.weight * 0.55;
+          context.save();
+          context.fillStyle = mark.current ? currentColor : markerColor;
+          context.strokeStyle = markerBorderColor;
+          context.lineWidth = 0.9;
+          context.shadowColor = mark.current ? currentColor : markerColor;
+          context.shadowBlur = 3;
+          context.globalAlpha = 0.58 + mark.weight * 0.38;
           context.beginPath();
-          context.arc(point.x, point.y, 1.4 + mark.weight * 1.7, 0, Math.PI * 2);
+          context.arc(point.x, point.y, 1.8 + mark.weight * 1.7, 0, Math.PI * 2);
           context.fill();
+          context.shadowBlur = 0;
+          context.globalAlpha = 0.92;
+          context.stroke();
           if (mark.current) {
-            context.strokeStyle = globeColor;
-            context.globalAlpha = 0.7;
+            context.strokeStyle = currentColor;
+            context.lineWidth = 1;
+            context.globalAlpha = 0.74;
             context.beginPath();
-            context.arc(point.x, point.y, 4.6, 0, Math.PI * 2);
+            context.arc(point.x, point.y, 5.2, 0, Math.PI * 2);
             context.stroke();
           }
+          context.restore();
         });
-      }
-
-      var home = project(39.9042 * Math.PI / 180, -116.4074 * Math.PI / 180, rotation);
-      if (home.z > 0) {
-        var pulse = reducedMotion ? 0.25 : (now / 1500) % 1;
-        context.strokeStyle = globeColor;
-        context.fillStyle = globeColor;
-        context.globalAlpha = 0.42 * (1 - pulse);
-        context.beginPath();
-        context.arc(home.x, home.y, 1.5 + pulse * 4.2, 0, Math.PI * 2);
-        context.stroke();
-        context.globalAlpha = 1;
-        context.beginPath();
-        context.arc(home.x, home.y, 1.5, 0, Math.PI * 2);
-        context.fill();
       }
 
       context.globalAlpha = 1;
