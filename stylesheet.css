@@ -1135,10 +1135,12 @@ body.wechat-open::after {
 }
 
 .visitor-origins {
-  position: relative;
   display: flex;
   order: 2;
   margin-bottom: 14px;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 8px;
   justify-content: flex-end;
   color: var(--muted);
 }
@@ -1190,10 +1192,7 @@ body.wechat-open::after {
 }
 
 .visitor-origins__panel {
-  position: absolute;
-  bottom: calc(100% + 10px);
-  right: 0;
-  z-index: 80;
+  position: static;
   width: min(320px, calc(100vw - 28px));
   padding: 14px;
   color: var(--ink);
@@ -1610,12 +1609,7 @@ body.wechat-open::after {
   .visitor-origins {
     order: 1;
     margin-bottom: 0;
-  }
-
-  .visitor-origins__panel {
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
+    align-items: center;
   }
 
   .footer-info {
