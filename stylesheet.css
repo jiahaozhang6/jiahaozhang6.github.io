@@ -1063,6 +1063,10 @@ hr {
   margin-bottom: 10px;
 }
 
+.institution-logos.pair {
+  margin-bottom: 10px;
+}
+
 .institution-logos.single img {
   max-width: 280px;
   max-height: 92px;
@@ -1129,19 +1133,21 @@ body.wechat-open::after {
   display: flex;
   width: 100%;
   margin: 0 auto;
-  align-items: flex-start;
+  align-items: center;
   flex-direction: column;
   gap: 6px;
 }
 
 .footer-info {
   display: flex;
+  width: 100%;
   order: 2;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
   flex-direction: column;
   gap: 2px;
-  padding: 0 0 20px;
-  text-align: left;
+  padding: 0 0 18px;
+  text-align: center;
 }
 
 .visitor-origins {
@@ -1675,6 +1681,8 @@ body.wechat-open::after {
 
   .footer-info {
     align-items: center;
+    flex-direction: column;
+    gap: 2px;
     padding: 0 14px 20px;
     text-align: center;
   }

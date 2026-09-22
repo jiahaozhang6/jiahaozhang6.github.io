@@ -91,6 +91,7 @@
       if (outlines.length) {
         landOutlines = outlines;
         detailedCoastlines = true;
+        document.dispatchEvent(new Event('visitor-map-data'));
       }
     })
     .catch(function () { /* retain the built-in simplified coastline */ });
@@ -463,6 +464,7 @@
 
   var themeObserver = new MutationObserver(function () {
     refreshColors();
+    if (reducedMotion) window.requestAnimationFrame(drawStatic);
   });
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
@@ -470,6 +472,10 @@
     drawSmall(0.8, 0);
     if (!panel.hidden) drawLarge(0.8, 0);
   }
+
+  document.addEventListener('visitor-map-data', function () {
+    if (reducedMotion) window.requestAnimationFrame(drawStatic);
+  });
 
   if (reducedMotion) {
     drawStatic();
