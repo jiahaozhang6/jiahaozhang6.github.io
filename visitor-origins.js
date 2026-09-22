@@ -15,8 +15,8 @@
 
   var COUNTER_API = 'https://abacus.jasoncameron.dev';
   var GEO_API = 'https://api.country.is/';
-  var NAMESPACE = 'jiahaozhang-cn-v1';
-  var SESSION_KEY = 'jiahao-visit-counted-v1';
+  var NAMESPACE = 'www-jiahaozhang-cn-20260922';
+  var SESSION_KEY = 'jiahao-visit-counted-v2';
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var counts = {};
   var currentCountry = null;
