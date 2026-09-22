@@ -171,6 +171,7 @@
 
   function displayName(code) {
     var regionNames = {
+      CN: 'China',
       HK: 'Hong Kong, China',
       MO: 'Macao, China',
       TW: 'Taiwan, China'
