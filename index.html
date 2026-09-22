@@ -228,10 +228,11 @@
         { className: 'is-happy', duration: 950 },
         { className: 'is-pawing', duration: 1200 },
         { className: 'is-listening', duration: 1350 },
-        { className: 'is-spinning', duration: 1150 },
+        { className: 'is-running', duration: 1150 },
         { className: 'is-sleeping', duration: 2200 },
         { className: 'is-sniffing', duration: 1450 }
       ];
+      var idleActionQueue = [];
       var messageIndex = -1;
       var hideTimer = null;
       var actionTimer = null;
@@ -266,7 +267,7 @@
         'is-happy': 'jumping',
         'is-pawing': 'waving',
         'is-listening': 'review',
-        'is-spinning': 'running',
+        'is-running': 'running',
         'is-sleeping': 'failed',
         'is-sniffing': 'waiting'
       };
@@ -296,14 +297,14 @@
         return pet.classList.contains('is-happy') ||
           pet.classList.contains('is-pawing') ||
           pet.classList.contains('is-listening') ||
-          pet.classList.contains('is-spinning') ||
+          pet.classList.contains('is-running') ||
           pet.classList.contains('is-sleeping') ||
           pet.classList.contains('is-sniffing') ||
           pet.classList.contains('is-dragging');
       }
 
       function clearActionClasses(){
-        pet.classList.remove('is-happy', 'is-pawing', 'is-listening', 'is-spinning', 'is-sleeping', 'is-sniffing');
+        pet.classList.remove('is-happy', 'is-pawing', 'is-listening', 'is-running', 'is-sleeping', 'is-sniffing');
       }
 
       function speak(message, duration){
@@ -324,6 +325,19 @@
           pet.classList.remove(className);
           playSprite('idle');
         }, duration || 1200);
+      }
+
+      function nextIdleAction(){
+        if(!idleActionQueue.length){
+          idleActionQueue = idleActions.slice();
+          for(var i = idleActionQueue.length - 1; i > 0; i--){
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = idleActionQueue[i];
+            idleActionQueue[i] = idleActionQueue[j];
+            idleActionQueue[j] = temp;
+          }
+        }
+        return idleActionQueue.shift();
       }
 
       function clamp(value, min, max){
@@ -358,7 +372,6 @@
         var dy = Math.max(-1.8, Math.min(1.8, (pointerY - centerY) / 90));
         pet.style.setProperty('--shiba-look-x', dx.toFixed(2) + 'px');
         pet.style.setProperty('--shiba-look-y', dy.toFixed(2) + 'px');
-        pet.style.setProperty('--shiba-look-rotate', (dx * 0.55).toFixed(2) + 'deg');
         var distance = Math.hypot(pointerX - centerX, pointerY - centerY);
         var curious = activePointer === null && distance < 210;
         pet.classList.toggle('is-curious', curious);
@@ -387,7 +400,6 @@
       document.addEventListener('pointerleave', function(){
         pet.style.setProperty('--shiba-look-x', '0px');
         pet.style.setProperty('--shiba-look-y', '0px');
-        pet.style.setProperty('--shiba-look-rotate', '0deg');
         pet.classList.remove('is-curious');
         if(!hasActiveAction()) playSprite('idle');
       });
@@ -472,7 +484,7 @@
         clearTimeout(idleTimer);
         idleTimer = setTimeout(function(){
           if(!document.hidden && activePointer === null && !pet.classList.contains('is-speaking')){
-            var action = idleActions[Math.floor(Math.random() * idleActions.length)];
+            var action = nextIdleAction();
             react(action.className, null, action.duration);
           }
           scheduleIdle();
