@@ -22,6 +22,10 @@
   var currentCountry = null;
   var scanStarted = false;
   var marks = [];
+  var panelOpenedAt = 0;
+  var panelStartLatitude = 25 * Math.PI / 180;
+  var panelStartLongitude = 110 * Math.PI / 180;
+  var globeRotationSpeed = Math.PI * 2 / 120000;
 
   var countries = [
     ['CN', 35.9, 104.2, 'China'], ['US', 39.8, -98.6, 'United States'],
@@ -69,7 +73,7 @@
   ];
   var detailedCoastlines = false;
 
-  fetch('data/world-land-110m.geojson?v=20260922-1')
+  fetch('data/world-countries-110m.geojson?v=20260922-1')
     .then(function (response) { return response.ok ? response.json() : null; })
     .then(function (data) {
       if (!data || !Array.isArray(data.features)) return;
@@ -154,6 +158,7 @@
     fetchJson(GEO_API, 6500).then(function (data) {
       var code = data && typeof data.country === 'string' ? data.country.toUpperCase() : '';
       if (!/^[A-Z]{2}$/.test(code)) return;
+      if (code === 'TW') code = 'CN';
       currentCountry = code;
       return readCounter('country-' + code, !alreadyCounted).then(function (value) {
         if (value !== null) {
@@ -179,11 +184,9 @@
     return countryByCode[code] ? countryByCode[code].fallbackName : code;
   }
 
-  function flag(code) {
-    return String.fromCodePoint(
-      0x1F1E6 + code.charCodeAt(0) - 65,
-      0x1F1E6 + code.charCodeAt(1) - 65
-    );
+  function flagCode(code) {
+    /* Taiwan is represented with China's national flag; Hong Kong and Macao use regional flags. */
+    return code === 'TW' ? 'CN' : code;
   }
 
   function orderedCodes() {
@@ -213,8 +216,12 @@
       var item = document.createElement('li');
       item.className = 'visitor-origins__item' + (code === currentCountry ? ' is-current' : '');
 
-      var flagElement = document.createElement('span');
-      flagElement.textContent = flag(code);
+      var flagElement = document.createElement('img');
+      var renderedFlagCode = flagCode(code);
+      flagElement.className = 'visitor-origins__flag';
+      flagElement.src = 'images/flags/' + renderedFlagCode.toLowerCase() + '.svg';
+      flagElement.alt = '';
+      flagElement.setAttribute('aria-hidden', 'true');
 
       var nameElement = document.createElement('span');
       nameElement.className = 'visitor-origins__name';
@@ -268,7 +275,10 @@
       var batch = queue.splice(0, 24);
       Promise.all(batch.map(function (code) {
         return readCounter('country-' + code, false).then(function (value) {
-          if (value !== null && value > 0) counts[code] = value;
+          if (value !== null && value > 0) {
+            var normalizedCode = code === 'TW' ? 'CN' : code;
+            counts[normalizedCode] = (counts[normalizedCode] || 0) + value;
+          }
         });
       })).then(function () {
         renderCountries();
@@ -288,7 +298,13 @@
     wrap.classList.toggle('is-open', open);
     document.body.classList.toggle('visitor-panel-open', open);
     toggle.setAttribute('aria-expanded', String(open));
-    if (open) scanCountries();
+    if (open) {
+      var startingPlace = countryByCode[currentCountry] || countryByCode.CN;
+      panelStartLatitude = startingPlace.lat * Math.PI / 180;
+      panelStartLongitude = startingPlace.lon * Math.PI / 180;
+      panelOpenedAt = performance.now();
+      scanCountries();
+    }
   }
 
   toggle.addEventListener('click', function () {
@@ -328,16 +344,16 @@
     var context = canvas.getContext('2d');
     context.setTransform(dpr, 0, 0, dpr, 0, 0);
     var center = logicalSize / 2;
-    var tilt = 0.34;
-
-    function project(latitude, longitude, rotation) {
+    function project(latitude, longitude, centerLongitude, centerLatitude) {
       var cosLatitude = Math.cos(latitude);
-      var x = cosLatitude * Math.cos(longitude + rotation);
-      var y = Math.sin(latitude);
-      var z = cosLatitude * Math.sin(longitude + rotation);
-      var tiltedY = y * Math.cos(tilt) - z * Math.sin(tilt);
-      var depth = y * Math.sin(tilt) + z * Math.cos(tilt);
-      return { x: center + radius * x, y: center - radius * tiltedY, z: depth };
+      var sinLatitude = Math.sin(latitude);
+      var longitudeDelta = longitude - centerLongitude;
+      var cosCenterLatitude = Math.cos(centerLatitude);
+      var sinCenterLatitude = Math.sin(centerLatitude);
+      var x = cosLatitude * Math.sin(longitudeDelta);
+      var y = cosCenterLatitude * sinLatitude - sinCenterLatitude * cosLatitude * Math.cos(longitudeDelta);
+      var depth = sinCenterLatitude * sinLatitude + cosCenterLatitude * cosLatitude * Math.cos(longitudeDelta);
+      return { x: center + radius * x, y: center - radius * y, z: depth };
     }
 
     function drawLine(points) {
@@ -374,7 +390,7 @@
       context.stroke();
     }
 
-    return function draw(rotation, now) {
+    return function draw(centerLongitude, centerLatitude, now) {
       context.clearRect(0, 0, logicalSize, logicalSize);
       context.strokeStyle = coastColor;
       context.fillStyle = coastColor;
@@ -393,7 +409,7 @@
       latitudes.forEach(function (latitude) {
         var points = [];
         for (var angle = 0; angle <= 360; angle += step) {
-          points.push(project(latitude * Math.PI / 180, angle * Math.PI / 180, rotation));
+          points.push(project(latitude * Math.PI / 180, angle * Math.PI / 180, centerLongitude, centerLatitude));
         }
         drawLine(points);
       });
@@ -401,7 +417,7 @@
       longitudes.forEach(function (longitude) {
         var points = [];
         for (var latitude = -90; latitude <= 90; latitude += step) {
-          points.push(project(latitude * Math.PI / 180, longitude * Math.PI / 180, rotation));
+          points.push(project(latitude * Math.PI / 180, longitude * Math.PI / 180, centerLongitude, centerLatitude));
         }
         drawLine(points);
       });
@@ -418,16 +434,18 @@
             var progress = segment / steps;
             var lon = start[0] + (end[0] - start[0]) * progress;
             var lat = start[1] + (end[1] - start[1]) * progress;
-            coastline.push(project(lat * Math.PI / 180, -lon * Math.PI / 180, rotation));
+            coastline.push(project(lat * Math.PI / 180, lon * Math.PI / 180, centerLongitude, centerLatitude));
           }
         }
-        coastline.push(project(outline[0][1] * Math.PI / 180, -outline[0][0] * Math.PI / 180, rotation));
+        coastline.push(project(outline[0][1] * Math.PI / 180, outline[0][0] * Math.PI / 180, centerLongitude, centerLatitude));
+        context.strokeStyle = coastColor;
+        context.lineWidth = logicalSize > 40 ? 1.05 : 0.75;
         drawCoastline(coastline);
       });
 
       if (showOrigins) {
         marks.forEach(function (mark) {
-          var point = project(mark.lat * Math.PI / 180, -mark.lon * Math.PI / 180, rotation);
+          var point = project(mark.lat * Math.PI / 180, mark.lon * Math.PI / 180, centerLongitude, centerLatitude);
           if (point.z <= 0) return;
           context.save();
           context.fillStyle = mark.current ? currentColor : markerColor;
@@ -469,8 +487,10 @@
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   function drawStatic() {
-    drawSmall(0.8, 0);
-    if (!panel.hidden) drawLarge(0.8, 0);
+    var eastAsia = 110 * Math.PI / 180;
+    var defaultLatitude = 25 * Math.PI / 180;
+    drawSmall(eastAsia, defaultLatitude, 0);
+    if (!panel.hidden) drawLarge(panelStartLongitude, panelStartLatitude, 0);
   }
 
   document.addEventListener('visitor-map-data', function () {
@@ -481,11 +501,17 @@
     drawStatic();
     toggle.addEventListener('click', function () { window.requestAnimationFrame(drawStatic); });
   } else {
+    var animationStartedAt = performance.now();
     (function animate(now) {
-      var rotation = now * 0.00023;
-      drawSmall(rotation, now);
-      if (!panel.hidden) drawLarge(rotation, now);
+      var eastAsia = 110 * Math.PI / 180;
+      var defaultLatitude = 25 * Math.PI / 180;
+      var smallCenter = eastAsia + (now - animationStartedAt) * globeRotationSpeed;
+      drawSmall(smallCenter, defaultLatitude, now);
+      if (!panel.hidden) {
+        var largeCenter = panelStartLongitude + Math.max(0, now - panelOpenedAt) * globeRotationSpeed;
+        drawLarge(largeCenter, panelStartLatitude, now);
+      }
       window.requestAnimationFrame(animate);
-    })(0);
+    })(animationStartedAt);
   }
 })();

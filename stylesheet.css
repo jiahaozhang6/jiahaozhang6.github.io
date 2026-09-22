@@ -821,6 +821,12 @@ p {
   width: 74%;
 }
 
+#publications > .full-table:first-child td,
+#patents > .full-table:first-child td {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .papertitle {
   color: var(--ink-strong);
   font-weight: 780;
@@ -891,8 +897,8 @@ em {
 }
 
 .publication-thumbnail--fluid {
-  max-width: 225px;
-  aspect-ratio: 4 / 3;
+  max-width: 205px;
+  aspect-ratio: 16 / 10;
 }
 
 .thumbnail-link {
@@ -1270,6 +1276,16 @@ body.wechat-open::after {
   gap: 7px;
   color: var(--ink-soft);
   font-size: 11px;
+}
+
+.visitor-origins__flag {
+  display: block;
+  width: 17px;
+  height: 11px;
+  border: 1px solid rgba(25, 45, 62, 0.22);
+  border-radius: 1px;
+  object-fit: cover;
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.7) inset;
 }
 
 .visitor-origins__name {
@@ -1875,9 +1891,11 @@ body.wechat-open::after {
     grid-template-columns: 1fr;
   }
 
+  #publications .spaced-rows,
   #publications .spaced-rows tbody,
   #publications .spaced-rows tr,
   #publications .spaced-rows td,
+  #patents .spaced-rows,
   #patents .spaced-rows tbody,
   #patents .spaced-rows tr,
   #patents .spaced-rows td,
@@ -1889,15 +1907,18 @@ body.wechat-open::after {
     min-width: 0 !important;
   }
 
-  .publication-thumbnail,
-  .publication-thumbnail--fluid {
-    max-width: 320px;
-    margin: 0 auto 7px;
-    background: var(--surface-code);
+  #publications .spaced-rows tr,
+  #patents .spaced-rows tr {
+    overflow: hidden;
   }
 
-  .publication-thumbnail {
-    aspect-ratio: 4 / 3;
+  .publication-thumbnail,
+  .publication-thumbnail--fluid {
+    width: min(100%, 320px);
+    max-width: 320px;
+    margin: 0 auto 7px;
+    aspect-ratio: 16 / 10;
+    background: var(--surface-code);
   }
 
   .thumbnail-actions {
