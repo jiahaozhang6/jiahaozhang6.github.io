@@ -224,14 +224,50 @@
       if(!button || !bubble || !sprite) return;
 
       var messages = ['Woof!', 'Hi!', 'Good luck!', 'Keep exploring!', 'Have a nice day!'];
+
+      function rowFrames(row, durations){
+        return durations.map(function(duration, column){
+          return { row: row, column: column, duration: duration };
+        });
+      }
+
+      // Preserve the atlas's authored per-frame timing instead of flattening
+      // every action to one interval. The longer final frames are intentional.
+      var spriteAnimations = {
+        idle: rowFrames(0, [280, 110, 110, 140, 140, 320]),
+        runningRight: rowFrames(1, [120, 120, 120, 120, 120, 120, 120, 220]),
+        runningLeft: rowFrames(2, [120, 120, 120, 120, 120, 120, 120, 220]),
+        waving: rowFrames(3, [140, 140, 140, 280]),
+        jumping: rowFrames(4, [140, 140, 140, 140, 280]),
+        failed: rowFrames(5, [140, 140, 140, 140, 140, 140, 140, 240]),
+        waiting: rowFrames(6, [150, 150, 150, 150, 150, 260]),
+        working: rowFrames(7, [120, 120, 120, 120, 120, 220]),
+        review: rowFrames(8, [150, 150, 150, 150, 150, 280]),
+        lookAround: rowFrames(9, [150, 150, 150, 150, 150, 150, 150, 150]).concat(
+          rowFrames(10, [150, 150, 150, 150, 150, 150, 150, 150])
+        ),
+        sleeping: [
+          { row: 5, column: 2, duration: 320 },
+          { row: 5, column: 3, duration: 420 },
+          { row: 5, column: 4, duration: 1400 },
+          { row: 5, column: 5, duration: 520 },
+          { row: 5, column: 4, duration: 1400 }
+        ]
+      };
+
       var idleActions = [
-        { className: 'is-happy', duration: 950 },
-        { className: 'is-pawing', duration: 1200 },
-        { className: 'is-listening', duration: 1350 },
-        { className: 'is-running', duration: 1150 },
-        { className: 'is-sleeping', duration: 2200 },
-        { className: 'is-sniffing', duration: 1450 }
+        { className: 'is-running-right', sprite: 'runningRight' },
+        { className: 'is-running-left', sprite: 'runningLeft' },
+        { className: 'is-pawing', sprite: 'waving' },
+        { className: 'is-happy', sprite: 'jumping' },
+        { className: 'is-failed', sprite: 'failed' },
+        { className: 'is-waiting', sprite: 'waiting' },
+        { className: 'is-working', sprite: 'working' },
+        { className: 'is-reviewing', sprite: 'review' },
+        { className: 'is-looking-around', sprite: 'lookAround' },
+        { className: 'is-sleeping', sprite: 'sleeping' }
       ];
+      var actionClasses = idleActions.map(function(action){ return action.className; });
       var idleActionQueue = [];
       var messageIndex = -1;
       var hideTimer = null;
@@ -245,6 +281,7 @@
       var activePointer = null;
       var startX = 0;
       var startY = 0;
+      var lastDragX = 0;
       var dragging = false;
       var longPressed = false;
       var ignoreClick = false;
@@ -252,25 +289,6 @@
       var spriteMode = '';
       var lastLookFrame = -1;
       var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var spriteAnimations = {
-        idle: { row: 0, frames: 7, interval: 185 },
-        runningRight: { row: 1, frames: 8, interval: 92 },
-        runningLeft: { row: 2, frames: 8, interval: 92 },
-        waving: { row: 3, frames: 4, interval: 145 },
-        jumping: { row: 4, frames: 5, interval: 115 },
-        failed: { row: 5, frames: 8, interval: 190 },
-        waiting: { row: 6, frames: 6, interval: 175 },
-        running: { row: 7, frames: 6, interval: 105 },
-        review: { row: 8, frames: 6, interval: 170 }
-      };
-      var spriteForAction = {
-        'is-happy': 'jumping',
-        'is-pawing': 'waving',
-        'is-listening': 'review',
-        'is-running': 'running',
-        'is-sleeping': 'failed',
-        'is-sniffing': 'waiting'
-      };
 
       function setSpriteFrame(row, column){
         var x = (column / 7) * 100;
@@ -278,33 +296,52 @@
         sprite.style.backgroundPosition = x.toFixed(4) + '% ' + y.toFixed(4) + '%';
       }
 
-      function playSprite(name){
-        clearInterval(spriteTimer);
+      function spriteDuration(name){
+        var frames = spriteAnimations[name] || spriteAnimations.idle;
+        return frames.reduce(function(total, frame){ return total + frame.duration; }, 0);
+      }
+
+      function playSprite(name, options){
+        clearTimeout(spriteTimer);
         spriteTimer = null;
+        pet.classList.remove('is-looking');
         spriteMode = name;
         lastLookFrame = -1;
-        var config = spriteAnimations[name] || spriteAnimations.idle;
-        var frame = 0;
-        setSpriteFrame(config.row, frame);
+        var frames = spriteAnimations[name] || spriteAnimations.idle;
+        var loop = !options || options.loop !== false;
+        var frameIndex = 0;
+        setSpriteFrame(frames[0].row, frames[0].column);
         if(reducedMotion) return;
-        spriteTimer = setInterval(function(){
-          frame = (frame + 1) % config.frames;
-          setSpriteFrame(config.row, frame);
-        }, config.interval);
+
+        function scheduleFrame(){
+          var frame = frames[frameIndex];
+          spriteTimer = setTimeout(function(){
+            if(frameIndex >= frames.length - 1){
+              if(!loop){
+                spriteTimer = null;
+                return;
+              }
+              frameIndex = 0;
+            }else{
+              frameIndex += 1;
+            }
+            frame = frames[frameIndex];
+            setSpriteFrame(frame.row, frame.column);
+            scheduleFrame();
+          }, frame.duration);
+        }
+
+        scheduleFrame();
       }
 
       function hasActiveAction(){
-        return pet.classList.contains('is-happy') ||
-          pet.classList.contains('is-pawing') ||
-          pet.classList.contains('is-listening') ||
-          pet.classList.contains('is-running') ||
-          pet.classList.contains('is-sleeping') ||
-          pet.classList.contains('is-sniffing') ||
-          pet.classList.contains('is-dragging');
+        return actionClasses.some(function(className){
+          return pet.classList.contains(className);
+        }) || pet.classList.contains('is-dragging');
       }
 
       function clearActionClasses(){
-        pet.classList.remove('is-happy', 'is-pawing', 'is-listening', 'is-running', 'is-sleeping', 'is-sniffing');
+        actionClasses.forEach(function(className){ pet.classList.remove(className); });
       }
 
       function speak(message, duration){
@@ -314,17 +351,19 @@
         hideTimer = setTimeout(function(){ pet.classList.remove('is-speaking'); }, duration || 1200);
       }
 
-      function react(className, message, duration){
+      function react(action){
+        var duration = spriteDuration(action.sprite);
         clearActionClasses();
+        pet.classList.remove('is-curious', 'is-looking');
         void pet.offsetWidth;
-        pet.classList.add(className);
-        playSprite(spriteForAction[className] || 'idle');
-        if(message) speak(message, duration);
+        pet.style.setProperty('--shiba-action-duration', duration + 'ms');
+        pet.classList.add(action.className);
+        playSprite(action.sprite, { loop: false });
         clearTimeout(actionTimer);
         actionTimer = setTimeout(function(){
-          pet.classList.remove(className);
-          playSprite('idle');
-        }, duration || 1200);
+          pet.classList.remove(action.className);
+          resumeAmbientSprite();
+        }, duration);
       }
 
       function nextIdleAction(){
@@ -342,6 +381,22 @@
 
       function clamp(value, min, max){
         return Math.max(min, Math.min(max, value));
+      }
+
+      function pointerIsNearPet(){
+        var rect = button.getBoundingClientRect();
+        var centerX = rect.left + rect.width * 0.53;
+        var centerY = rect.top + rect.height * 0.43;
+        return Math.hypot(pointerX - centerX, pointerY - centerY) < 210;
+      }
+
+      function resumeAmbientSprite(){
+        if(activePointer === null && pointerIsNearPet()){
+          updateLook();
+        }else{
+          pet.classList.remove('is-curious', 'is-looking');
+          playSprite('idle');
+        }
       }
 
       function setPetPosition(clientX, clientY, save){
@@ -373,21 +428,25 @@
         pet.style.setProperty('--shiba-look-x', dx.toFixed(2) + 'px');
         pet.style.setProperty('--shiba-look-y', dy.toFixed(2) + 'px');
         var distance = Math.hypot(pointerX - centerX, pointerY - centerY);
-        var curious = activePointer === null && distance < 210;
+        var curious = activePointer === null && distance < 210 && !hasActiveAction();
         pet.classList.toggle('is-curious', curious);
-        if(curious && !hasActiveAction()){
+        if(curious){
           var angle = Math.atan2(pointerY - centerY, pointerX - centerX);
           // The final two sprite rows contain 16 look directions ordered
           // clockwise from straight up: up, upper-right, right, and so on.
           var lookIndex = (Math.round(((angle + Math.PI / 2) / (Math.PI * 2)) * 16) + 16) % 16;
           if(lookIndex !== lastLookFrame){
-            clearInterval(spriteTimer);
+            clearTimeout(spriteTimer);
             spriteTimer = null;
             spriteMode = 'look';
             lastLookFrame = lookIndex;
+            pet.classList.add('is-looking');
             setSpriteFrame(lookIndex < 8 ? 9 : 10, lookIndex % 8);
           }
-        }else if(!hasActiveAction() && spriteMode === 'look'){
+        }else{
+          pet.classList.remove('is-looking');
+        }
+        if(!curious && !hasActiveAction() && spriteMode === 'look'){
           playSprite('idle');
         }
         raf = null;
@@ -402,7 +461,7 @@
       document.addEventListener('pointerleave', function(){
         pet.style.setProperty('--shiba-look-x', '0px');
         pet.style.setProperty('--shiba-look-y', '0px');
-        pet.classList.remove('is-curious');
+        pet.classList.remove('is-curious', 'is-looking');
         if(!hasActiveAction()) playSprite('idle');
       });
 
@@ -411,8 +470,10 @@
         activePointer = event.pointerId;
         startX = event.clientX;
         startY = event.clientY;
+        lastDragX = event.clientX;
         dragging = false;
         longPressed = false;
+        pet.classList.remove('is-curious');
         pet.classList.add('is-held');
         try { button.setPointerCapture(event.pointerId); } catch(_) {}
         clearTimeout(holdTimer);
@@ -431,19 +492,29 @@
       button.addEventListener('pointermove', function(event){
         if(activePointer !== event.pointerId) return;
         if(Math.hypot(event.clientX - startX, event.clientY - startY) > 6){
-          if(!dragging) playSprite(event.clientX >= startX ? 'runningRight' : 'runningLeft');
-          dragging = true;
+          if(!dragging){
+            clearActionClasses();
+            clearTimeout(actionTimer);
+            pet.classList.remove('is-curious', 'is-looking');
+            dragging = true;
+            pet.classList.add('is-dragging');
+          }
           clearTimeout(holdTimer);
-          pet.classList.add('is-dragging');
+          if(Math.abs(event.clientX - lastDragX) > 1){
+            var dragSprite = event.clientX > lastDragX ? 'runningRight' : 'runningLeft';
+            if(spriteMode !== dragSprite) playSprite(dragSprite);
+          }
+          lastDragX = event.clientX;
           setPetPosition(event.clientX, event.clientY, false);
         }
       });
 
       function finishPointer(event){
         if(activePointer !== event.pointerId) return;
+        var wasDragging = dragging;
         clearTimeout(holdTimer);
         pet.classList.remove('is-held', 'is-dragging');
-        if(dragging){
+        if(wasDragging){
           setPetPosition(event.clientX, event.clientY, true);
           ignoreClick = true;
           speak('New spot!', 900);
@@ -451,6 +522,7 @@
         }
         activePointer = null;
         dragging = false;
+        if(!wasDragging && !hasActiveAction()) resumeAmbientSprite();
       }
 
       button.addEventListener('pointerup', finishPointer);
@@ -464,9 +536,6 @@
         }
         clearTimeout(clickTimer);
         clickTimer = setTimeout(function(){
-          clearActionClasses();
-          clearTimeout(actionTimer);
-          playSprite('idle');
           messageIndex = (messageIndex + 1) % messages.length;
           speak(messages[messageIndex], 1500);
         }, 190);
@@ -475,9 +544,6 @@
       button.addEventListener('dblclick', function(event){
         event.preventDefault();
         clearTimeout(clickTimer);
-        clearActionClasses();
-        clearTimeout(actionTimer);
-        playSprite('idle');
         messageIndex = (messageIndex + 1) % messages.length;
         speak(messages[messageIndex], 1500);
       });
@@ -487,7 +553,7 @@
         idleTimer = setTimeout(function(){
           if(!document.hidden && activePointer === null && !pet.classList.contains('is-speaking')){
             var action = nextIdleAction();
-            react(action.className, null, action.duration);
+            react(action);
           }
           scheduleIdle();
         }, 6500 + Math.random() * 6000);

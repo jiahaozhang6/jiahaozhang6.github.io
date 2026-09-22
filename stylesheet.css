@@ -1218,6 +1218,10 @@ body.wechat-open::after {
   transition: transform 110ms ease-out, filter 180ms ease;
 }
 
+.shiba-pet.is-looking .shiba-pet__sprite {
+  transform: translate(var(--shiba-look-x), var(--shiba-look-y)) scale(1.08);
+}
+
 .shiba-pet__sparkle,
 .shiba-pet__heart {
   position: absolute;
@@ -1291,7 +1295,6 @@ body.wechat-open::after {
   transform: translateX(-50%) rotate(45deg);
 }
 
-.shiba-pet:hover .shiba-pet__stage,
 .shiba-pet.is-curious .shiba-pet__stage {
   animation: shibaCurious 780ms ease-in-out infinite alternate;
 }
@@ -1302,40 +1305,61 @@ body.wechat-open::after {
 }
 
 .shiba-pet.is-happy .shiba-pet__button {
-  animation: shibaHop 620ms cubic-bezier(0.22, 0.8, 0.32, 1);
+  animation: shibaHop var(--shiba-action-duration, 840ms) cubic-bezier(0.22, 0.8, 0.32, 1) 1;
+}
+
+.shiba-pet.is-happy .shiba-pet__stage {
+  animation: none;
 }
 
 .shiba-pet.is-happy .shiba-pet__heart {
-  animation: shibaHeart 760ms ease-out 1;
+  animation: shibaHeart var(--shiba-action-duration, 840ms) ease-out 1;
 }
 
 .shiba-pet.is-pawing .shiba-pet__stage {
-  animation: shibaPaw 760ms ease-in-out 1;
+  animation: shibaPaw var(--shiba-action-duration, 700ms) ease-in-out 1;
 }
 
 .shiba-pet.is-pawing .shiba-pet__sparkle,
-.shiba-pet.is-running .shiba-pet__sparkle {
-  animation: shibaSparkle 760ms ease-out 1;
+.shiba-pet.is-working .shiba-pet__sparkle {
+  animation: shibaSparkle var(--shiba-action-duration, 820ms) ease-out 1;
 }
 
-.shiba-pet.is-listening .shiba-pet__stage {
-  animation: shibaListen 1.15s ease-in-out 1;
+.shiba-pet.is-running-right .shiba-pet__stage {
+  animation: shibaRunRight var(--shiba-action-duration, 1060ms) ease-in-out 1;
 }
 
-.shiba-pet.is-running .shiba-pet__stage {
-  animation: shibaDash 1.05s ease-in-out 1;
+.shiba-pet.is-running-left .shiba-pet__stage {
+  animation: shibaRunLeft var(--shiba-action-duration, 1060ms) ease-in-out 1;
+}
+
+.shiba-pet.is-failed .shiba-pet__stage,
+.shiba-pet.is-looking-around .shiba-pet__stage {
+  animation: none;
+}
+
+.shiba-pet.is-failed .shiba-pet__sprite {
+  filter: saturate(0.72) brightness(0.9);
+}
+
+.shiba-pet.is-waiting .shiba-pet__stage {
+  animation: shibaWaiting var(--shiba-action-duration, 1010ms) ease-in-out 1;
+}
+
+.shiba-pet.is-working .shiba-pet__stage {
+  animation: shibaWork var(--shiba-action-duration, 820ms) ease-in-out 1;
+}
+
+.shiba-pet.is-reviewing .shiba-pet__stage {
+  animation: shibaReview var(--shiba-action-duration, 1030ms) ease-in-out 1;
 }
 
 .shiba-pet.is-sleeping .shiba-pet__stage {
-  animation: shibaSleep 2s ease-in-out infinite;
+  animation: shibaSleep var(--shiba-action-duration, 4060ms) ease-in-out 1;
 }
 
 .shiba-pet.is-sleeping .shiba-pet__sprite {
   filter: saturate(0.78) brightness(0.92);
-}
-
-.shiba-pet.is-sniffing .shiba-pet__stage {
-  animation: shibaSniff 1.4s ease-in-out 1;
 }
 
 .shiba-pet.is-held .shiba-pet__button {
@@ -1348,14 +1372,18 @@ body.wechat-open::after {
   transform: scale(1.07);
 }
 
+.shiba-pet.is-dragging .shiba-pet__stage {
+  animation: none;
+}
+
 @keyframes shibaIdle {
   0%, 100% { transform: translateY(0) scale(1); }
   50% { transform: translateY(-2px) scale(1.008); }
 }
 
 @keyframes shibaCurious {
-  from { transform: translateY(0) scale(1.1); }
-  to { transform: translateY(-4px) scale(1.12); }
+  from { transform: translateY(0) scale(1.02); }
+  to { transform: translateY(-3px) scale(1.04); }
 }
 
 @keyframes shibaHop {
@@ -1371,28 +1399,35 @@ body.wechat-open::after {
   78% { transform: translate(-4px, -7px); }
 }
 
-@keyframes shibaListen {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  34%, 72% { transform: translate(-4px, -2px) scale(1.04); }
+@keyframes shibaRunRight {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(9px); }
 }
 
-@keyframes shibaDash {
+@keyframes shibaRunLeft {
   0%, 100% { transform: translateX(0); }
-  24% { transform: translateX(-8px); }
-  52% { transform: translateX(7px); }
-  78% { transform: translateX(-4px); }
+  50% { transform: translateX(-9px); }
+}
+
+@keyframes shibaWaiting {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(2px); }
+}
+
+@keyframes shibaWork {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.015); }
+}
+
+@keyframes shibaReview {
+  0%, 100% { transform: translateX(0); }
+  35% { transform: translateX(-2px); }
+  70% { transform: translateX(2px); }
 }
 
 @keyframes shibaSleep {
   0%, 100% { transform: translateY(5px) scaleY(0.98); }
   50% { transform: translateY(7px) scaleY(0.965); }
-}
-
-@keyframes shibaSniff {
-  0%, 100% { transform: translate(0, 0); }
-  30% { transform: translate(-3px, 4px); }
-  52% { transform: translate(3px, 5px); }
-  74% { transform: translate(-2px, 3px); }
 }
 
 @keyframes shibaHeart {
