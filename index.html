@@ -377,7 +377,9 @@
         pet.classList.toggle('is-curious', curious);
         if(curious && !hasActiveAction()){
           var angle = Math.atan2(pointerY - centerY, pointerX - centerX);
-          var lookIndex = Math.round(((angle + Math.PI) / (Math.PI * 2)) * 15) % 16;
+          // The final two sprite rows contain 16 look directions ordered
+          // clockwise from straight up: up, upper-right, right, and so on.
+          var lookIndex = (Math.round(((angle + Math.PI / 2) / (Math.PI * 2)) * 16) + 16) % 16;
           if(lookIndex !== lastLookFrame){
             clearInterval(spriteTimer);
             spriteTimer = null;
