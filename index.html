@@ -9,11 +9,10 @@
     <meta name="author" content="Jiahao Zhang">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
-    <link rel="preload" as="image" href="images/panotask_overview_preview.webp" type="image/webp">
     <link rel="preload" as="video" href="videos/panotask_camera_work.mp4" type="video/mp4">
     <link rel="preload" as="image" href="images/mksnet_image_preview.webp" type="image/webp">
     <link rel="preload" as="image" href="images/patent_census1_preview.webp" type="image/webp">
-    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260922-12">
+    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260922-13">
     <script src="visitor-origins.js?v=20260922-8" defer></script>
     
   </head>
@@ -117,6 +116,20 @@
         // when opened via file://, fetch may be blocked; handle errors gracefully
         return fetch(src, { cache: 'no-store' }).then(function(r){ if(!r.ok) throw new Error('Failed to load ' + src); return r.text(); }).then(function(html){
           el.innerHTML = html;
+          el.querySelectorAll('video[data-autoplay-preview]').forEach(function(video){
+            video.muted = true;
+            video.defaultMuted = true;
+            video.playsInline = true;
+            video.setAttribute('muted', '');
+            video.setAttribute('playsinline', '');
+            function startPlayback(){
+              var playback = video.play();
+              if(playback && typeof playback.catch === 'function') playback.catch(function(){ /* browser policy may delay playback */ });
+            }
+            video.addEventListener('loadeddata', startPlayback, { once: true });
+            video.addEventListener('canplay', startPlayback, { once: true });
+            startPlayback();
+          });
           // Execute inline scripts in the included fragment
           // When moving scripts to the document head we must copy ALL attributes
           // (e.g. data-* for widgets like Giscus) otherwise the widget won't receive its config.
