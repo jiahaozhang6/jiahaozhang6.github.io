@@ -1159,9 +1159,298 @@ body.wechat-open::after {
   border: 0;
 }
 
+.shiba-pet {
+  --shiba-look-x: 0px;
+  --shiba-look-y: 0px;
+  --shiba-look-rotate: 0deg;
+  position: fixed;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(10px, env(safe-area-inset-bottom));
+  z-index: 1500;
+  width: 132px;
+  height: 151px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.shiba-pet__button {
+  width: 100%;
+  height: 143px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  filter: drop-shadow(0 8px 10px rgba(12, 32, 46, 0.2));
+  transform-origin: 50% 100%;
+}
+
+.shiba-pet__button:focus-visible {
+  border-radius: 50%;
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.shiba-pet__stage {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: center bottom;
+  animation: shibaIdle 4.2s ease-in-out infinite;
+}
+
+.shiba-pet__sprite {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url("images/shiba_pet_sprites.webp");
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 800% 1100%;
+  image-rendering: pixelated;
+  pointer-events: none;
+  transform: translate(var(--shiba-look-x), var(--shiba-look-y)) rotate(var(--shiba-look-rotate));
+  transform-origin: center bottom;
+  transition: transform 110ms ease-out, filter 180ms ease;
+}
+
+.shiba-pet__credit {
+  position: absolute;
+  right: 8px;
+  bottom: 0;
+  z-index: 3;
+  color: var(--muted);
+  border-bottom: 0;
+  font-family: var(--font-mono);
+  font-size: 7px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  opacity: 0.55;
+  pointer-events: auto;
+  transition: color 160ms ease, opacity 160ms ease;
+}
+
+.shiba-pet__credit:hover,
+.shiba-pet__credit:focus-visible {
+  color: var(--brand);
+  opacity: 1;
+}
+
+.shiba-pet__sparkle,
+.shiba-pet__heart {
+  position: absolute;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.shiba-pet__sparkle {
+  color: #f4b83f;
+  font-size: 17px;
+  text-shadow: 0 1px 5px rgba(255, 255, 255, 0.9);
+}
+
+.shiba-pet__sparkle--one {
+  top: 10%;
+  left: 10%;
+}
+
+.shiba-pet__sparkle--two {
+  top: 28%;
+  right: 2%;
+  font-size: 12px;
+}
+
+.shiba-pet__heart {
+  top: 2%;
+  right: 12%;
+  color: #e85d75;
+  font-size: 18px;
+  text-shadow: 0 2px 6px rgba(232, 93, 117, 0.3);
+}
+
+.shiba-pet__bubble {
+  position: absolute;
+  right: 74%;
+  bottom: 83%;
+  min-width: 60px;
+  max-width: 116px;
+  padding: 6px 9px;
+  border: 1px solid var(--line);
+  border-radius: 12px 12px 3px;
+  background: var(--surface-solid);
+  color: var(--ink-strong);
+  box-shadow: var(--shadow);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(8px, 6px) scale(0.88);
+  transition: opacity 160ms ease, transform 180ms ease;
+}
+
+.shiba-pet__bubble::after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  bottom: -1px;
+  width: 10px;
+  height: 10px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-solid);
+  transform: skew(28deg);
+}
+
+.shiba-pet:hover .shiba-pet__stage,
+.shiba-pet.is-curious .shiba-pet__stage {
+  animation: shibaCurious 780ms ease-in-out infinite alternate;
+}
+
+.shiba-pet.is-speaking .shiba-pet__bubble {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
+
+.shiba-pet.is-happy .shiba-pet__button {
+  animation: shibaHop 620ms cubic-bezier(0.22, 0.8, 0.32, 1);
+}
+
+.shiba-pet.is-happy .shiba-pet__heart {
+  animation: shibaHeart 760ms ease-out 1;
+}
+
+.shiba-pet.is-pawing .shiba-pet__stage {
+  animation: shibaPaw 760ms ease-in-out 1;
+}
+
+.shiba-pet.is-pawing .shiba-pet__sparkle,
+.shiba-pet.is-spinning .shiba-pet__sparkle {
+  animation: shibaSparkle 760ms ease-out 1;
+}
+
+.shiba-pet.is-listening .shiba-pet__stage {
+  animation: shibaListen 1.15s ease-in-out 1;
+}
+
+.shiba-pet.is-spinning .shiba-pet__button {
+  animation: shibaSpin 920ms cubic-bezier(0.35, 0.8, 0.25, 1);
+}
+
+.shiba-pet.is-sleeping .shiba-pet__stage {
+  animation: shibaSleep 2s ease-in-out infinite;
+}
+
+.shiba-pet.is-sleeping .shiba-pet__sprite {
+  filter: saturate(0.78) brightness(0.92);
+}
+
+.shiba-pet.is-sniffing .shiba-pet__stage {
+  animation: shibaSniff 1.4s ease-in-out 1;
+}
+
+.shiba-pet.is-held .shiba-pet__button {
+  transform: scale(1.04);
+}
+
+.shiba-pet.is-dragging .shiba-pet__button {
+  cursor: grabbing;
+  filter: drop-shadow(0 13px 13px rgba(12, 32, 46, 0.28));
+  transform: scale(1.07) rotate(-2deg);
+}
+
+@keyframes shibaIdle {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.008); }
+}
+
+@keyframes shibaCurious {
+  from { transform: translateY(0) rotate(-1deg) scale(1.1); }
+  to { transform: translateY(-4px) rotate(2.5deg) scale(1.12); }
+}
+
+@keyframes shibaHop {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  36% { transform: translateY(-18px) rotate(-3deg); }
+  64% { transform: translateY(-6px) rotate(3deg); }
+}
+
+@keyframes shibaPaw {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  30% { transform: translate(-5px, -8px) rotate(-7deg); }
+  55% { transform: translate(3px, -4px) rotate(4deg); }
+  78% { transform: translate(-4px, -7px) rotate(-5deg); }
+}
+
+@keyframes shibaListen {
+  0%, 100% { transform: rotate(0deg); }
+  34%, 72% { transform: rotate(-9deg) translateY(-2px); }
+}
+
+@keyframes shibaSpin {
+  0% { transform: rotate(0deg) scale(1); }
+  38% { transform: rotate(-18deg) scale(0.92); }
+  76% { transform: rotate(366deg) scale(1.08); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes shibaSleep {
+  0%, 100% { transform: translateY(5px) rotate(3deg) scaleY(0.98); }
+  50% { transform: translateY(7px) rotate(5deg) scaleY(0.965); }
+}
+
+@keyframes shibaSniff {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  30% { transform: translate(-3px, 4px) rotate(-4deg); }
+  52% { transform: translate(3px, 5px) rotate(4deg); }
+  74% { transform: translate(-2px, 3px) rotate(-2deg); }
+}
+
+@keyframes shibaHeart {
+  0% { opacity: 0; transform: translateY(8px) scale(0.5) rotate(-8deg); }
+  35% { opacity: 1; transform: translateY(0) scale(1.15) rotate(4deg); }
+  100% { opacity: 0; transform: translateY(-20px) scale(0.85) rotate(8deg); }
+}
+
+@keyframes shibaSparkle {
+  0% { opacity: 0; transform: scale(0.3) rotate(0deg); }
+  35%, 65% { opacity: 1; transform: scale(1.1) rotate(90deg); }
+  100% { opacity: 0; transform: scale(0.5) rotate(180deg); }
+}
+
 @media (max-width: 560px) {
   .site-footer {
     padding-top: 10px;
+  }
+
+  .shiba-pet {
+    right: max(8px, env(safe-area-inset-right));
+    bottom: max(7px, env(safe-area-inset-bottom));
+    width: 94px;
+    height: 110px;
+  }
+
+  .shiba-pet__button {
+    height: 102px;
+  }
+
+  .shiba-pet__bubble {
+    right: 67%;
+    bottom: 80%;
+    min-width: 52px;
+    padding: 5px 7px;
+    font-size: 9px;
+  }
+
+  .shiba-pet__credit {
+    right: 5px;
+    font-size: 6px;
   }
 }
 
@@ -1611,5 +1900,10 @@ body.wechat-open::after {
   .neural-canvas,
   .lab-scanline {
     display: none;
+  }
+
+  .shiba-pet__stage,
+  .shiba-pet__sprite {
+    animation: none !important;
   }
 }

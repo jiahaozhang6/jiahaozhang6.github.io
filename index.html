@@ -13,7 +13,7 @@
     <link rel="preload" as="video" href="videos/panotask_camera_work.mp4" type="video/mp4">
     <link rel="preload" as="image" href="images/mksnet_image_preview.webp" type="image/webp">
     <link rel="preload" as="image" href="images/patent_census1_preview.webp" type="image/webp">
-    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260922-1">
+    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260922-2">
     
   </head>
   <!-- Developer notes: Major sections in this file (top to bottom):
@@ -85,6 +85,20 @@
         </div>
       </footer>
     </main>
+
+    <div id="shiba-pet" class="shiba-pet" aria-live="polite">
+      <div class="shiba-pet__bubble" role="status">Hi!</div>
+      <button class="shiba-pet__button" type="button" aria-label="Pet the Shiba Inu">
+        <!-- Animated sprite artwork: Kavana / Project Caro community, CC BY-NC 4.0. -->
+        <span class="shiba-pet__stage" aria-hidden="true">
+          <span class="shiba-pet__sprite"></span>
+          <span class="shiba-pet__sparkle shiba-pet__sparkle--one">✦</span>
+          <span class="shiba-pet__sparkle shiba-pet__sparkle--two">✦</span>
+          <span class="shiba-pet__heart">♥</span>
+        </span>
+      </button>
+      <a class="shiba-pet__credit" href="https://github.com/wildcard/kavana-codex-pet" target="_blank" rel="noopener noreferrer" title="Kavana artwork · CC BY-NC 4.0">Kavana</a>
+    </div>
 
     <script>
     (function(){
@@ -198,6 +212,264 @@
         y = Math.round((e.clientY / Math.max(window.innerHeight, 1)) * 100);
         if(!raf) raf = requestAnimationFrame(apply);
       }, { passive: true });
+    })();
+    </script>
+    <script>
+    // Animated Shiba desktop pet with atlas-driven states, pointer tracking, dragging, and gestures.
+    (function(){
+      var pet = document.getElementById('shiba-pet');
+      if(!pet) return;
+      var button = pet.querySelector('.shiba-pet__button');
+      var bubble = pet.querySelector('.shiba-pet__bubble');
+      var sprite = pet.querySelector('.shiba-pet__sprite');
+      if(!button || !bubble || !sprite) return;
+
+      var reactions = [
+        { className: 'is-happy', message: 'Woof!', duration: 1100 },
+        { className: 'is-pawing', message: 'High five!', duration: 1250 },
+        { className: 'is-listening', message: 'I am listening.', duration: 1300 },
+        { className: 'is-happy', message: 'Good luck!', duration: 1100 },
+        { className: 'is-pawing', message: 'Keep exploring!', duration: 1250 }
+      ];
+      var reactionIndex = -1;
+      var hideTimer = null;
+      var actionTimer = null;
+      var clickTimer = null;
+      var holdTimer = null;
+      var idleTimer = null;
+      var raf = null;
+      var pointerX = 0;
+      var pointerY = 0;
+      var activePointer = null;
+      var startX = 0;
+      var startY = 0;
+      var dragging = false;
+      var longPressed = false;
+      var ignoreClick = false;
+      var spriteTimer = null;
+      var spriteMode = '';
+      var lastLookFrame = -1;
+      var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var spriteAnimations = {
+        idle: { row: 0, frames: 7, interval: 185 },
+        runningRight: { row: 1, frames: 8, interval: 92 },
+        runningLeft: { row: 2, frames: 8, interval: 92 },
+        waving: { row: 3, frames: 4, interval: 145 },
+        jumping: { row: 4, frames: 5, interval: 115 },
+        failed: { row: 5, frames: 8, interval: 190 },
+        waiting: { row: 6, frames: 6, interval: 175 },
+        running: { row: 7, frames: 6, interval: 105 },
+        review: { row: 8, frames: 6, interval: 170 }
+      };
+      var spriteForAction = {
+        'is-happy': 'jumping',
+        'is-pawing': 'waving',
+        'is-listening': 'review',
+        'is-spinning': 'running',
+        'is-sleeping': 'failed',
+        'is-sniffing': 'waiting'
+      };
+
+      function setSpriteFrame(row, column){
+        var x = (column / 7) * 100;
+        var y = (row / 10) * 100;
+        sprite.style.backgroundPosition = x.toFixed(4) + '% ' + y.toFixed(4) + '%';
+      }
+
+      function playSprite(name){
+        clearInterval(spriteTimer);
+        spriteTimer = null;
+        spriteMode = name;
+        lastLookFrame = -1;
+        var config = spriteAnimations[name] || spriteAnimations.idle;
+        var frame = 0;
+        setSpriteFrame(config.row, frame);
+        if(reducedMotion) return;
+        spriteTimer = setInterval(function(){
+          frame = (frame + 1) % config.frames;
+          setSpriteFrame(config.row, frame);
+        }, config.interval);
+      }
+
+      function hasActiveAction(){
+        return pet.classList.contains('is-happy') ||
+          pet.classList.contains('is-pawing') ||
+          pet.classList.contains('is-listening') ||
+          pet.classList.contains('is-spinning') ||
+          pet.classList.contains('is-sleeping') ||
+          pet.classList.contains('is-sniffing') ||
+          pet.classList.contains('is-dragging');
+      }
+
+      function clearActionClasses(){
+        pet.classList.remove('is-happy', 'is-pawing', 'is-listening', 'is-spinning', 'is-sleeping', 'is-sniffing');
+      }
+
+      function speak(message, duration){
+        bubble.textContent = message;
+        pet.classList.add('is-speaking');
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(function(){ pet.classList.remove('is-speaking'); }, duration || 1200);
+      }
+
+      function react(className, message, duration){
+        clearActionClasses();
+        void pet.offsetWidth;
+        pet.classList.add(className);
+        playSprite(spriteForAction[className] || 'idle');
+        if(message) speak(message, duration);
+        clearTimeout(actionTimer);
+        actionTimer = setTimeout(function(){
+          pet.classList.remove(className);
+          playSprite('idle');
+        }, duration || 1200);
+      }
+
+      function clamp(value, min, max){
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function setPetPosition(clientX, clientY, save){
+        var rect = pet.getBoundingClientRect();
+        var right = clamp(window.innerWidth - clientX - rect.width / 2, 4, Math.max(4, window.innerWidth - rect.width - 4));
+        var bottom = clamp(window.innerHeight - clientY - rect.height / 2, 4, Math.max(4, window.innerHeight - rect.height - 4));
+        pet.style.right = right + 'px';
+        pet.style.bottom = bottom + 'px';
+        if(save){
+          try { localStorage.setItem('shiba-pet-position', JSON.stringify({ right: right, bottom: bottom })); } catch(_) {}
+        }
+      }
+
+      try {
+        var savedPosition = JSON.parse(localStorage.getItem('shiba-pet-position') || 'null');
+        if(savedPosition && Number.isFinite(savedPosition.right) && Number.isFinite(savedPosition.bottom)){
+          var petRect = pet.getBoundingClientRect();
+          pet.style.right = clamp(savedPosition.right, 4, Math.max(4, window.innerWidth - petRect.width - 4)) + 'px';
+          pet.style.bottom = clamp(savedPosition.bottom, 4, Math.max(4, window.innerHeight - petRect.height - 4)) + 'px';
+        }
+      } catch(_) {}
+
+      function updateLook(){
+        var rect = button.getBoundingClientRect();
+        var centerX = rect.left + rect.width * 0.53;
+        var centerY = rect.top + rect.height * 0.43;
+        var dx = Math.max(-2.4, Math.min(2.4, (pointerX - centerX) / 90));
+        var dy = Math.max(-1.8, Math.min(1.8, (pointerY - centerY) / 90));
+        pet.style.setProperty('--shiba-look-x', dx.toFixed(2) + 'px');
+        pet.style.setProperty('--shiba-look-y', dy.toFixed(2) + 'px');
+        pet.style.setProperty('--shiba-look-rotate', (dx * 0.55).toFixed(2) + 'deg');
+        var distance = Math.hypot(pointerX - centerX, pointerY - centerY);
+        var curious = activePointer === null && distance < 210;
+        pet.classList.toggle('is-curious', curious);
+        if(curious && !hasActiveAction()){
+          var angle = Math.atan2(pointerY - centerY, pointerX - centerX);
+          var lookIndex = Math.round(((angle + Math.PI) / (Math.PI * 2)) * 15) % 16;
+          if(lookIndex !== lastLookFrame){
+            clearInterval(spriteTimer);
+            spriteTimer = null;
+            spriteMode = 'look';
+            lastLookFrame = lookIndex;
+            setSpriteFrame(lookIndex < 8 ? 9 : 10, lookIndex % 8);
+          }
+        }else if(!hasActiveAction() && spriteMode === 'look'){
+          playSprite('idle');
+        }
+        raf = null;
+      }
+
+      document.addEventListener('pointermove', function(event){
+        pointerX = event.clientX;
+        pointerY = event.clientY;
+        if(!raf) raf = requestAnimationFrame(updateLook);
+      }, { passive: true });
+
+      document.addEventListener('pointerleave', function(){
+        pet.style.setProperty('--shiba-look-x', '0px');
+        pet.style.setProperty('--shiba-look-y', '0px');
+        pet.style.setProperty('--shiba-look-rotate', '0deg');
+        pet.classList.remove('is-curious');
+        if(!hasActiveAction()) playSprite('idle');
+      });
+
+      button.addEventListener('pointerdown', function(event){
+        if(event.button !== undefined && event.button !== 0) return;
+        activePointer = event.pointerId;
+        startX = event.clientX;
+        startY = event.clientY;
+        dragging = false;
+        longPressed = false;
+        pet.classList.add('is-held');
+        try { button.setPointerCapture(event.pointerId); } catch(_) {}
+        clearTimeout(holdTimer);
+        holdTimer = setTimeout(function(){
+          if(!dragging){
+            longPressed = true;
+            ignoreClick = true;
+            react('is-sleeping', 'Zzz…', 2400);
+          }
+        }, 650);
+      });
+
+      button.addEventListener('pointermove', function(event){
+        if(activePointer !== event.pointerId) return;
+        if(Math.hypot(event.clientX - startX, event.clientY - startY) > 6){
+          if(!dragging) playSprite(event.clientX >= startX ? 'runningRight' : 'runningLeft');
+          dragging = true;
+          clearTimeout(holdTimer);
+          pet.classList.add('is-dragging');
+          setPetPosition(event.clientX, event.clientY, false);
+        }
+      });
+
+      function finishPointer(event){
+        if(activePointer !== event.pointerId) return;
+        clearTimeout(holdTimer);
+        pet.classList.remove('is-held', 'is-dragging');
+        if(dragging){
+          setPetPosition(event.clientX, event.clientY, true);
+          ignoreClick = true;
+          speak('New spot!', 900);
+          playSprite('idle');
+        }
+        activePointer = null;
+        dragging = false;
+      }
+
+      button.addEventListener('pointerup', finishPointer);
+      button.addEventListener('pointercancel', finishPointer);
+
+      button.addEventListener('click', function(){
+        if(ignoreClick || longPressed){
+          ignoreClick = false;
+          longPressed = false;
+          return;
+        }
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(function(){
+          reactionIndex = (reactionIndex + 1) % reactions.length;
+          var item = reactions[reactionIndex];
+          react(item.className, item.message, item.duration);
+        }, 190);
+      });
+
+      button.addEventListener('dblclick', function(event){
+        event.preventDefault();
+        clearTimeout(clickTimer);
+        react('is-spinning', 'Zoomies!', 1100);
+      });
+
+      function scheduleIdle(){
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(function(){
+          if(!document.hidden && activePointer === null && !pet.classList.contains('is-speaking')){
+            react('is-sniffing', null, 1500);
+          }
+          scheduleIdle();
+        }, 9000 + Math.random() * 5000);
+      }
+
+      playSprite('idle');
+      scheduleIdle();
     })();
     </script>
     <script>
