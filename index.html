@@ -11,7 +11,7 @@
     <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
     <link rel="preload" as="image" href="images/mksnet_image_preview.webp" type="image/webp">
     <link rel="preload" as="image" href="images/patent_census1_preview.webp" type="image/webp">
-    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260922-16">
+    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260923-1">
     <script src="visitor-origins.js?v=20260922-9" defer></script>
     
   </head>
@@ -250,6 +250,28 @@
         runningLeft: rowFrames(2, [120, 120, 120, 120, 120, 120, 120, 220]),
         waving: rowFrames(3, [140, 140, 140, 280]),
         jumping: rowFrames(4, [140, 140, 140, 140, 280]),
+        doubleWave: [
+          { row: 3, column: 0, duration: 120 },
+          { row: 3, column: 1, duration: 110 },
+          { row: 3, column: 2, duration: 110 },
+          { row: 3, column: 3, duration: 140 },
+          { row: 3, column: 0, duration: 120 },
+          { row: 3, column: 1, duration: 110 },
+          { row: 3, column: 2, duration: 110 },
+          { row: 3, column: 3, duration: 260 }
+        ],
+        excitedHop: [
+          { row: 4, column: 0, duration: 110 },
+          { row: 4, column: 1, duration: 110 },
+          { row: 4, column: 2, duration: 120 },
+          { row: 4, column: 3, duration: 110 },
+          { row: 4, column: 4, duration: 140 },
+          { row: 4, column: 0, duration: 110 },
+          { row: 4, column: 1, duration: 110 },
+          { row: 4, column: 2, duration: 120 },
+          { row: 4, column: 3, duration: 110 },
+          { row: 4, column: 4, duration: 300 }
+        ],
         failed: rowFrames(5, [140, 140, 140, 140, 140, 140, 140, 240]),
         waiting: rowFrames(6, [150, 150, 150, 150, 150, 260]),
         working: rowFrames(7, [120, 120, 120, 120, 120, 220]),
@@ -263,6 +285,16 @@
           { row: 5, column: 4, duration: 1400 },
           { row: 5, column: 5, duration: 520 },
           { row: 5, column: 4, duration: 1400 }
+        ],
+        sleepyStretch: [
+          { row: 5, column: 2, duration: 260 },
+          { row: 5, column: 3, duration: 340 },
+          { row: 5, column: 4, duration: 900 },
+          { row: 5, column: 5, duration: 240 },
+          { row: 6, column: 0, duration: 170 },
+          { row: 6, column: 1, duration: 170 },
+          { row: 6, column: 2, duration: 220 },
+          { row: 0, column: 0, duration: 320 }
         ]
       };
 
@@ -271,12 +303,15 @@
         { className: 'is-running-left', sprite: 'runningLeft' },
         { className: 'is-pawing', sprite: 'waving' },
         { className: 'is-happy', sprite: 'jumping' },
+        { className: 'is-double-waving', sprite: 'doubleWave' },
+        { className: 'is-excited', sprite: 'excitedHop' },
         { className: 'is-failed', sprite: 'failed' },
         { className: 'is-waiting', sprite: 'waiting' },
         { className: 'is-working', sprite: 'working' },
         { className: 'is-reviewing', sprite: 'review' },
         { className: 'is-looking-around', sprite: 'lookAround' },
-        { className: 'is-sleeping', sprite: 'sleeping' }
+        { className: 'is-sleeping', sprite: 'sleeping' },
+        { className: 'is-stretching', sprite: 'sleepyStretch' }
       ];
       var actionClasses = idleActions.map(function(action){ return action.className; });
       var idleActionQueue = [];

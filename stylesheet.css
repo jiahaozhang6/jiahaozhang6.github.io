@@ -1558,6 +1558,26 @@ body.wechat-open::after {
   animation: shibaHeart var(--shiba-action-duration, 840ms) ease-out 1;
 }
 
+.shiba-pet.is-excited .shiba-pet__stage {
+  animation: shibaExcited var(--shiba-action-duration, 1340ms) ease-in-out 1;
+}
+
+.shiba-pet.is-excited .shiba-pet__heart {
+  animation: shibaHeartBurst var(--shiba-action-duration, 1340ms) ease-out 1;
+}
+
+.shiba-pet.is-double-waving .shiba-pet__stage {
+  animation: shibaDoubleWave var(--shiba-action-duration, 1080ms) ease-in-out 1;
+}
+
+.shiba-pet.is-double-waving .shiba-pet__sparkle {
+  animation: shibaSparkle var(--shiba-action-duration, 1080ms) ease-out 1;
+}
+
+.shiba-pet.is-stretching .shiba-pet__stage {
+  animation: shibaStretch var(--shiba-action-duration, 2620ms) ease-in-out 1;
+}
+
 .shiba-pet.is-pawing .shiba-pet__stage {
   animation: shibaPaw var(--shiba-action-duration, 700ms) ease-in-out 1;
 }
@@ -1648,6 +1668,23 @@ body.wechat-open::after {
   78% { transform: translate(-4px, -7px); }
 }
 
+@keyframes shibaDoubleWave {
+  0%, 100% { transform: translateY(0); }
+  20%, 67% { transform: translate(-3px, -5px); }
+  40%, 82% { transform: translate(2px, -3px); }
+}
+
+@keyframes shibaExcited {
+  0%, 47%, 100% { transform: translateY(0) scale(1); }
+  22%, 72% { transform: translateY(-9px) scale(1.025); }
+}
+
+@keyframes shibaStretch {
+  0%, 53% { transform: translateY(5px) scaleY(0.98); }
+  71% { transform: translateY(2px) scaleY(1.02); }
+  85%, 100% { transform: translateY(0) scaleY(1); }
+}
+
 @keyframes shibaRunRight {
   0%, 100% { transform: translateX(0); }
   50% { transform: translateX(9px); }
@@ -1683,6 +1720,12 @@ body.wechat-open::after {
   0% { opacity: 0; transform: translateY(8px) scale(0.5) rotate(-8deg); }
   35% { opacity: 1; transform: translateY(0) scale(1.15) rotate(4deg); }
   100% { opacity: 0; transform: translateY(-20px) scale(0.85) rotate(8deg); }
+}
+
+@keyframes shibaHeartBurst {
+  0%, 45%, 100% { opacity: 0; transform: translateY(7px) scale(0.6); }
+  20%, 67% { opacity: 1; transform: translateY(-5px) scale(1.1); }
+  35%, 83% { opacity: 0; transform: translateY(-18px) scale(0.85); }
 }
 
 @keyframes shibaSparkle {
