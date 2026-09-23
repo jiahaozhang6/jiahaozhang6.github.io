@@ -253,18 +253,44 @@ figure {
   color: var(--brand);
 }
 
-.nav-links .nav-cv-link {
+.nav-actions {
   display: inline-flex;
-  align-items: baseline;
-  gap: 4px;
-  color: var(--brand-deep);
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
 }
 
-.nav-cv-date {
-  color: var(--muted);
-  font-size: 9px;
-  font-weight: 650;
-  letter-spacing: 0.02em;
+.nav-cv-button {
+  display: inline-flex;
+  min-width: 67px;
+  min-height: 34px;
+  padding: 5px 13px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-solid), transparent 5%);
+  color: var(--ink-strong);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 4px 14px rgba(9, 29, 48, 0.04);
+}
+
+.nav-cv-button:hover,
+.nav-cv-button:focus-visible {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.nav-cv-chevron {
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
 }
 
 .theme-toggle,
@@ -277,14 +303,15 @@ figure {
 }
 
 .theme-toggle {
-  min-height: 31px;
+  width: 38px;
+  height: 38px;
+  padding: 0;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 4px 10px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 700;
+  justify-content: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--surface-solid), transparent 5%);
+  box-shadow: 0 4px 14px rgba(9, 29, 48, 0.04);
 }
 
 .theme-toggle:hover,
@@ -296,10 +323,46 @@ figure {
 }
 
 .theme-icon {
-  width: 9px;
-  height: 9px;
-  border: 1px solid currentColor;
+  position: relative;
+  width: 12px;
+  height: 12px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 50%;
   background: currentColor;
+}
+
+.theme-icon::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--surface-solid);
+}
+
+:root[data-theme="dark"] .theme-icon {
+  overflow: visible;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent), transparent 75%);
+}
+
+:root[data-theme="dark"] .theme-icon::after {
+  display: none;
+}
+
+.theme-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .nav-toggle {
@@ -1903,7 +1966,7 @@ body.wechat-open::after {
     margin-left: 0;
   }
 
-  .theme-toggle {
+  .nav-actions {
     order: 2;
   }
 
@@ -2024,8 +2087,14 @@ body.wechat-open::after {
   }
 
   .nav-toggle,
-  .theme-toggle {
+  .theme-toggle,
+  .nav-cv-button {
     min-height: 40px;
+  }
+
+  .theme-toggle {
+    width: 40px;
+    height: 40px;
   }
 
   .nav-toggle {
