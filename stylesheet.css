@@ -293,6 +293,7 @@ figure {
   transform: translateY(-2px) rotate(45deg);
 }
 
+.language-toggle,
 .theme-toggle,
 .nav-toggle {
   appearance: none;
@@ -302,6 +303,7 @@ figure {
   cursor: pointer;
 }
 
+.language-toggle,
 .theme-toggle {
   width: 38px;
   height: 38px;
@@ -314,6 +316,8 @@ figure {
   box-shadow: 0 4px 14px rgba(9, 29, 48, 0.04);
 }
 
+.language-toggle:hover,
+.language-toggle:focus-visible,
 .theme-toggle:hover,
 .theme-toggle:focus-visible,
 .nav-toggle:hover,
@@ -330,6 +334,18 @@ figure {
   border: 0;
   border-radius: 50%;
   background: currentColor;
+}
+
+.language-toggle {
+  color: var(--ink-strong);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.language-toggle[aria-pressed="true"] {
+  color: var(--brand);
 }
 
 .theme-icon::after {
@@ -530,6 +546,10 @@ p {
   font-size: 12px;
   font-weight: 700;
   overflow-wrap: anywhere;
+}
+
+html[lang="zh-CN"] .name::after {
+  content: "视频生成 / 长视频生成 / 视频世界模型 / 模型蒸馏 / 记忆机制";
 }
 
 .profile-intro {
@@ -2243,11 +2263,13 @@ body.wechat-open::after {
   }
 
   .nav-toggle,
+  .language-toggle,
   .theme-toggle,
   .nav-cv-button {
     min-height: 40px;
   }
 
+  .language-toggle,
   .theme-toggle {
     width: 40px;
     height: 40px;
@@ -2452,6 +2474,34 @@ body.wechat-open::after {
 
   .honor-list span {
     min-width: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .nav-inner {
+    gap: 5px;
+  }
+
+  .nav-brand {
+    font-size: 11px;
+  }
+
+  .nav-actions {
+    gap: 5px;
+  }
+
+  .nav-cv-button {
+    min-width: 48px;
+    padding: 5px 7px;
+    gap: 5px;
+  }
+
+  .language-toggle,
+  .theme-toggle,
+  .nav-toggle {
+    width: 35px;
+    min-height: 35px;
+    height: 35px;
   }
 }
 

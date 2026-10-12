@@ -11,8 +11,9 @@
     <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
     <link rel="preload" as="image" href="images/mksnet_image_preview.webp" type="image/webp">
     <link rel="preload" as="image" href="images/patent_census1_preview.webp" type="image/webp">
-    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20260923-9">
-    <script src="visitor-origins.js?v=20260922-9" defer></script>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20261012-1">
+    <script src="visitor-origins.js?v=20261012-1" defer></script>
+    <script src="site-language.js?v=20261012-1" defer></script>
     
   </head>
   <!-- Developer notes: Major sections in this file (top to bottom):
@@ -54,6 +55,7 @@
           <a class="nav-cv-button" href="files/Jiahao_Zhang_English_Resume.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open English CV updated September 22, 2026">
             <span>CV</span><span class="nav-cv-chevron" aria-hidden="true"></span>
           </a>
+          <button id="language-toggle" class="language-toggle" type="button" aria-label="切换到中文" title="切换到中文" aria-pressed="false" lang="zh-CN">中</button>
           <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
             <span class="theme-icon" aria-hidden="true"></span>
             <span class="theme-text">Dark</span>
@@ -78,7 +80,7 @@
                 <canvas id="visitor-origins-map" width="120" height="120" aria-hidden="true"></canvas>
                 <div>
                   <span class="visitor-origins__title">Visitor origins</span>
-                  <span class="visitor-origins__summary"><span id="visitor-country-count">—</span> countries/regions</span>
+                  <span class="visitor-origins__summary"><span id="visitor-country-count">—</span><span class="visitor-origins__summary-label"> countries/regions</span></span>
                 </div>
               </div>
               <ol class="visitor-origins__list" id="visitor-origins-list">
@@ -89,7 +91,7 @@
             </div>
             <button class="visitor-origins__toggle" id="visitor-origins-toggle" type="button" aria-expanded="false" aria-controls="visitor-origins-panel">
               <canvas id="visitor-origins-globe" width="26" height="26" aria-hidden="true"></canvas>
-              <span class="visitor-origins__total"><span id="visitor-total-count">—</span> visits</span>
+              <span class="visitor-origins__total"><span id="visitor-total-count">—</span><span class="visitor-origins__unit"> visits</span></span>
               <span class="visitor-origins__caret" aria-hidden="true">▾</span>
             </button>
           </div>
@@ -159,7 +161,7 @@
 
       var includes = document.querySelectorAll('[data-include]');
       var promises = Array.from(includes).map(loadInclude);
-      Promise.all(promises).catch(function(){ /* ignore include load errors */ });
+      window.siteIncludesReady = Promise.all(promises);
       
     })();
     </script>
@@ -190,10 +192,11 @@
 
       function applyTheme(theme){
         var dark = theme === 'dark';
+        var chinese = root.lang === 'zh-CN';
         root.setAttribute('data-theme', dark ? 'dark' : 'light');
         if(btn){
           btn.setAttribute('aria-pressed', String(dark));
-          btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+          btn.setAttribute('aria-label', dark ? (chinese ? '切换为浅色模式' : 'Switch to light theme') : (chinese ? '切换为深色模式' : 'Switch to dark theme'));
         }
         if(text) text.textContent = dark ? 'Light' : 'Dark';
       }
@@ -209,6 +212,9 @@
           try { localStorage.setItem(key, next); } catch(_) {}
         });
       }
+      document.addEventListener('site:languagechange', function(){
+        applyTheme(root.getAttribute('data-theme'));
+      });
     })();
     </script>
     <script>
@@ -404,6 +410,14 @@
       }
 
       function speak(message, duration){
+        if(document.documentElement.lang === 'zh-CN'){
+          var chineseMessages = {
+            'Woof!': '汪！', 'Hi!': '你好！', 'Good luck!': '祝你顺利！',
+            'Keep exploring!': '继续探索！', 'Have a nice day!': '祝你今天愉快！',
+            'Easy…': '慢一点…', 'New spot!': '新位置！'
+          };
+          message = chineseMessages[message] || message;
+        }
         bubble.textContent = message;
         pet.classList.add('is-speaking');
         clearTimeout(hideTimer);

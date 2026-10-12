@@ -176,7 +176,13 @@
   }
 
   function displayName(code) {
-    var regionNames = {
+    var chinese = document.documentElement.lang === 'zh-CN';
+    var regionNames = chinese ? {
+      CN: '中国',
+      HK: '中国香港',
+      MO: '中国澳门',
+      TW: '中国台湾'
+    } : {
       CN: 'China',
       HK: 'Hong Kong, China',
       MO: 'Macao, China',
@@ -212,7 +218,9 @@
     if (!order.length) {
       var empty = document.createElement('li');
       empty.className = 'visitor-origins__empty';
-      empty.textContent = scanStarted ? 'No country/region data yet.' : 'Loading…';
+      empty.textContent = document.documentElement.lang === 'zh-CN'
+        ? (scanStarted ? '暂无国家或地区数据。' : '加载中…')
+        : (scanStarted ? 'No country/region data yet.' : 'Loading…');
       listElement.appendChild(empty);
       marks = [];
       return;
@@ -236,7 +244,7 @@
       if (code === currentCountry) {
         var you = document.createElement('span');
         you.className = 'visitor-origins__you';
-        you.textContent = 'YOU';
+        you.textContent = document.documentElement.lang === 'zh-CN' ? '您' : 'YOU';
         nameElement.appendChild(you);
       }
 
@@ -299,6 +307,8 @@
 
     runWave();
   }
+
+  document.addEventListener('site:languagechange', renderCountries);
 
   function setPanel(open) {
     panel.hidden = !open;
