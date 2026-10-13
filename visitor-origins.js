@@ -20,6 +20,7 @@
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var counts = {};
   var currentCountry = null;
+  var currentOriginCode = null;
   var scanStarted = false;
   var marks = [];
   var panelOpenedAt = 0;
@@ -164,11 +165,13 @@
     fetchJson(GEO_API, 6500).then(function (data) {
       var code = data && typeof data.country === 'string' ? data.country.toUpperCase() : '';
       if (!/^[A-Z]{2}$/.test(code)) return;
-      if (code === 'TW') code = 'CN';
-      currentCountry = code;
-      return readCounter('country-' + code, !alreadyCounted).then(function (value) {
+      // Keep the geographic origin for rotation, independently of visitor grouping.
+      currentOriginCode = code;
+      currentCountry = code === 'TW' ? 'CN' : code;
+      if (!panel.hidden) startGlobeAtVisitorOrigin();
+      return readCounter('country-' + currentCountry, !alreadyCounted).then(function (value) {
         if (value !== null) {
-          counts[code] = value;
+          counts[currentCountry] = value;
           renderCountries();
         }
       });
@@ -310,16 +313,21 @@
 
   document.addEventListener('site:languagechange', renderCountries);
 
+  function startGlobeAtVisitorOrigin() {
+    var startingPlace = countryByCode[currentOriginCode || currentCountry] || countryByCode.CN;
+    panelStartLatitude = startingPlace.lat * Math.PI / 180;
+    panelStartLongitude = startingPlace.lon * Math.PI / 180;
+    panelOpenedAt = performance.now();
+    if (reducedMotion) window.requestAnimationFrame(drawStatic);
+  }
+
   function setPanel(open) {
     panel.hidden = !open;
     wrap.classList.toggle('is-open', open);
     document.body.classList.toggle('visitor-panel-open', open);
     toggle.setAttribute('aria-expanded', String(open));
     if (open) {
-      var startingPlace = countryByCode[currentCountry] || countryByCode.CN;
-      panelStartLatitude = startingPlace.lat * Math.PI / 180;
-      panelStartLongitude = startingPlace.lon * Math.PI / 180;
-      panelOpenedAt = performance.now();
+      startGlobeAtVisitorOrigin();
       scanCountries();
     }
   }
@@ -516,7 +524,6 @@
 
   if (reducedMotion) {
     drawStatic();
-    toggle.addEventListener('click', function () { window.requestAnimationFrame(drawStatic); });
   } else {
     var animationStartedAt = performance.now();
     (function animate(now) {
