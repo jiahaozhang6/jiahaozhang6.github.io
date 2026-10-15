@@ -14,7 +14,7 @@
     ['#primary-nav a[href="#patents"]', '专利'],
     ['#primary-nav a[href="#honors"]', '荣誉'],
 
-    ['#profile .profile-intro', '我目前在北京航空航天大学计算机学院攻读计算机科学与技术博士学位，导师是<a href="http://miaowang.me">汪淼教授</a>。此前，我在北京理工大学获得软件工程硕士学位，导师是<a href="https://guangyu-ryan.github.io/">高广宇教授</a>。'],
+    ['#profile .profile-intro', '我目前在北京航空航天大学计算机学院攻读计算机科学与技术博士学位，导师是<a href="http://miaowang.me">汪淼教授</a>。此前，我在北京理工大学学习软件工程，导师是<a href="https://guangyu-ryan.github.io/">高广宇教授</a>。'],
     ['#profile .console-grid span:nth-child(1)', '视频生成'],
     ['#profile .console-grid span:nth-child(2)', '长视频生成'],
     ['#profile .console-grid span:nth-child(3)', '视频世界模型'],
