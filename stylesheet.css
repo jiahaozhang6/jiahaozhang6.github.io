@@ -697,11 +697,6 @@ html[lang="zh-CN"] .name::after {
   border-bottom: 0;
 }
 
-.portrait-resource-links span {
-  color: var(--muted);
-  opacity: 0.55;
-}
-
 .research-console {
   position: relative;
   overflow: hidden;
