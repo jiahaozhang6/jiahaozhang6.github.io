@@ -183,6 +183,11 @@
     }
   } catch (error) { /* unavailable or outdated cache */ }
 
+  function retryStatsLater() {
+    var delay = Math.min(60000, 5000 * Math.pow(2, retryAttempt++));
+    retryTimer = window.setTimeout(loadStats, delay);
+  }
+
   function loadStats() {
     if (requestPending) return;
     window.clearTimeout(retryTimer);
@@ -190,17 +195,30 @@
     statsState = hasStats ? 'cached' : 'loading';
     renderCountries();
     var increment = !alreadyCounted;
+    var visitRecorded = !increment;
+    var url = STATS_API + (privacyRequested ? '?locate=0' : '');
     var options = { method: increment ? 'POST' : 'GET', cache: 'no-store' };
     if (increment) options.headers = { 'X-Visit-Key': visitKey };
-    fetchJson(STATS_API + (privacyRequested ? '?locate=0' : ''), 9000, options).then(function (data) {
+    fetchJson(url, 9000, options).then(function (data) {
+      if (validStats(data)) {
+        visitRecorded = true;
+        return data;
+      }
+      // A failed count must not prevent reading the existing aggregate data.
+      return increment ? fetchJson(url, 9000, { cache: 'no-store' }) : data;
+    }).then(function (data) {
       requestPending = false;
       if (validStats(data)) {
         applyStats(data);
         statsState = 'ready';
-        retryAttempt = 0;
-        alreadyCounted = true;
+        if (visitRecorded) {
+          retryAttempt = 0;
+          alreadyCounted = true;
+        } else {
+          retryStatsLater();
+        }
         try {
-          window.sessionStorage.setItem(SESSION_KEY, '1');
+          if (visitRecorded) window.sessionStorage.setItem(SESSION_KEY, '1');
           // Cache aggregate counts only, never a visitor's origin or visit key.
           window.localStorage.setItem(CACHE_KEY, JSON.stringify({ visits: totalVisits, countries: counts }));
         } catch (error) { /* private mode */ }
@@ -213,8 +231,7 @@
         }
       } else {
         statsState = hasStats ? 'cached' : 'error';
-        var delay = Math.min(60000, 5000 * Math.pow(2, retryAttempt++));
-        retryTimer = window.setTimeout(loadStats, delay);
+        retryStatsLater();
       }
       renderCountries();
     });

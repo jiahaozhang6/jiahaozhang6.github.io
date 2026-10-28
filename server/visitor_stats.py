@@ -86,6 +86,22 @@ def make_server(database, host="127.0.0.1", port=8010):
         def log_message(self, *_args):
             pass  # Do not log visitor IP addresses or request headers.
 
+        def has_empty_body(self):
+            if self.headers.get("Content-Length", "0") != "0":
+                return False
+            encoding = self.headers.get("Transfer-Encoding")
+            if encoding is None:
+                return True
+            if encoding.strip().lower() != "chunked":
+                return False
+            # Cloudflare can frame an empty POST as a zero-length HTTP chunk.
+            # Accept the empty frame only, with bounded reads and no trailers.
+            self.connection.settimeout(3)
+            try:
+                return self.rfile.readline(4) == b"0\r\n" and self.rfile.readline(3) == b"\r\n"
+            except (OSError, TimeoutError):
+                return False
+
         def reply(self, status, value=None):
             body = b"" if value is None else json.dumps(value).encode()
             self.send_response(status)
@@ -119,7 +135,7 @@ def make_server(database, host="127.0.0.1", port=8010):
             if self.command == "POST":
                 if not visit_key or not re.fullmatch(r"[a-f0-9-]{16,80}", visit_key):
                     return self.reply(400, {"error": "Invalid visit key"})
-                if self.headers.get("Content-Length", "0") != "0" or self.headers.get("Transfer-Encoding"):
+                if not self.has_empty_body():
                     return self.reply(400, {"error": "Request body not supported"})
             # Cloudflare supplies the geographic origin; never store the IP itself.
             origin = self.headers.get("CF-IPCountry", "").upper()

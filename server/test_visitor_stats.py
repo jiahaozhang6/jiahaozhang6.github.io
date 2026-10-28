@@ -2,6 +2,7 @@ import concurrent.futures
 import json
 import contextlib
 import io
+import http.client
 import tempfile
 import threading
 import unittest
@@ -100,6 +101,40 @@ class VisitorStatisticsTests(unittest.TestCase):
             error.exception.close()
             with request(headers={"Origin": "https://unrelated.example"}) as response:
                 self.assertNotIn("Access-Control-Allow-Origin", response.headers)
+        finally:
+            server.shutdown()
+            thread.join()
+            server.server_close()
+
+    def test_cloudflare_chunked_empty_post_counts_once(self):
+        server = make_server(self.database, port=0)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+
+        def request(body):
+            connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=5)
+            try:
+                connection.putrequest("POST", "/visitor-stats")
+                connection.putheader("Origin", "https://www.jiahaozhang.me")
+                connection.putheader("X-Visit-Key", "e" * 32)
+                connection.putheader("CF-IPCountry", "TW")
+                connection.putheader("Transfer-Encoding", "chunked")
+                connection.endheaders(body)
+                response = connection.getresponse()
+                return response.status, json.load(response)
+            finally:
+                connection.close()
+
+        try:
+            status, _ = request(b"1\r\nx\r\n0\r\n\r\n")
+            self.assertEqual(status, 400)
+            self.assertEqual(snapshot(self.database)["visits"], 494)
+            for _ in range(2):
+                status, result = request(b"0\r\n\r\n")
+                self.assertEqual(status, 200)
+                self.assertEqual(result["visits"], 495)
+                self.assertEqual(result["countries"]["CN"], 184)
+                self.assertEqual(result["origin"], "TW")
         finally:
             server.shutdown()
             thread.join()

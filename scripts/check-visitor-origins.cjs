@@ -17,6 +17,7 @@ const cases = [
   { width: 684, language: 'en', mode: 'delayed' },
   { width: 320, language: 'zh', mode: 'cached' },
   { width: 390, language: 'en', mode: 'outage' },
+  { width: 390, language: 'en', mode: 'post-rejected' },
   { width: 390, language: 'zh', mode: 'invalid' },
   { width: 390, language: 'en', mode: 'empty' },
   { width: 390, language: 'en', mode: 'privacy' },
@@ -65,6 +66,7 @@ const cases = [
         if (url.hostname === 'papers.jiahaozhang.me' && url.pathname === '/visitor-stats') {
           requests.push({ method: request.method(), key: request.headers()['x-visit-key'], query: url.search });
           await gate;
+          if (test.mode === 'post-rejected' && !recovery && request.method() === 'POST') return route.fulfill({ status: 400, json: { error: 'Request body not supported' } });
           if (!recovery && ['outage', 'cached'].includes(test.mode)) return route.fulfill({ status: 503, json: { error: 'Unavailable' } });
           if (!recovery && test.mode === 'invalid') return route.fulfill({ json: { visits: null, countries: {} } });
           return route.fulfill({ json: test.mode === 'empty' ? { visits: 0, countries: {}, origin: null } : { ...baseline, visits: recovery ? 501 : 500 } });
@@ -138,6 +140,15 @@ const cases = [
         assert.equal(cache.countries.TW, undefined);
       }
       assert(requests.filter(request => request.method === 'POST').every(request => request.key === requests[0].key));
+      if (test.mode === 'post-rejected') {
+        assert(requests.some(request => request.method === 'GET'));
+        assert.equal(await page.evaluate(() => sessionStorage.getItem('jiahao-visit-counted-v2')), null);
+        recovery = true;
+        await page.evaluate(() => window.dispatchEvent(new Event('online')));
+        await page.waitForFunction(() => document.getElementById('visitor-total-count').textContent === '501');
+        assert.equal(await page.evaluate(() => sessionStorage.getItem('jiahao-visit-counted-v2')), '1');
+        assert(requests.filter(request => request.method === 'POST').every(request => request.key === requests[0].key));
+      }
       if (test.mode === 'healthy' && test.width === 390) {
         await page.locator('#language-toggle').click();
         assert.equal(await page.locator('.visitor-origins__item.is-current .visitor-origins__name').innerText(), 'ChinaYOU');

@@ -29,6 +29,8 @@ Deployment:
 4. Add the path route to Cloudflare Tunnel / Caddy and validate before reload.
 5. Test GET and the site's browser CORS preflight. Use GET for health checks;
    POST increments once per session and requires the allowed Origin and visit key.
+   An empty POST may arrive through Cloudflare with `Transfer-Encoding: chunked`;
+   the service accepts its zero-length chunk while rejecting non-empty bodies.
 
 Verify with `python -m unittest discover -s server -p 'test_*.py'`.
 The browser regression checks use `node scripts/check-visitor-origins.cjs`
@@ -36,6 +38,10 @@ with Playwright installed (`PLAYWRIGHT_MODULE` can point to an existing install)
 They cover mobile/desktop, language changes, delayed responses, genuine empty
 data, network failures, cached data, recovery, privacy settings, and blocked
 storage. Browser requests are mocked; the checks do not add production visits.
+If a POST fails, the panel still reads existing counts with GET and retries the
+write with the same key. A successful fallback read never marks a failed write
+as counted. Live verification must include a fresh session's POST through the
+public Cloudflare route; a GET-only check misses proxy request-body framing.
 
 Back up SQLite with the sqlite3 connection backup API while the service is live;
 copying just the main database file during writes can omit the WAL contents.
