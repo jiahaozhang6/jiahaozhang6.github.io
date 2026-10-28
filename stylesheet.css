@@ -1569,6 +1569,27 @@ body.wechat-open::after {
   margin: 8px 0 0;
 }
 
+.visitor-origins__retry {
+  margin: 8px 0 0;
+  padding: 5px 10px;
+  color: var(--brand);
+  background: var(--surface-solid);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.visitor-origins__retry[hidden] {
+  display: none;
+}
+
+.visitor-origins__retry:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
 .visitor-origins__privacy {
   margin: 10px 0 0;
   padding-top: 9px;

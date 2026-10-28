@@ -1,0 +1,22 @@
+[Unit]
+Description=Personal website aggregate visitor statistics
+After=network.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/site-visitors/server
+ExecStart=/usr/bin/python3 visitor_stats.py
+Restart=on-failure
+RestartSec=3
+StateDirectory=site-visitors
+StateDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=read-only
+ProtectSystem=strict
+RestrictAddressFamilies=AF_INET AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

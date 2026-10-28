@@ -10,18 +10,26 @@
   var countryCountElement = document.getElementById('visitor-country-count');
   var listElement = document.getElementById('visitor-origins-list');
   var scanElement = document.getElementById('visitor-origins-scan');
+  var retryButton = document.getElementById('visitor-origins-retry');
 
   if (!wrap || !toggle || !panel || !smallCanvas || !largeCanvas || !totalElement || !listElement) return;
 
-  var COUNTER_API = 'https://abacus.jasoncameron.dev';
-  var GEO_API = 'https://api.country.is/';
-  var NAMESPACE = 'www-jiahaozhang-cn-20260922';
+  var STATS_API = 'https://papers.jiahaozhang.me/visitor-stats';
   var SESSION_KEY = 'jiahao-visit-counted-v2';
+  var VISIT_KEY = 'jiahao-visit-key-v1';
+  var CACHE_KEY = 'jiahao-visitor-stats-v1';
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var counts = {};
   var currentCountry = null;
   var currentOriginCode = null;
-  var scanStarted = false;
+  var statsState = 'loading';
+  var hasStats = false;
+  var totalVisits = null;
+  var requestPending = false;
+  var retryTimer = null;
+  var retryAttempt = 0;
+  var savedPetPosition = null;
+  var petLayoutFrame = null;
   var marks = [];
   var panelOpenedAt = 0;
   var panelStartLatitude = 25 * Math.PI / 180;
@@ -56,12 +64,6 @@
     ['KZ', 48.2, 67.3, 'Kazakhstan'], ['NG', 9.6, 8.1, 'Nigeria'],
     ['EG', 26.5, 29.9, 'Egypt'], ['SA', 24.1, 44.5, 'Saudi Arabia']
   ];
-
-  // Abacus returns HTTP 404 for a counter that has never been created. Only
-  // request established origin counters so opening the panel does not flood
-  // the browser console with expected "not found" responses. The current
-  // visitor's country is still counted and rendered immediately below.
-  var establishedOriginCodes = ['CN', 'US', 'JP', 'IN', 'TW', 'HK', 'SG', 'RU', 'AR'];
 
   /* Simplified coastlines used by both globes. Coordinates are [longitude, latitude]. */
   var landOutlines = [
@@ -116,10 +118,12 @@
     };
   });
 
-  function fetchJson(url, timeout) {
+  function fetchJson(url, timeout, options) {
     var controller = typeof AbortController === 'function' ? new AbortController() : null;
     var timer = controller ? window.setTimeout(function () { controller.abort(); }, timeout || 7000) : null;
-    return fetch(url, controller ? { signal: controller.signal } : undefined)
+    options = options || {};
+    if (controller) options.signal = controller.signal;
+    return fetch(url, options)
       .then(function (response) {
         if (!response.ok) return null;
         return response.json();
@@ -131,52 +135,97 @@
       });
   }
 
-  function counterUrl(action, key) {
-    return COUNTER_API + '/' + action + '/' + encodeURIComponent(NAMESPACE) + '/' + encodeURIComponent(key);
-  }
-
-  function readCounter(key, increment) {
-    return fetchJson(counterUrl(increment ? 'hit' : 'get', key), 7000).then(function (data) {
-      return data && typeof data.value === 'number' ? data.value : null;
-    });
-  }
-
   function formatNumber(value) {
     return value.toLocaleString(document.documentElement.lang || 'en');
   }
 
   var alreadyCounted = false;
+  var visitKey = null;
   try {
     alreadyCounted = window.sessionStorage.getItem(SESSION_KEY) === '1';
+    visitKey = window.sessionStorage.getItem(VISIT_KEY);
   } catch (error) {
     alreadyCounted = false;
   }
-
-  readCounter('visits', !alreadyCounted).then(function (value) {
-    if (value === null) return;
-    totalElement.textContent = formatNumber(value);
-    try { window.sessionStorage.setItem(SESSION_KEY, '1'); } catch (error) { /* private mode */ }
-  });
+  if (!visitKey || !/^[a-f0-9-]{16,80}$/.test(visitKey)) {
+    var random = new Uint8Array(16);
+    window.crypto.getRandomValues(random);
+    visitKey = Array.from(random, function (value) { return value.toString(16).padStart(2, '0'); }).join('');
+    try { window.sessionStorage.setItem(VISIT_KEY, visitKey); } catch (error) { /* private mode */ }
+  }
 
   var privacyRequested = navigator.doNotTrack === '1' || window.doNotTrack === '1' ||
     navigator.msDoNotTrack === '1' || navigator.globalPrivacyControl === true;
 
-  if (!privacyRequested) {
-    fetchJson(GEO_API, 6500).then(function (data) {
-      var code = data && typeof data.country === 'string' ? data.country.toUpperCase() : '';
-      if (!/^[A-Z]{2}$/.test(code)) return;
-      // Keep the geographic origin for rotation, independently of visitor grouping.
-      currentOriginCode = code;
-      currentCountry = code === 'TW' ? 'CN' : code;
-      if (!panel.hidden) startGlobeAtVisitorOrigin();
-      return readCounter('country-' + currentCountry, !alreadyCounted).then(function (value) {
-        if (value !== null) {
-          counts[currentCountry] = value;
-          renderCountries();
-        }
+  function validStats(data) {
+    return data && Number.isSafeInteger(data.visits) && data.visits >= 0 &&
+      data.countries && typeof data.countries === 'object' && !Array.isArray(data.countries) &&
+      Object.keys(data.countries).every(function (code) {
+        return /^[A-Z]{2}$/.test(code) && Number.isSafeInteger(data.countries[code]) && data.countries[code] >= 0;
       });
+  }
+
+  function applyStats(data) {
+    totalVisits = data.visits;
+    counts = {};
+    Object.keys(data.countries).forEach(function (code) {
+      var normalized = code === 'TW' ? 'CN' : code;
+      counts[normalized] = (counts[normalized] || 0) + data.countries[code];
+    });
+    hasStats = true;
+  }
+
+  try {
+    var cached = JSON.parse(window.localStorage.getItem(CACHE_KEY));
+    if (validStats(cached)) {
+      applyStats(cached);
+      statsState = 'cached';
+    }
+  } catch (error) { /* unavailable or outdated cache */ }
+
+  function loadStats() {
+    if (requestPending) return;
+    window.clearTimeout(retryTimer);
+    requestPending = true;
+    statsState = hasStats ? 'cached' : 'loading';
+    renderCountries();
+    var increment = !alreadyCounted;
+    var options = { method: increment ? 'POST' : 'GET', cache: 'no-store' };
+    if (increment) options.headers = { 'X-Visit-Key': visitKey };
+    fetchJson(STATS_API + (privacyRequested ? '?locate=0' : ''), 9000, options).then(function (data) {
+      requestPending = false;
+      if (validStats(data)) {
+        applyStats(data);
+        statsState = 'ready';
+        retryAttempt = 0;
+        alreadyCounted = true;
+        try {
+          window.sessionStorage.setItem(SESSION_KEY, '1');
+          // Cache aggregate counts only, never a visitor's origin or visit key.
+          window.localStorage.setItem(CACHE_KEY, JSON.stringify({ visits: totalVisits, countries: counts }));
+        } catch (error) { /* private mode */ }
+        var code = !privacyRequested && typeof data.origin === 'string' ? data.origin.toUpperCase() : '';
+        if (/^[A-Z]{2}$/.test(code)) {
+          var originChanged = currentOriginCode !== code;
+          currentOriginCode = code;
+          currentCountry = code === 'TW' ? 'CN' : code;
+          if (originChanged && !panel.hidden) startGlobeAtVisitorOrigin();
+        }
+      } else {
+        statsState = hasStats ? 'cached' : 'error';
+        var delay = Math.min(60000, 5000 * Math.pow(2, retryAttempt++));
+        retryTimer = window.setTimeout(loadStats, delay);
+      }
+      renderCountries();
     });
   }
+
+  if (retryButton) retryButton.addEventListener('click', loadStats);
+  window.addEventListener('online', loadStats);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && statsState !== 'ready') loadStats();
+  });
+  loadStats();
 
   function displayName(code) {
     var chinese = document.documentElement.lang === 'zh-CN';
@@ -214,16 +263,28 @@
   }
 
   function renderCountries() {
+    keepPetClearOfPanel();
     var order = orderedCodes();
-    countryCountElement.textContent = order.length ? formatNumber(order.length) : '—';
+    var chinese = document.documentElement.lang === 'zh-CN';
+    totalElement.textContent = hasStats ? formatNumber(totalVisits) : '—';
+    countryCountElement.textContent = hasStats ? formatNumber(order.length) : '—';
+    scanElement.hidden = statsState !== 'cached';
+    scanElement.textContent = chinese ? '正在显示已保存的统计，重新连接中…' : 'Showing saved counts. Reconnecting…';
+    if (retryButton) {
+      retryButton.hidden = statsState !== 'error' && statsState !== 'cached';
+      retryButton.disabled = requestPending;
+      retryButton.textContent = chinese ? '重试' : 'Retry';
+    }
     listElement.textContent = '';
 
     if (!order.length) {
       var empty = document.createElement('li');
       empty.className = 'visitor-origins__empty';
-      empty.textContent = document.documentElement.lang === 'zh-CN'
-        ? (scanStarted ? '暂无国家或地区数据。' : '加载中…')
-        : (scanStarted ? 'No country/region data yet.' : 'Loading…');
+      empty.textContent = statsState === 'loading'
+        ? (chinese ? '加载中…' : 'Loading…')
+        : (hasStats
+          ? (chinese ? '暂无国家或地区数据。' : 'No country/region data yet.')
+          : (chinese ? '访客统计暂时不可用，请稍后重试。' : 'Visitor statistics are temporarily unavailable. Please retry.'));
       listElement.appendChild(empty);
       marks = [];
       return;
@@ -238,6 +299,7 @@
       var renderedFlagCode = flagCode(code);
       flagElement.className = 'visitor-origins__flag';
       flagElement.src = 'images/flags/' + renderedFlagCode.toLowerCase() + '.svg';
+      flagElement.addEventListener('error', function () { flagElement.style.visibility = 'hidden'; });
       flagElement.alt = '';
       flagElement.setAttribute('aria-hidden', 'true');
 
@@ -278,40 +340,31 @@
         current: code === currentCountry
       };
     }).filter(Boolean);
-  }
-
-  function scanCountries() {
-    if (scanStarted) return;
-    scanStarted = true;
-    scanElement.hidden = false;
-
-    var queue = establishedOriginCodes.filter(function (code) {
-      return code !== currentCountry;
-    });
-
-    function runWave() {
-      var batch = queue.splice(0, 24);
-      Promise.all(batch.map(function (code) {
-        return readCounter('country-' + code, false).then(function (value) {
-          if (value !== null && value > 0) {
-            var normalizedCode = code === 'TW' ? 'CN' : code;
-            counts[normalizedCode] = (counts[normalizedCode] || 0) + value;
-          }
-        });
-      })).then(function () {
-        renderCountries();
-        if (queue.length) {
-          window.setTimeout(runWave, 10500);
-        } else {
-          scanElement.hidden = true;
-        }
-      });
-    }
-
-    runWave();
+    if (reducedMotion) window.requestAnimationFrame(drawStatic);
   }
 
   document.addEventListener('site:languagechange', renderCountries);
+
+  function keepPetClearOfPanel() {
+    window.cancelAnimationFrame(petLayoutFrame);
+    petLayoutFrame = window.requestAnimationFrame(function () {
+      var pet = document.getElementById('shiba-pet');
+      if (!pet || panel.hidden) return;
+      var mapRect = panel.getBoundingClientRect();
+      var petRect = pet.getBoundingClientRect();
+      if (petRect.right <= mapRect.left || petRect.left >= mapRect.right ||
+          petRect.bottom <= mapRect.top || petRect.top >= mapRect.bottom) return;
+      var above = mapRect.top - petRect.height - 12;
+      var below = mapRect.bottom + 12;
+      var top = above >= 8 ? above : (below + petRect.height <= window.innerHeight - 8 ? below : null);
+      if (top === null) return;
+      if (!savedPetPosition) savedPetPosition = { right: pet.style.right, bottom: pet.style.bottom };
+      pet.style.bottom = (window.innerHeight - top - petRect.height) + 'px';
+    });
+  }
+
+  window.addEventListener('resize', function () { if (!panel.hidden) keepPetClearOfPanel(); }, { passive: true });
+  window.addEventListener('scroll', function () { if (!panel.hidden) keepPetClearOfPanel(); }, { passive: true });
 
   function startGlobeAtVisitorOrigin() {
     var startingPlace = countryByCode[currentOriginCode || currentCountry] || countryByCode.CN;
@@ -328,7 +381,15 @@
     toggle.setAttribute('aria-expanded', String(open));
     if (open) {
       startGlobeAtVisitorOrigin();
-      scanCountries();
+      if (statsState !== 'ready') loadStats();
+      keepPetClearOfPanel();
+    } else if (savedPetPosition) {
+      var pet = document.getElementById('shiba-pet');
+      if (pet) {
+        pet.style.right = savedPetPosition.right;
+        pet.style.bottom = savedPetPosition.bottom;
+      }
+      savedPetPosition = null;
     }
   }
 

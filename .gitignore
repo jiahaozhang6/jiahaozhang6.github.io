@@ -3,3 +3,7 @@
 *.ps1
 .DS_Store
 *.py
+!server/*.py
+server/__pycache__/
+*.sqlite3
+*.sqlite3-*

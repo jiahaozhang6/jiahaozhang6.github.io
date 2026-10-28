@@ -12,9 +12,9 @@
     <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
     <link rel="preload" as="image" href="images/mksnet_image_preview.webp" type="image/webp">
     <link rel="preload" as="image" href="images/patent_census1_preview.webp" type="image/webp">
-    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20261015-1">
-    <script src="visitor-origins.js?v=20261013-1" defer></script>
-    <script src="site-language.js?v=20261015-2" defer></script>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=20261028-1">
+    <script src="visitor-origins.js?v=20261028-1" defer></script>
+    <script src="site-language.js?v=20261028-1" defer></script>
     
   </head>
   <!-- Developer notes: Major sections in this file (top to bottom):
@@ -87,7 +87,8 @@
               <ol class="visitor-origins__list" id="visitor-origins-list">
                 <li class="visitor-origins__empty">Loading…</li>
               </ol>
-              <p class="visitor-origins__scan" id="visitor-origins-scan" hidden>Scanning visitor origins…</p>
+              <p class="visitor-origins__scan" id="visitor-origins-scan" role="status" hidden></p>
+              <button class="visitor-origins__retry" id="visitor-origins-retry" type="button" hidden>Retry</button>
               <p class="visitor-origins__privacy">Only aggregate country/region counts are stored. No IP address, city, cookie, or per-visit profile is retained.</p>
             </div>
             <button class="visitor-origins__toggle" id="visitor-origins-toggle" type="button" aria-expanded="false" aria-controls="visitor-origins-panel">

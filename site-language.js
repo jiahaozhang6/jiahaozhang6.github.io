@@ -101,7 +101,6 @@
 
     ['.visitor-origins__title', '访客来源'],
     ['.visitor-origins__summary-label', ' 个国家或地区'],
-    ['.visitor-origins__scan', '正在查询访客来源…'],
     ['.visitor-origins__privacy', '仅保存国家或地区的汇总访问次数，不保留 IP 地址、城市、Cookie 或个人访问记录。'],
     ['.visitor-origins__unit', ' 次访问'],
     ['.footer-info > .muted-note', '设计与源代码参考 <a class="muted-note" href="https://jonbarron.info" target="_blank">Jon Barron 的网站</a>'],
